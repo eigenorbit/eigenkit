@@ -1,0 +1,22 @@
+[project]
+name = "eigenkit"
+version = "0.0.0"
+description = "Build quantum algorithms once. Run them anywhere."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "EigenOrbit" }]
+requires-python = ">=3.11"
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+[project.urls]
+Homepage = "https://eigenorbit.com"
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"

@@ -1,0 +1,16 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  pypi:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+      - run: pipx run build
+      - uses: pypa/gh-action-pypi-publish@release/v1

@@ -1,17 +1,193 @@
-name: Release
+name: release
+
+# Manual release: Actions -> release -> Run workflow on `main`. Merging to
+# `main` runs CI only. The run re-tests the tree (full extras + bare install),
+# then semantic-release bumps the version, writes the changelog, tags, builds
+# the wheel and sdist and creates the GitHub release; the `pypi` job publishes
+# those files and the `docs` job deploys the site. See CONTRIBUTING.md,
+# "Releasing".
+#
+# The PyPI trusted publisher for `eigenkit` is bound to this file name and to
+# the `pypi` environment, so keep both.
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: "Release candidate (X.Y.Z-rc.N), no docs deploy"
+        type: boolean
+        default: false
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
+  verify:
+    # Releases come from `main` only. On any other branch semantic-release
+    # exits 0 without a version, and the docs would still deploy; `release`
+    # is skipped together with its `needs`.
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/_test.yml
+    with:
+      python-versions: '["3.13"]'
+      extras: "all,perceval"  # perceval is outside `all`; see ci.yml
+
+  verify-core-only:
+    # Same core-only gate as ci.yml's `test-core-only`: no extras, import-linter
+    # contracts, and the framework-free tests only.
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/_test.yml
+    with:
+      python-versions: '["3.13"]'
+      extras: ""
+      lint-imports: true
+      test-paths: "tests/core/test_torch_free_import.py tests/core/test_numpy_backend.py"
+
+  release:
+    needs: [verify, verify-core-only]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    outputs:
+      released: ${{ steps.dist.outputs.released }}
+
+    steps:
+      - name: Mint release-bot token
+        # A GitHub App token, not GITHUB_TOKEN: the version commit and tag have
+        # to pass the protection on `main` and on `v*` tags, which list the
+        # app in their bypass.
+        id: release-bot
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.RELEASE_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+
+      - name: Check-out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          token: ${{ steps.release-bot.outputs.token }}
+          persist-credentials: true
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.2.0  # no floating major tag since v10
+        with:
+          enable-cache: true
+          # Keep only wheels built from source; the downloaded ones (torch with
+          # CUDA among them) filled the runner's disk when the cache was saved.
+          prune-cache: true
+          cache-dependency-glob: "**/uv.lock"
+
+      - name: Install package
+        run: uv sync --dev
+
+      - name: Run semantic-release
+        env:
+          GH_TOKEN: ${{ steps.release-bot.outputs.token }}
+          BOT: ${{ steps.release-bot.outputs.app-slug }}[bot]
+        run: |
+          git config user.name "$BOT"
+          git config user.email "$(gh api "/users/$BOT" --jq .id)+$BOT@users.noreply.github.com"
+          uv run semantic-release version ${{ inputs.prerelease && '--as-prerelease' || '' }}
+          uv run semantic-release publish
+
+      - name: Keep the built distributions
+        # semantic-release builds only when it cuts a version; with no `feat`
+        # or `fix` since the last tag, dist/ stays empty and nothing is published.
+        id: dist
+        run: |
+          if ls dist/*.whl >/dev/null 2>&1; then
+            echo "released=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload distributions
+        if: steps.dist.outputs.released == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+
   pypi:
+    needs: release
+    if: needs.release.outputs.released == 'true'
     runs-on: ubuntu-latest
     environment: pypi
+
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Download distributions
+        uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  docs:
+    # Runs after a release and also when none was cut, which is how a
+    # docs-only fix goes live. GitHub Pages serves the site; its custom domain,
+    # docs.kit.eigenorbit.com, is set in the repository's Pages settings.
+    needs: release
+    if: ${{ !inputs.prerelease }}
+    runs-on: ubuntu-latest
+
     permissions:
       contents: read
+      pages: write
       id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
     steps:
-      - uses: actions/checkout@v7
-      - run: pipx run build
-      - uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Check-out repository
+        uses: actions/checkout@v7
+        with:
+          # The release commit, not the commit the run started on.
+          ref: main
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.2.0  # no floating major tag since v10
+        with:
+          enable-cache: true
+          # Keep only wheels built from source; the downloaded ones (torch with
+          # CUDA among them) filled the runner's disk when the cache was saved.
+          prune-cache: true
+          cache-dependency-glob: "**/uv.lock"
+
+      - name: Install package
+        # mkdocstrings imports the modules it documents.
+        run: uv sync --dev --extra all
+
+      - name: Build documentation
+        run: uv run mkdocs build --strict
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v5

@@ -1,22 +1,342 @@
 [project]
 name = "eigenkit"
-version = "0.0.0"
+version = "1.0.0"
 description = "Build quantum algorithms once. Run them anywhere."
 readme = "README.md"
 license = "Apache-2.0"
-license-files = ["LICENSE"]
-authors = [{ name = "EigenOrbit" }]
-requires-python = ">=3.11"
+license-files = ["LICENSE", "NOTICE"]
+authors = [
+    { name = "EigenOrbit", email = "info@eigenorbit.com" }
+]
+requires-python = ">=3.12,<3.15"
+keywords = [
+    "quantum computing",
+    "quantum machine learning",
+    "variational quantum circuits",
+    "qaoa",
+    "vqe",
+    "pytorch",
+    "scikit-learn",
+    "pennylane",
+    "qiskit",
+    "braket",
+]
 classifiers = [
-    "Development Status :: 1 - Planning",
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Physics",
+    "Typing :: Typed",
+]
+# Core is intentionally lightweight: the numpy reference simulator, IR,
+# dispatch, construction, and variational layers need only these. scikit-learn
+# (the qml tier + datasets/benchmark), torch (the nn.Module ring + hybrid
+# estimators), and the quantum backends are all optional extras, imported
+# lazily.
+dependencies = [
+    "numpy>=2.4,<3",
+    "scipy>=1.10,<2",
+    # Lower bound kept at the oldest release the dataset registry's plain
+    # BaseModel / Field usage works on, so the [iqm] extra stays installable:
+    # iqm-client pins pydantic<2.13, and a >=2.13 floor here made the two
+    # unresolvable together.
+    "pydantic>=2.12.4,<3",
+]
+
+[project.optional-dependencies]
+# The hybrid estimators (HQNC, ...) subclass the sklearn-compatible base in the
+# qml tier, so torch includes the qml extra. They run on the built-in numpy
+# simulator by default; add the `pennylane` extra to use that backend.
+torch = [
+    "torch>=2.5,<3",
+    "tqdm>=4.66,<5",
+    "eigenkit[qml]",
+]
+pennylane = [
+    "pennylane>=0.45,<0.46",
+    "pennylane-lightning>=0.45,<0.46",
+]
+qiskit = [
+    "qiskit>=1.4.1,<3",
+    # qiskit 1.x needs symengine<0.14, which has no Python 3.14 wheels.
+    "qiskit>=2; python_version >= '3.14'",
+    # No Linux ARM wheels for Python 3.14 yet, and the source build needs CMake
+    # and a BLAS; there the extra installs without Aer.
+    "qiskit-aer>=0.16,<0.18; python_version < '3.14' or sys_platform != 'linux' or platform_machine != 'aarch64'",
+    # 0.44.x imports calc_final_ops, which only exists in qiskit 2, yet allows qiskit 1.x;
+    # 0.45 and later require qiskit 2 themselves, so a resolver pairs them correctly.
+    # 0.50 deprecates SamplerV2 and EstimatorV2, which the Runtime backend runs on.
+    "qiskit-ibm-runtime>=0.43.1,!=0.44.*,<0.50",
+]
+braket = [
+    "amazon-braket-sdk>=1.117,<2",
+    # The Braket schemas are built on pydantic.v1, which works on Python 3.14 only
+    # from pydantic 2.13 on.
+    "pydantic>=2.13; python_version >= '3.14'",
+]
+# IQM hardware through IQM's own SDK rather than through Braket. The `qiskit`
+# extra of iqm-client brings the `iqm.qiskit_iqm` adapter (IQMProvider, the
+# noise-modelled fake backends) that the `iqm` provider is built on.
+iqm = [
+    # iqm-client pins pydantic<2.13, which breaks Braket on Python 3.14 (see the
+    # braket extra), so on 3.14 the IQM SDK is left out until IQM lifts that pin.
+    "iqm-client[qiskit]>=35,<36; python_version < '3.14'",
+    "eigenkit[qiskit]",
+]
+tensorcircuit = [
+    "tensorcircuit-ng>=1.7",
+    "jax>=0.4",
+]
+cudaquantum = [
+    "cudaq>=0.14.0; sys_platform == 'linux' or (sys_platform == 'darwin' and platform_machine == 'arm64')",
+    "cuda-quantum-cu13>=0.14.0; sys_platform == 'linux' or (sys_platform == 'darwin' and platform_machine == 'arm64')",
+]
+# Fast C++ statevector simulator with native adjoint gradients (backprop).
+qulacs = [
+    # No Python 3.14 wheels yet (0.6.14), and the source build needs Boost.
+    "qulacs>=0.6,<0.7; python_version < '3.14'",
+]
+# Google's qsim (high-performance Schrödinger statevector sim) via its Cirq bridge. Single-precision
+# (fp32) — fast, but expectation values carry ~1e-6 error, so it does not pass a 1e-9 parity gate.
+qsim = [
+    # 0.22.1, the first with Python 3.14 wheels, pins contourpy<1.3.3, which has
+    # none, so on 3.14 contourpy would have to build from source. There are no
+    # Linux ARM wheels at all, and the source build needs CMake and a compiler.
+    "qsimcirq>=0.21; python_version < '3.14' and (sys_platform != 'linux' or platform_machine != 'aarch64')",
+    "cirq-core>=1.4",
+]
+# Photonic (linear-optics) ring: Quandela's Perceval SDK (discrete-variable,
+# MIT-licensed). The photonic IR is pure data and needs none of this; only the
+# Perceval executors import it, lazily. Kept out of `all`: its simulator
+# dependency, exqalibur, pins protobuf exactly, which through `all` would hold
+# protobuf back for every install. CI syncs it explicitly ("all,perceval").
+# Verified against perceval-quandela 1.3.1.
+perceval = [
+    "perceval-quandela>=1.3,<2",
+]
+# Synthetic + real datasets and the sklearn baselines used by them.
+datasets = [
+    "scikit-learn>=1.3,<2",
+]
+benchmark = [
+    "matplotlib>=3.7",
+    "pandas>=2.0",
+    "scikit-learn>=1.3,<2",
+]
+# Circuit drawing via matplotlib (Circuit.draw_mpl, and Qiskit's "mpl" drawer
+# for Circuit.transpiled_circuit(), which needs pylatexenc). The text drawer
+# (Circuit.draw) needs nothing.
+viz = [
+    "matplotlib>=3.7",
+    "pylatexenc>=2.10",
+]
+# Real-molecule support: integrals from PySCF, fermionic ops / mappings interop
+# from OpenFermion. The dependency-free chemistry path (own Jordan-Wigner +
+# built-in models + VQE) needs none of these.
+chemistry = [
+    # PySCF publishes no Windows wheels and supports Windows only through WSL; its
+    # source build needs CMake and a C compiler. Leaving it (and openfermionpyscf,
+    # which requires it) out on Windows keeps this extra and `all` installable there.
+    "pyscf>=2.3; sys_platform != 'win32'",
+    "openfermion>=1.6",
+    "openfermionpyscf>=0.5; sys_platform != 'win32'",
+]
+# The kernel-based QML tier (QuantumKernel, QSVC, QSVR) — scikit-learn only,
+# torch-free, on the built-in numpy simulator by default. For the
+# differentiable hybrid estimators, use the `torch` extra (which bundles this
+# plus torch). Other backends, PennyLane included, are their own extras.
+qml = [
+    "scikit-learn>=1.3,<2",
+]
+all = [
+    "eigenkit[torch,pennylane,qiskit,braket,iqm,tensorcircuit,cudaquantum,qulacs,qsim,benchmark,datasets,chemistry,qml,viz]",
 ]
 
 [project.urls]
 Homepage = "https://eigenorbit.com"
+Documentation = "https://docs.kit.eigenorbit.com"
+Repository = "https://github.com/eigenorbit/eigenkit"
+Issues = "https://github.com/eigenorbit/eigenkit/issues"
+Changelog = "https://github.com/eigenorbit/eigenkit/blob/main/CHANGELOG.md"
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+assets = ["uv.lock"]
+build_command = """
+    uv lock --upgrade-package "$PACKAGE_NAME"
+    uv build
+"""
+
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
 
 [build-system]
+# 1.27 is the first hatchling that reads the PEP 639 `license` expression.
 requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.sdist]
+# What building and testing the package needs. The docs site and the example
+# notebooks (about 14 MB of images and outputs) stay in the repository.
+include = ["src", "tests", "conftest.py", "CHANGELOG.md"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "pytest-cov>=6.0",
+    "mkdocs>=1.6",
+    "mkdocs-material>=9.5",
+    "mkdocstrings[python]>=1.0",
+    "mkdocs-gen-files>=0.5",
+    "mkdocs-literate-nav>=0.6",
+    "mkdocs-section-index>=0.3",
+    "pre-commit>=4.3.0",
+    "python-semantic-release>=10.7.0",
+    "ruff>=0.16.10",
+    "import-linter>=2.0",
+    "mkdocs-llmstxt>=0.5",
+]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cu126", marker = "sys_platform != 'darwin'" },
+]
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "qpu: requires real QPU/cloud access; skipped by default",
+    "gpu: requires CUDA (torch.cuda.is_available()); integration GPU smoke tests",
+    "pennylane: needs the pennylane extra; skipped when it is not installed",
+]
+# Silence noisy DeprecationWarnings from upstream (qiskit) so the
+# test output stays readable. Project-internal warnings still surface.
+filterwarnings = [
+    "ignore::DeprecationWarning:qiskit.*",
+    "ignore::DeprecationWarning:qiskit_aer.*",
+]
+
+[tool.ruff]
+line-length = 90
+# Generated from docs/examples/ by tools/docs-checks/build_example_notebooks.py;
+# fix the page, not the notebook.
+extend-exclude = ["examples/notebooks"]
+src = ["src", "tests"]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["B", "C90", "E", "F", "W", "I"]
+ignore = ["E203", "E501", "E722", "E731", "B905", "C901"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 12
+
+[tool.ruff.lint.isort]
+# Pin first-party explicitly so import grouping does not depend on which
+# subpackages exist on disk when ruff runs. With filesystem auto-detection a
+# stray/untracked package dir (or a branch lacking one) silently reclassifies
+# `eigenkit.*` imports, giving different I001 results locally vs CI.
+known-first-party = ["eigenkit"]
+lines-after-imports = 2
+
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = ["F401"]
+"**/types.py" = ["F401"]
+
+[tool.coverage.run]
+source = ["src/eigenkit"]
+branch = true
+relative_files = true
+
+[tool.coverage.report]
+show_missing = true
+
+# Architecture enforcement: the core compute layer (IR, dispatch, provider
+# protocol, interfaces, construction, numpy reference sim) must not import any
+# framework or backend SDK. Backends are an outer ring; torch/jax are
+# interfaces; both depend on core, never the reverse. Run with `lint-imports`.
+[tool.importlinter]
+root_package = "eigenkit"
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Core compute layer is framework-free"
+type = "forbidden"
+source_modules = [
+    "eigenkit.core.ir",
+    "eigenkit.core.circuit",
+    "eigenkit.core.provider",
+    "eigenkit.core.interfaces",
+    "eigenkit.core.blocks",
+    "eigenkit.core.builder",
+    "eigenkit.core.observables",
+    "eigenkit.core.draw",
+    "eigenkit.core.draw_mpl",
+    "eigenkit.core.variational",
+    "eigenkit.core.solver",
+    "eigenkit.core._results",
+    "eigenkit.core.wire",
+    "eigenkit.core.secret_fields",
+    "eigenkit.core.backends.numpy_backend",
+    "eigenkit.optimization",
+    "eigenkit.chemistry",
+    "eigenkit.reservoir",
+]
+forbidden_modules = ["torch", "pennylane", "qiskit", "braket", "sklearn", "qulacs", "perceval"]
+
+# The qml tier (kernels, SVMs, the sklearn estimator base) may use scikit-learn,
+# but must not require torch or a specific backend SDK at import: the kernels run
+# on the numpy interface, so a torch-free install can still use them.
+[[tool.importlinter.contracts]]
+name = "QML tier does not require torch"
+type = "forbidden"
+source_modules = [
+    "eigenkit.qml._base",
+    "eigenkit.qml._kernels",
+    "eigenkit.qml._registry",
+    "eigenkit.qml.qsvc",
+    "eigenkit.qml.qsvr",
+    "eigenkit.qml.qrc",
+]
+forbidden_modules = ["torch", "pennylane", "qiskit", "braket", "qulacs"]
+# Runtime-only edge, never hit at import: _serialization imports torch inside
+# functions only when a bundle carries torch state.
+ignore_imports = [
+    "eigenkit.qml._serialization -> torch",
+]
+
+# The torch tier (the layers and the hybrid estimators) runs on the numpy
+# simulator by default, so it must not import PennyLane or another backend SDK
+# itself; each backend is its own extra. Indirect chains are allowed: they run
+# through the provider registry and lazy, function-level imports elsewhere
+# (a callable IQAE oracle, a lazily registered backend).
+[[tool.importlinter.contracts]]
+name = "Torch tier does not import a backend SDK"
+type = "forbidden"
+source_modules = ["eigenkit.torch"]
+forbidden_modules = ["pennylane", "qiskit", "braket", "qulacs"]
+allow_indirect_imports = true
+
+# The photonic ring is a separate paradigm (linear optics), not a qubit Provider.
+# Its IR is pure data and must never import perceval or any framework. The
+# Perceval backends import perceval lazily (inside functions); the package import
+# surface staying perceval-free is pinned by tests/photonics/test_import_surface.py
+# (a runtime sys.modules check) rather than here, since grimp sees function-level imports.
+[[tool.importlinter.contracts]]
+name = "Photonics compute layer is framework-free"
+type = "forbidden"
+source_modules = [
+    "eigenkit.photonics.ir",
+    "eigenkit.photonics.executor",
+    "eigenkit.photonics.gradients",
+]
+forbidden_modules = ["perceval", "torch", "pennylane", "qiskit", "braket", "sklearn", "qulacs"]

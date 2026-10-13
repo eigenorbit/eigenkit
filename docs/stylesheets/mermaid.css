@@ -1,0 +1,19 @@
+/* Diagram legibility.
+ *
+ * `javascripts/mermaid-size.js` restores each diagram's natural width so its
+ * labels stay at 16px. This makes the block that holds it scroll instead of
+ * squeezing the graph into the content column.
+ */
+
+.md-typeset .mermaid {
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* the scrollbar sits under the graph, not across its bottom row */
+  padding-bottom: 0.4rem;
+}
+
+/* Belt and braces: the width is set inline from the viewBox, but the theme's
+   own `max-width: 100%` would still cap it. */
+.md-typeset .mermaid > svg {
+  max-width: none;
+}

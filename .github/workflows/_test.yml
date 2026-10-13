@@ -1,0 +1,107 @@
+name: _test
+
+# Reusable: install the package with the chosen extras and run pytest.
+# Called by `ci.yml`, `release.yml`, and `latest-deps.yml`. Not triggered
+# directly — the leading underscore is a convention to mark that.
+
+on:
+  workflow_call:
+    inputs:
+      python-versions:
+        description: 'JSON array of Python versions to test against.'
+        type: string
+        default: '["3.12","3.13","3.14"]'
+      extras:
+        description: 'Comma-separated list passed to `uv sync --extra`. Empty = no extras.'
+        type: string
+        default: 'all'
+      pytest-args:
+        description: 'Extra arguments forwarded to pytest.'
+        type: string
+        default: '-m "not slow"'
+      test-paths:
+        description: 'Paths passed to pytest. Default = the whole suite; core-only
+          runs pass the framework-free subset.'
+        type: string
+        default: 'tests/'
+      lint-imports:
+        description: 'When true, enforce the import-linter contracts before pytest
+          (used by the core-only runs to catch unguarded optional imports in src/).'
+        type: boolean
+        default: false
+      coverage:
+        description: 'When true, collect coverage and upload coverage.xml as an artifact.'
+        type: boolean
+        default: false
+      runs-on:
+        description: 'Runner label.'
+        type: string
+        default: 'ubuntu-latest'
+
+jobs:
+  pytest:
+    runs-on: ${{ inputs.runs-on }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ${{ fromJSON(inputs.python-versions) }}
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.2.0  # no floating major tag since v10
+        with:
+          enable-cache: true
+          # Keep only wheels built from source; the downloaded ones (torch with
+          # CUDA among them) filled the runner's disk when the cache was saved.
+          prune-cache: true
+          cache-dependency-glob: "**/uv.lock"
+
+      - name: Install package
+        # `--dev` pulls only the tooling group (pytest, ruff, import-linter,
+        # mkdocs) — never the framework extras — so an empty `extras` is a
+        # genuine core-only install (numpy + scipy + pydantic).
+        run: |
+          if [ -n "${{ inputs.extras }}" ]; then
+            uv sync --dev --extra "${{ inputs.extras }}"
+          else
+            uv sync --dev
+          fi
+
+      - name: Enforce import-linter contracts
+        if: ${{ inputs.lint-imports }}
+        run: uv run lint-imports
+
+      - name: Run pytest
+        # Only the 3.13 leg uploads coverage (next step), and the tracer more
+        # than doubles the 3.12 run, so the other legs skip it.
+        run: |
+          if [ "${{ inputs.coverage }}" = "true" ] && [ "${{ matrix.python-version }}" = "3.13" ]; then
+            uv run pytest ${{ inputs.test-paths }} ${{ inputs.pytest-args }} \
+              --cov=src/eigenkit --cov-report=xml --cov-report=term
+          else
+            uv run pytest ${{ inputs.test-paths }} ${{ inputs.pytest-args }}
+          fi
+
+      - name: Upload coverage data
+        # py-cov-action's downstream job runs `coverage json` against the
+        # SQLite `.coverage` file, so that's what we ship — not coverage.xml.
+        if: ${{ inputs.coverage && matrix.python-version == '3.13' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-data
+          path: .coverage
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7

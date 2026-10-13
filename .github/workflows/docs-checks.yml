@@ -1,0 +1,135 @@
+name: docs-checks
+
+# The documentation gate: the strict site build, plus one script per class of
+# defect that had to be fixed by hand because nothing was checking for it —
+# unfenced or unhighlighted code inside a docstring, an RST heading underline,
+# an undocumented parameter, a roster that has drifted from the code, a field
+# name on a diagram that the code never had, a page importing a top-level name
+# from a submodule, a README command that no longer runs. The scripts live in `tools/docs-checks/` and each
+# one is described in `tools/docs-checks/README.md`.
+#
+# Why a workflow of its own: `ci.yml` ignores `docs/**` and `**.md`, so a
+# documentation-only pull request triggers none of its jobs — including, until
+# now, the site build. That is why the `docs` job below was moved here out of
+# `ci.yml`. It reports as `docs-checks / docs`, so branch protection on `main`
+# has to name that context, not the `ci / docs` it was before the move.
+#
+# Why there is no `paths:` filter on the trigger: a workflow skipped by a path
+# filter does not report a skipped check — its checks stay *pending* forever,
+# and a required check that is pending forever blocks the merge without ever
+# running. Every job here has to be safe to require, so every job has to run on
+# every pull request to `main`. The two cheap jobs are standard-library only;
+# the `docs` job installs the extras but hits the uv cache. Filter inside a job
+# with an `if:` if that ever needs to change — a job skipped by its own `if:`
+# does report, and does satisfy branch protection.
+#
+# Not here yet: executing the snippets in `docs/`. That waits on the runtime of
+# `docs/user-guide/estimators.md`, which is over four hours.
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: docs-checks-${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    # Moved verbatim from `ci.yml`. Needs every extra, because mkdocstrings
+    # imports the modules it documents.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.2.0  # no floating major tag since v10
+        with:
+          enable-cache: true
+          # Keep only wheels built from source; the downloaded ones (torch with
+          # CUDA among them) filled the runner's disk when the cache was saved.
+          prune-cache: true
+          cache-dependency-glob: "**/uv.lock"
+
+      - name: Install package
+        run: uv sync --dev --extra all
+
+      - name: Build documentation
+        run: uv run mkdocs build --strict
+
+  docstrings:
+    # Six checkers, all of them standard-library only: they parse `src/` with
+    # `ast` and read `docs/` as text. No install, no deploy key, no network.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: No unfenced code and no RST markup in a docstring
+        run: python tools/docs-checks/find_unfenced_code.py
+
+      - name: Every public parameter is documented
+        # Without `--strict` the script only reports. The count it reports is 0,
+        # so the flag turns it into a ratchet; drop the flag to make it advisory
+        # again. The `Example:` inventory it also prints stays advisory either way.
+        run: python tools/docs-checks/check_func_params.py --strict
+
+      - name: Every roster matches its source
+        run: python tools/docs-checks/check_rosters.py
+
+      - name: Every name on a diagram exists in the code
+        run: python tools/docs-checks/check_diagrams.py
+
+      - name: One import idiom across the pages
+        run: python tools/docs-checks/check_doc_imports.py
+
+      - name: Filenames, spelling and trailing headings
+        run: python tools/docs-checks/check_conventions.py
+
+  readme-commands:
+    # Runs the read-only commands in `README.md` and `CONTRIBUTING.md` and
+    # shape-checks the ones that install, serve or publish. Needs the dev
+    # environment: `semantic-release` and `pre-commit` are dev dependencies.
+    # No extras are synced.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v7
+        with:
+          # `semantic-release --noop version` reads the tag history.
+          fetch-depth: 0
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.2.0  # no floating major tag since v10
+        with:
+          enable-cache: true
+          # Keep only wheels built from source; the downloaded ones (torch with
+          # CUDA among them) filled the runner's disk when the cache was saved.
+          prune-cache: true
+          cache-dependency-glob: "**/uv.lock"
+
+      - name: Install the dev environment
+        run: uv sync --dev
+
+      - name: README and CONTRIBUTING commands, flags and paths
+        run: python tools/docs-checks/check_readme_cmds.py

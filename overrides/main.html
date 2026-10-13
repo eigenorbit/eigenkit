@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{#- Figtree is the EigenOrbit heading face; `theme.font` loads only Manrope and
+    JetBrains Mono. -#}
+{% block fonts %}
+  {{ super() }}
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@600;700;800&display=swap">
+{% endblock %}
+
+{#- Points agents at the page's Markdown copy, written by mkdocs-llmstxt. -#}
+{% block extrahead %}
+  {% if page and page.canonical_url and page.canonical_url.endswith("/") %}
+    <link rel="alternate" type="text/markdown" href="{{ page.canonical_url }}index.md">
+  {% endif %}
+{% endblock %}

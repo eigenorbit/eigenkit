@@ -1,0 +1,56 @@
+/* Heading weight and API-member separation.
+ *
+ * Measured on the built site: body text is 16px/400, an H3 is 20px/400 — the
+ * same weight — while `**bold**` inside a paragraph is 16px/700. With the
+ * theme's default H3 weight, a bold lead-in carries more visual weight than the
+ * subheading above it, so subheadings read as ordinary text.
+ */
+
+.md-typeset h3 {
+  font-weight: 600;
+}
+
+/* The theme separates consecutive API members by 32px of margin and nothing
+ * else — no rule, no change of weight — so one member runs into the next. A
+ * hairline above each one turns the block into a list of members, and separates
+ * the class's own description from the first of them.
+ */
+.md-typeset .doc-children > .doc-object {
+  /* `--lightest` is 7% opacity — the weight of a table border, which is
+     barely noticeable. `--lighter` is 32%: a rule you see without it dividing
+     the page. Tune with this one token. */
+  border-top: 1px solid var(--md-default-fg-color--lighter);
+  padding-top: 0.6rem;
+}
+
+/* The rule is the separator, so the heading does not also need its full
+   top margin. */
+.md-typeset .doc-children > .doc-object > .doc-heading {
+  margin-top: 0.4rem;
+}
+
+/* Figure captions.
+ *
+ * A diagram in the user guide is a pair of images - one per colour scheme, see
+ * `theme-images.css` - followed by a single paragraph explaining what it shows.
+ * Only one image of the pair is ever visible, so that paragraph belongs to
+ * whichever it is; at body size and body colour it would read as another
+ * paragraph of prose instead of as a caption.
+ */
+.md-typeset p.figure-caption {
+  margin-top: -0.4em;
+  font-size: 0.7rem;
+  line-height: 1.55;
+  color: var(--md-default-fg-color--light);
+}
+
+/* Box-drawn output: one font for the whole block.
+ *
+ * See `javascripts/box-drawing.js` for why the class is added there. Every
+ * font named here carries the U+2500 block at its own advance width, so the
+ * frame lines up whichever one the platform supplies; JetBrains Mono is left
+ * out on purpose, because the served subset is what breaks the alignment.
+ */
+.md-typeset pre > code.box-drawing {
+  font-family: Consolas, Menlo, "DejaVu Sans Mono", "Liberation Mono", monospace;
+}

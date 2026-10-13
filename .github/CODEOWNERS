@@ -1,0 +1,8 @@
+ # Default owners for everything
+ *                                @eigenorbit/kit-maintainers
+
+ # Release-sensitive paths get extra scrutiny
+ /.github/workflows/              @eigenorbit/kit-maintainers
+ /pyproject.toml                  @eigenorbit/kit-maintainers
+ /uv.lock                         @eigenorbit/kit-maintainers
+ /.github/CODEOWNERS              @eigenorbit/kit-maintainers

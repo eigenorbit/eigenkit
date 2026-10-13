@@ -1,0 +1,103 @@
+name: latest-deps
+
+# Weekly canary: re-resolve every dependency to its latest version
+# compatible with our pyproject.toml constraints and run the test suite.
+# Catches upstream regressions before they bite a real release.
+
+on:
+  schedule:
+    # Mondays at 06:00 UTC
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: latest-deps
+  cancel-in-progress: false
+
+jobs:
+  latest-deps:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Check-out repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.2.0  # no floating major tag since v10
+        with:
+          enable-cache: true
+          # Keep only wheels built from source; the downloaded ones (torch with
+          # CUDA among them) filled the runner's disk when the cache was saved.
+          prune-cache: true
+          cache-dependency-glob: "**/uv.lock"
+
+      - name: Upgrade lockfile to latest compatible versions
+        run: uv lock --upgrade
+
+      - name: Show resolved versions
+        run: |
+          echo "::group::Upgraded packages"
+          git --no-pager diff --no-color uv.lock | grep -E '^[+-](name|version) = ' || echo "(no changes)"
+          echo "::endgroup::"
+
+      - name: Install package
+        run: uv sync --dev --extra all --extra perceval  # perceval is outside `all`
+
+      - name: Test with pytest
+        run: uv run pytest tests/ -m "not slow"
+
+      - name: Build documentation
+        if: matrix.python-version == '3.13'
+        run: uv run mkdocs build --strict
+
+      - name: Open issue on failure
+        if: failure() && matrix.python-version == '3.13'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Ensure labels exist (idempotent — ignore "already exists" errors).
+          gh label create latest-deps --color B60205 \
+            --description "Weekly latest-deps canary failed" 2>/dev/null || true
+          gh label create ci --color 0E8A16 \
+            --description "Continuous integration" 2>/dev/null || true
+
+          title="latest-deps CI failed on $(date -u +%Y-%m-%d)"
+          body=$(cat <<EOF
+          The weekly \`latest-deps\` canary failed. An upstream dependency
+          released a version that breaks our test suite or docs build under
+          the current constraints in \`pyproject.toml\`.
+
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          Next steps:
+          1. Inspect the diff in the "Upgraded packages" step to identify
+             which dependency moved.
+          2. Reproduce locally with \`uv lock --upgrade && uv sync && pytest\`.
+          3. Either pin around the bad release or adapt the code.
+          EOF
+          )
+          # Avoid duplicate issues if the canary fails several weeks in a row.
+          existing=$(gh issue list \
+            --label "latest-deps" --state open --json number --jq '.[0].number' || true)
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create \
+              --title "$title" \
+              --body "$body" \
+              --label "latest-deps,ci"
+          fi

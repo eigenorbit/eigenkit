@@ -1,0 +1,45 @@
+{#-
+  The page menu for AI tools, in place of Material's edit and view buttons
+  (`edit_uri` is empty, so those never render). Every page has a Markdown copy
+  next to it, `index.md`, written by mkdocs-llmstxt; `page-actions.js` copies it.
+-#}
+{% if page.canonical_url and page.canonical_url.endswith("/") %}
+  {% set prompt = "Read " ~ page.canonical_url ~ "index.md so I can ask you questions about it." %}
+  <div class="page-actions">
+    <button type="button" class="page-actions__copy" data-markdown="index.md">
+      {% include ".icons/material/content-copy.svg" %}
+      <span>Copy page</span>
+    </button>
+    <details class="page-actions__more">
+      <summary title="More ways to use this page with AI">
+        {% include ".icons/material/chevron-down.svg" %}
+      </summary>
+      <ul>
+        <li>
+          <a href="index.md">
+            {% include ".icons/material/language-markdown.svg" %}
+            View as Markdown
+          </a>
+        </li>
+        <li>
+          <a href="https://claude.ai/new?q={{ prompt | urlencode }}" target="_blank" rel="noopener">
+            {% include ".icons/material/open-in-new.svg" %}
+            Open in Claude
+          </a>
+        </li>
+        <li>
+          <a href="https://chatgpt.com/?hints=search&q={{ prompt | urlencode }}" target="_blank" rel="noopener">
+            {% include ".icons/material/open-in-new.svg" %}
+            Open in ChatGPT
+          </a>
+        </li>
+        <li>
+          <a href="{{ 'use-with-ai/' | url }}#mcp-server">
+            {% include ".icons/material/connection.svg" %}
+            Connect via MCP
+          </a>
+        </li>
+      </ul>
+    </details>
+  </div>
+{% endif %}

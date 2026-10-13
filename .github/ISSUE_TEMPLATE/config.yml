@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/eigenorbit/eigenkit/security/advisories/new
+    about: Report security issues privately, not in a public issue.
+  - name: Documentation
+    url: https://docs.kit.eigenorbit.com
+    about: User guide, worked examples and the API reference.

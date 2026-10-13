@@ -1,0 +1,42 @@
+default_language_version:
+  python: python3.13
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+        # mkdocs.yml uses Python-specific tags (!!python/name:...) for
+        # pymdownx extensions; --unsafe checks syntax without constructing them.
+        args: ['--unsafe']
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=10240']
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-case-conflict
+      - id: mixed-line-ending
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.10
+    hooks:
+      # ruff skips `examples/notebooks/` through `extend-exclude` in
+      # pyproject.toml: they are generated from the pages, so fix the page.
+      - id: ruff-check
+        args: [--fix]
+      # Also formats the Python blocks in the Markdown pages (ruff 0.16+); the
+      # notebooks then follow through the `example-notebooks` hook below.
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+      # The notebooks are generated from the example pages and ship without
+      # outputs. Rebuilding rewrites any notebook that has drifted from its
+      # page or was saved with outputs, which fails the hook; stage the
+      # rewritten notebook and commit again.
+      - id: example-notebooks
+        name: example notebooks match their pages
+        entry: python tools/docs-checks/build_example_notebooks.py
+        language: python
+        pass_filenames: false
+        files: ^(docs/examples/.+\.md|examples/notebooks/.+\.ipynb)$

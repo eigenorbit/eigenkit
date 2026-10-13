@@ -1,0 +1,8 @@
+/* Theme-aware image visibility for Material light/dark schemes. */
+[data-md-color-scheme="default"] .theme-image-dark {
+  display: none;
+}
+
+[data-md-color-scheme="slate"] .theme-image-light {
+  display: none;
+}

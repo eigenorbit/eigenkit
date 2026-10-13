@@ -7,12 +7,12 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version >= '3.14' and sys_platform == 'darwin'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version < '3.13' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'darwin'",
+    "python_full_version < '3.13' and sys_platform == 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.13' and sys_platform == 'darwin'",
 ]
 
@@ -480,12 +480,12 @@ version = "1.3.2"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version < '3.13' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'darwin'",
+    "python_full_version < '3.13' and sys_platform == 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.13' and sys_platform == 'darwin'",
 ]
 dependencies = [
@@ -748,7 +748,7 @@ wheels = [
 
 [[package]]
 name = "cuda-quantum-cu13"
-version = "0.16.0.post1"
+version = "0.16.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astpretty" },
@@ -768,12 +768,15 @@ dependencies = [
     { name = "scipy" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b0/01/ba1e3a809098049ddfffc5e7e5bf9531cb6248ae590959c8928d347b0f37/cuda_quantum_cu13-0.16.0.post1-cp312-cp312-manylinux_2_28_aarch64.whl", hash = "sha256:299d36fb228cdc6c6c24717360e4acb504112a2280ef3c9bc4edfa08b923eb57", size = 79960744, upload-time = "2026-09-17T12:31:47.382Z" },
-    { url = "https://files.pythonhosted.org/packages/36/1b/801edaea3ef343e9b64285203ca9e2bb1d48f63a550cb3cdd7c4f4ca6332/cuda_quantum_cu13-0.16.0.post1-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:5ae7550621095f719b787261b31ee637a243323cef7173bab8ba997db1988400", size = 91941181, upload-time = "2026-09-17T12:31:53.186Z" },
-    { url = "https://files.pythonhosted.org/packages/9d/7a/5aa3cd2d0630f415137da8f94f310d6981a63c14bca2c131a901521da335/cuda_quantum_cu13-0.16.0.post1-cp313-cp313-manylinux_2_28_aarch64.whl", hash = "sha256:57df707dced5273e79351a2a420b3e4e539e1b31538ca2860122125fdc5e0fd5", size = 79964851, upload-time = "2026-09-17T12:31:58.75Z" },
-    { url = "https://files.pythonhosted.org/packages/7e/7e/f9c1826bec0019247d66b7a606f7e23f3bab78a260601c0470e50a45e8ca/cuda_quantum_cu13-0.16.0.post1-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:70cdf7ac3a2c5c7b0951b946574ca9ae15646383d9ae9ca547b1b08f5857ca15", size = 91944375, upload-time = "2026-09-17T12:32:04.48Z" },
-    { url = "https://files.pythonhosted.org/packages/aa/cf/ab264155e82e92dc53f40eeb16746abdc171e3b0021c8615f24207d9dcaf/cuda_quantum_cu13-0.16.0.post1-cp314-cp314-manylinux_2_28_aarch64.whl", hash = "sha256:350bbca1ff4f6ef0239e13403d55581d7bd61bea4703cd9a18b285e97dd8f52e", size = 79966084, upload-time = "2026-09-17T12:32:10.342Z" },
-    { url = "https://files.pythonhosted.org/packages/8d/8d/a05c15d4f834c6f5b1ac07d5928e06efc6af8c9ca8e74773ab756aaf1de3/cuda_quantum_cu13-0.16.0.post1-cp314-cp314-manylinux_2_28_x86_64.whl", hash = "sha256:4faceb4bfe44cba1f1a556d0c4a746e703523be760377f0e86b964e1b31d852b", size = 91944099, upload-time = "2026-09-17T12:32:16.026Z" },
+    { url = "https://files.pythonhosted.org/packages/e0/05/101bae7c873973ad6aace03cc189bd1736618132cbe080d77fc2c3e9cf67/cuda_quantum_cu13-0.16.0-cp312-cp312-macosx_13_0_arm64.whl", hash = "sha256:a89abf7628a0cac9d172cc4aff32071f921eae0f7af079c24a7d2f05f4fdecb1", size = 63898015, upload-time = "2026-09-12T09:45:33.646Z" },
+    { url = "https://files.pythonhosted.org/packages/fa/bd/2cdb63dbceefb72e9be30fd6b0dd0ed6126558419eab0ef52b39b860bcfc/cuda_quantum_cu13-0.16.0-cp312-cp312-manylinux_2_28_aarch64.whl", hash = "sha256:5313d8bb0a1b4fb2b5dd7f29347e017fa6b9767643d1cc43c47d9a3e2df9f76d", size = 79962300, upload-time = "2026-09-12T09:45:39.011Z" },
+    { url = "https://files.pythonhosted.org/packages/1c/41/32b2fc99d3b6e10d42a23d0d13697ad21a688c15bd5c6ec20f7554326aba/cuda_quantum_cu13-0.16.0-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:ed3d7131255440790e1cfda7825f8f8680697c192791fa510ae8447f4554b4da", size = 91940806, upload-time = "2026-09-12T09:45:44.754Z" },
+    { url = "https://files.pythonhosted.org/packages/11/dc/566db9383d3b2dd7197e744b0a26162a11152f415f6388ba0aafb4a2d011/cuda_quantum_cu13-0.16.0-cp313-cp313-macosx_13_0_arm64.whl", hash = "sha256:a032ee9de325515b257786d1eb13bf530531b3bd11172bf8de505fa5c7d4d4a3", size = 63901790, upload-time = "2026-09-12T09:45:49.93Z" },
+    { url = "https://files.pythonhosted.org/packages/6e/ac/fdb87c46199d7a9471b660afa3bc81acd5e1a0d39a1ef9343a7db2bd14fe/cuda_quantum_cu13-0.16.0-cp313-cp313-manylinux_2_28_aarch64.whl", hash = "sha256:d85e878923b0d5891b24216be800a651598a14fec03b8106592e1e6ce31cd8b2", size = 79966386, upload-time = "2026-09-12T09:45:55.243Z" },
+    { url = "https://files.pythonhosted.org/packages/48/9d/5f7a4b6c44d5fbc20958f9f3b6312658ea9ba5bf7f2156cccbd01b674128/cuda_quantum_cu13-0.16.0-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:c2efa2801fa1e95b5d96b4244499ff272264e47c09d2eb5bba71bf41abac65f7", size = 91944000, upload-time = "2026-09-12T09:46:01.155Z" },
+    { url = "https://files.pythonhosted.org/packages/16/19/1c0ed4d237bf930cc2357dddc696fa179b178b9526126b5ba9ba3a7c94d2/cuda_quantum_cu13-0.16.0-cp314-cp314-macosx_13_0_arm64.whl", hash = "sha256:809de7b0d980ec35918a5bc9aab4f21ac1b64386da3037a87c9e0175c127765e", size = 63902335, upload-time = "2026-09-12T09:46:06.42Z" },
+    { url = "https://files.pythonhosted.org/packages/04/b9/c24829e3a2fbe4957dcceab123cf2e53fa00bb2f9f338c07e4ad4a026f8e/cuda_quantum_cu13-0.16.0-cp314-cp314-manylinux_2_28_aarch64.whl", hash = "sha256:4f51029ccb0c99d4ba70a878fc739dec46e4457bc3765c40e378e42c8b7aeed2", size = 79967628, upload-time = "2026-09-12T09:46:12.84Z" },
+    { url = "https://files.pythonhosted.org/packages/3a/19/415181c4d06e723a92393eefcc8e8656c9e5d137a8873172c52944e8f324/cuda_quantum_cu13-0.16.0-cp314-cp314-manylinux_2_28_x86_64.whl", hash = "sha256:303873d8c9521c1d36b87c75b68dea9fc23663f8b8f9049809a5d33cc253e6af", size = 91943726, upload-time = "2026-09-12T09:46:19.388Z" },
 ]
 
 [[package]]
@@ -818,25 +821,25 @@ nvtx = [
 
 [[package]]
 name = "cudaq"
-version = "0.16.0.post1"
+version = "0.16.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cuda-quantum-cu13" },
     { name = "cudaq-logical", extra = ["cu13"], marker = "sys_platform == 'linux'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/88/e8/b5311dc21fc6358013c096fcd00787e8c4aa8ae9db6ecb0448a316994a24/cudaq-0.16.0.post1.tar.gz", hash = "sha256:28314d4c1f1f9a9f03b6b22005c998db0c6437fe7722351e77a0925ea53cc881", size = 30021, upload-time = "2026-09-17T12:32:38.554Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/17/d7/2a0b7f9cdaece0768de5a8a8bcf39d53fc602baf530014bc293c2dc5743e/cudaq-0.16.0.tar.gz", hash = "sha256:3d41d64caed07c05aeeef5fd760877f8126df230ccf3f13a638554df74922790", size = 30005, upload-time = "2026-09-12T09:46:42.558Z" }
 
 [[package]]
 name = "cudaq-logical"
-version = "0.1.1.post1"
+version = "0.1.1"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/dc/a7/c831a1b000de64711bc81f6ed0eb0b91c296589b1eb02ff38a2a424611f4/cudaq_logical-0.1.1.post1-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:829d13ae295e37389b0626a140dafa121d16e66c26aa3b30b7e28ef1cf682a72", size = 11433473, upload-time = "2026-09-17T12:32:25.06Z" },
-    { url = "https://files.pythonhosted.org/packages/4e/04/af35da3c2a747a4cae89a598960e2dbb215a7b7bfb67c738c6f8c5a5a74a/cudaq_logical-0.1.1.post1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:302b4b0effb0e138e0b98c8b794a2bdb61962e28f80e9cc0d1715ea7c904a94e", size = 11560793, upload-time = "2026-09-17T12:32:27.573Z" },
-    { url = "https://files.pythonhosted.org/packages/03/b4/a505c78ed886b0b3f31c471d598be767427f076be7e73728c2c4b749048f/cudaq_logical-0.1.1.post1-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:63ac3cd9ca8cf013ed169ee882971f0ffb0bd45ab10830d2ae0e39f9e7a66e56", size = 11433502, upload-time = "2026-09-17T12:32:30.219Z" },
-    { url = "https://files.pythonhosted.org/packages/45/75/69bd286be5d2c067459ce4957d06f227db1369687f4a1ecc4ae297c738d3/cudaq_logical-0.1.1.post1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:7f2e94b21f5447054c04ec71b57089693b0fe3015ed9a2ae1433b15a4588678b", size = 11560764, upload-time = "2026-09-17T12:32:32.374Z" },
-    { url = "https://files.pythonhosted.org/packages/b2/1e/ea15c60ab968932bc0402d198f9aa733b72b11e1a722517d69223416cec5/cudaq_logical-0.1.1.post1-cp314-cp314-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:6d8559ab578033db54f63438e9fa7ee7640590126cd3924c25d085247ba891ca", size = 11433526, upload-time = "2026-09-17T12:32:34.532Z" },
-    { url = "https://files.pythonhosted.org/packages/7c/c6/2e8165a2ccbbb15d70514827c7047662e0e1daca11fd37290525435e7ec7/cudaq_logical-0.1.1.post1-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:ca49cb8befdfd6918425747ead881d8709b5eb3ca132b8b27a5c3f3894bb41d7", size = 11560763, upload-time = "2026-09-17T12:32:36.938Z" },
+    { url = "https://files.pythonhosted.org/packages/8f/79/4fcc72177c4eca259972030ea6e391f526802e56f2c31e690b18c477d715/cudaq_logical-0.1.1-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:a7d516e967c19dc1ef4bd359fde6c85c14cb376d7bab3fef1673968b77f67072", size = 11437245, upload-time = "2026-09-12T09:46:28.117Z" },
+    { url = "https://files.pythonhosted.org/packages/7d/7c/4578e3e36029eab25e498edc28e2afa941a068556bb9427901af8c811132/cudaq_logical-0.1.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:74e266b37ab34b8800565374cf7ff40a0cda32eeaa7c597e04a51456d2a6e028", size = 11564563, upload-time = "2026-09-12T09:46:30.664Z" },
+    { url = "https://files.pythonhosted.org/packages/43/39/28851f5ce2f8292eb65b0cdd3075155dcfd8965599acc878b8e0e3791c86/cudaq_logical-0.1.1-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:6c031be40c2b86d5ba4840589a4b861135e64c2e65bbc5b57402f5f51724c961", size = 11437275, upload-time = "2026-09-12T09:46:33.244Z" },
+    { url = "https://files.pythonhosted.org/packages/a7/63/25ad3f0ee978a78dff104c72e02b63dfbfc114006dffe684a88514073611/cudaq_logical-0.1.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:935fbfbf81608544a786fc07efdab7ff19e173aa9af37948dd2970f39a1704f4", size = 11564534, upload-time = "2026-09-12T09:46:35.634Z" },
+    { url = "https://files.pythonhosted.org/packages/43/ba/4cdd9aff0e0a01a74f91680e832399b6316297c66974f7d456f2d25836dc/cudaq_logical-0.1.1-cp314-cp314-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:655234c832749341612449021674273df653ad57bb309df038f3ab0ec62d2511", size = 11437298, upload-time = "2026-09-12T09:46:38.302Z" },
+    { url = "https://files.pythonhosted.org/packages/c5/70/8534c56f32b29e96bd2a842e3197a0af861f8abdbec3c3f0eecd91647848/cudaq_logical-0.1.1-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:4396f3811518208acb574a9bc6f59d42ffe193ab6994ea9d3160ec787758341b", size = 11564531, upload-time = "2026-09-12T09:46:40.91Z" },
 ]
 
 [package.optional-dependencies]
@@ -2996,12 +2999,12 @@ version = "24.2"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version < '3.13' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'darwin'",
+    "python_full_version < '3.13' and sys_platform == 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.13' and sys_platform == 'darwin'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d0/63/68dbb6eb2de9cb10ee4c9c14a0148804425e13c4fb20d61cce69f53106da/packaging-24.2.tar.gz", hash = "sha256:c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f", size = 163950, upload-time = "2024-11-08T09:47:47.202Z" }
@@ -3463,12 +3466,12 @@ version = "2.12.5"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version < '3.13' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'darwin'",
+    "python_full_version < '3.13' and sys_platform == 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.13' and sys_platform == 'darwin'",
 ]
 dependencies = [
@@ -3509,12 +3512,12 @@ version = "2.41.5"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version < '3.13' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'darwin'",
+    "python_full_version < '3.13' and sys_platform == 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.13' and sys_platform == 'darwin'",
 ]
 dependencies = [
@@ -3722,7 +3725,6 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "h5py" },
     { name = "numpy" },
-    { name = "psutil", marker = "python_version < '0'" },
     { name = "scipy" },
     { name = "setuptools" },
 ]
@@ -3960,12 +3962,12 @@ version = "2.1.2"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version < '3.13' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'darwin'",
+    "python_full_version < '3.13' and sys_platform == 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.13' and sys_platform == 'darwin'",
 ]
 dependencies = [
@@ -4057,12 +4059,12 @@ version = "0.45.1"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version < '3.13' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'darwin'",
+    "python_full_version < '3.13' and sys_platform == 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.13' and sys_platform == 'darwin'",
 ]
 dependencies = [
@@ -4622,10 +4624,10 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version < '3.13' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
@@ -4771,12 +4773,12 @@ version = "21.14.5"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version < '3.13' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.13' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'darwin'",
+    "python_full_version < '3.13' and sys_platform == 'win32'",
+    "python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version < '3.13' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.13' and sys_platform == 'darwin'",
 ]
 dependencies = [

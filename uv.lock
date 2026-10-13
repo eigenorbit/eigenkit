@@ -1152,7 +1152,8 @@ dev = [
 requires-dist = [
     { name = "amazon-braket-sdk", marker = "extra == 'braket'", specifier = ">=1.117,<2" },
     { name = "cirq-core", marker = "extra == 'qsim'", specifier = ">=1.4" },
-    { name = "cuda-quantum-cu13", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin' and extra == 'cudaquantum') or (sys_platform == 'linux' and extra == 'cudaquantum')", specifier = ">=0.14.0" },
+    { name = "cuda-quantum-cu13", marker = "platform_machine == 'arm64' and sys_platform == 'darwin' and extra == 'cudaquantum'", specifier = ">=0.14.0,!=0.16.0.post1" },
+    { name = "cuda-quantum-cu13", marker = "sys_platform == 'linux' and extra == 'cudaquantum'", specifier = ">=0.14.0" },
     { name = "cudaq", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin' and extra == 'cudaquantum') or (sys_platform == 'linux' and extra == 'cudaquantum')", specifier = ">=0.14.0" },
     { name = "eigenkit", extras = ["qiskit"], marker = "extra == 'iqm'" },
     { name = "eigenkit", extras = ["qml"], marker = "extra == 'torch'" },

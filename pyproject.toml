@@ -96,7 +96,10 @@ tensorcircuit = [
 ]
 cudaquantum = [
     "cudaq>=0.14.0; sys_platform == 'linux' or (sys_platform == 'darwin' and platform_machine == 'arm64')",
-    "cuda-quantum-cu13>=0.14.0; sys_platform == 'linux' or (sys_platform == 'darwin' and platform_machine == 'arm64')",
+    "cuda-quantum-cu13>=0.14.0; sys_platform == 'linux'",
+    # 0.16.0.post1 ships no macOS arm64 wheel, so a uv project that locks for
+    # every platform would pick it and fail to install on Apple Silicon.
+    "cuda-quantum-cu13>=0.14.0,!=0.16.0.post1; sys_platform == 'darwin' and platform_machine == 'arm64'",
 ]
 # Fast C++ statevector simulator with native adjoint gradients (backprop).
 qulacs = [

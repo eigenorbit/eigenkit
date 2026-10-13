@@ -6,6 +6,9 @@ site_description: >-
 repo_url: https://github.com/eigenorbit/eigenkit
 repo_name: eigenkit
 edit_uri: ""
+# The home page's <title> and link-preview title (overrides/main.html).
+extra:
+  home_title: "eigenkit: Python library for quantum computing | EigenOrbit"
 # Build scripts under docs/ (gen-files, llms.txt) are not part of the site.
 exclude_docs: |
   *.py

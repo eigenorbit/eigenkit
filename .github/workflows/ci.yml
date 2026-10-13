@@ -1,0 +1,97 @@
+name: ci
+
+# PR validation. Runs the full-matrix pytest (with coverage) and the
+# bare-install smoke test; pre-commit runs in `lint.yml`. Branch protection on `main` should require the
+# relevant jobs as status checks.
+#
+# The docs build lives in `docs-checks.yml`, not here: the paths-ignore below
+# skips this workflow entirely on a documentation-only pull request, which is
+# exactly when the site build matters.
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - ".github/CODEOWNERS"
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    uses: ./.github/workflows/_test.yml
+    with:
+      # `perceval` is kept out of `all` (see pyproject.toml), so the photonics
+      # tests need it named here.
+      extras: "all,perceval"
+      coverage: true
+
+  test-macos:
+    # The full suite on Apple silicon. One Python version: the `test` matrix
+    # already covers the version spread.
+    uses: ./.github/workflows/_test.yml
+    with:
+      python-versions: '["3.13"]'
+      extras: "all,perceval"
+      runs-on: macos-latest
+
+  test-core-only:
+    # The numpy core must install, import, and run with NO optional extras
+    # (no torch / pennylane / qiskit / ...). Enforces the import-linter
+    # contracts (static guard against unguarded optional imports in src/) and
+    # runs the framework-free tests: the lazy-import smoke checks plus the numpy
+    # reference simulator's own behaviour (its cross-framework parity tests skip
+    # when the extras are absent). The full matrix runs in the `test` job
+    # (extras=all). Mirrored by release.yml's `verify-core-only`.
+    uses: ./.github/workflows/_test.yml
+    with:
+      python-versions: '["3.13"]'
+      extras: ""
+      lint-imports: true
+      test-paths: "tests/core/test_torch_free_import.py tests/core/test_numpy_backend.py"
+
+  test-missing-importorskip:
+    # Catch a test that forgot its `pytest.importorskip` or `pennylane` mark.
+    # Installs the default DL stack (the `torch` extra -> torch + scikit-learn)
+    # but NOT the optional backends (pennylane / qiskit / braket / cudaq) or
+    # chemistry, then runs the FULL suite. A test that uses one of those
+    # without a guard ERRORs here — whereas the `test` job
+    # (extras=all, everything installed) would silently pass. Complements
+    # `test-core-only`, whose `lint-imports` statically catches the other half:
+    # an unguarded optional import in `src/`. One Python version suffices; this
+    # checks import guards, not behaviour, so it skips coverage.
+    uses: ./.github/workflows/_test.yml
+    with:
+      python-versions: '["3.13"]'
+      extras: "torch"
+
+  coverage-comment:
+    needs: test
+    # A pull request from a fork gets a read-only token, so the comment could
+    # not be posted.
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v7
+
+      - name: Download coverage data
+        uses: actions/download-artifact@v8
+        with:
+          name: coverage-data
+
+      - name: Post coverage comment
+        uses: py-cov-action/python-coverage-comment-action@e5fb2218463c3377f3504b0c5b5646ed53da7a2f  # v4.5; v4 publishes immutable releases only
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

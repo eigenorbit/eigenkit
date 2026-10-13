@@ -1,0 +1,102 @@
+/* The page menu for AI tools at the top right of every page
+ * (overrides/partials/actions.html): a "Copy page" button and a dropdown. */
+
+.md-typeset .page-actions {
+  position: relative;
+  display: flex;
+  float: right;
+  margin: 0 0 0.8rem 0.8rem;
+  font-size: 0.65rem;
+  line-height: 1;
+}
+
+/* Material styles every `details` in the content as a collapsible admonition
+   (border, shadow, icon and chevron); the menu is not one. */
+.md-typeset .page-actions__more {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+  background: none;
+  font-size: inherit;
+  overflow: visible;
+}
+
+.md-typeset .page-actions__more > summary::before,
+.md-typeset .page-actions__more > summary::after {
+  display: none;
+}
+
+.page-actions__copy,
+.md-typeset .page-actions__more > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  color: var(--md-default-fg-color--light);
+  background: none;
+  cursor: pointer;
+}
+
+.page-actions__copy {
+  border-radius: 0.2rem 0 0 0.2rem;
+  font: inherit;
+}
+
+.md-typeset .page-actions__more > summary {
+  margin: 0;
+  border-left: 0;
+  font-weight: inherit;
+  border-radius: 0 0.2rem 0.2rem 0;
+  list-style: none;
+}
+
+.md-typeset .page-actions__more > summary::-webkit-details-marker {
+  display: none;
+}
+
+.page-actions__copy:hover,
+.md-typeset .page-actions__more > summary:hover,
+.md-typeset .page-actions__more[open] > summary {
+  color: var(--md-accent-fg-color);
+}
+
+.page-actions svg {
+  width: 0.8rem;
+  height: 0.8rem;
+  fill: currentColor;
+}
+
+.md-typeset .page-actions__more ul {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 2;
+  min-width: 10rem;
+  margin: 0.2rem 0 0;
+  padding: 0.25rem 0;
+  list-style: none;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.2rem;
+  background-color: var(--md-default-bg-color);
+  box-shadow: var(--md-shadow-z2);
+}
+
+.md-typeset .page-actions__more li {
+  margin: 0;
+}
+
+.md-typeset .page-actions__more a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  color: var(--md-default-fg-color);
+  white-space: nowrap;
+}
+
+.md-typeset .page-actions__more a:hover {
+  color: var(--md-accent-fg-color);
+  background-color: var(--md-accent-fg-color--transparent);
+}

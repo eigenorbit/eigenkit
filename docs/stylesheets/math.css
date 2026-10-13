@@ -1,0 +1,15 @@
+/* MathJax sizes formulas against the maths font's x-height, which lands about
+   1.24x the body text and reads as oversized next to it. Pin the container to
+   the surrounding size so a formula sits on the same line weight as prose. */
+mjx-container {
+  font-size: 1em !important;
+}
+
+/* Display maths still needs its own breathing room and horizontal scroll on
+   narrow screens, where a long Hamiltonian would otherwise widen the page. */
+mjx-container[display="true"] {
+  margin: 0.8em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+}

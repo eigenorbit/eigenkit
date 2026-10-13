@@ -1,0 +1,184 @@
+site_name: eigenkit
+site_url: https://docs.kit.eigenorbit.com
+repo_url: https://github.com/eigenorbit/eigenkit
+repo_name: eigenkit
+edit_uri: ""
+# Build scripts under docs/ (gen-files, llms.txt) are not part of the site.
+exclude_docs: |
+  *.py
+
+theme:
+  name: material
+  custom_dir: overrides
+  logo: assets/eigenorbit-logo.svg
+  favicon: assets/favicon.png
+  # The colours are set in `stylesheets/brand.css`.
+  palette:
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Manrope
+    code: JetBrains Mono
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search
+  - autorefs:
+      resolve_closest: true
+  - gen-files:
+      scripts:
+        - docs/gen_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - section-index
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_root_heading: true
+            show_source: false
+            # Without this the rendered class heading is an h2, the same level
+            # as the page's own sections, so a guide page's table of contents
+            # reads "Variational, StrongVariational, Choosing depth, API
+            # reference, Variational, StrongVariational". At 3 the classes nest
+            # under "API reference" and their members become h4.
+            # `docs/gen_ref_pages.py` overrides this back to 2 for the
+            # generated reference pages, whose top heading is the object itself.
+            heading_level: 3
+  # llms.txt, llms-full.txt and a Markdown copy of every page listed here
+  # (`user-guide/encoding/index.md` next to its `index.html`), which the page's
+  # "Copy page" menu and the docs MCP server read.
+  - llmstxt:
+      full_output: llms-full.txt
+      preprocess: docs/llms_preprocess.py
+      markdown_description: |
+        eigenkit is a provider-neutral quantum computing library by EigenOrbit:
+        a circuit is defined once and runs on any supported simulator or
+        quantum processor by changing the `provider=` argument. Install with
+        `pip install eigenkit`.
+      sections:
+        Docs:
+          - index.md
+          - getting-started.md
+          - architecture-diagrams.md
+          - use-with-ai.md
+          - changelog.md
+        User Guide:
+          - user-guide/*.md
+        Algorithms Explained:
+          - algorithms/*.md
+        Usage Examples:
+          - examples/*.md
+        API Reference:
+          - api/*.md
+
+nav:
+  - Docs:
+    - Home: index.md
+    - Getting Started: getting-started.md
+    - Architecture: architecture-diagrams.md
+    - API Reference: api/
+    - Use with AI: use-with-ai.md
+    - Changelog: changelog.md
+  - User Guide:
+    - Encoding: user-guide/encoding.md
+    - Variational: user-guide/variational.md
+    - Reuploading: user-guide/reuploading.md
+    - Observables: user-guide/observables.md
+    - Circuit Builder: user-guide/circuit-builder.md
+    - Interfaces (numpy and torch): user-guide/interfaces.md
+    - Providers: user-guide/providers.md
+    - QPU and Cloud: user-guide/qpu.md
+    - Datasets: user-guide/datasets.md
+    - Layers: user-guide/layers.md
+    - Estimators: user-guide/estimators.md
+    - Quantum Kernels: user-guide/kernels.md
+    - QML: user-guide/qml.md
+    - Reservoir Computing: user-guide/reservoir.md
+    - Photonic Circuits (Perceval): user-guide/photonics.md
+    - Algorithms: user-guide/algorithms.md
+    - Quantum Chemistry: user-guide/chemistry.md
+    - Optimization: user-guide/optimization.md
+    - Model Persistence (.eigenkit): user-guide/model-persistence.md
+    - Benchmark: user-guide/benchmark.md
+  - Algorithms Explained:
+    - Overview: algorithms/index.md
+    - "IQAE: Amplitude Estimation": algorithms/iqae.md
+    - "HHL: Linear Systems": algorithms/hhl.md
+    - "QFT: Quantum Fourier Transform": algorithms/qft.md
+    - "QAOA: Optimization": algorithms/qaoa.md
+    - "VQE: Ground-State Energies": algorithms/vqe.md
+    - "QSVC / QSVR: Quantum Kernels": algorithms/qsvc-qsvr.md
+    - "HQNN: Hybrid Neural Networks": algorithms/hqnn.md
+    - "Quantum Reservoir Computing": algorithms/reservoir.md
+    - References: algorithms/references.md
+  - Usage Examples:
+    - Basic Circuit: examples/basic-circuit.md
+    - Layers: examples/layers.md
+    - Hybrid Model: examples/hybrid-model.md
+    - Generic Estimators: examples/generic-estimators.md
+    - Quantum Classification: examples/algorithms-classification.md
+    - Quantum Regression and Time Series: examples/algorithms-regression.md
+    - QSVC HPO on Iris: examples/hpo-qsvc-iris.md
+    - Quantum Reservoir Memory: examples/reservoir-memory.md
+    - MaxCut with QAOA: examples/qaoa-max-cut.md
+    - Ground-State Energy with VQE: examples/vqe-fermi-hubbard.md
+    - Linear Systems with HHL: examples/hhl-honest.md
+    - Benchmark on Iris: examples/benchmark-iris.md
+    - Circles HQNC: examples/circles-hqnc.md
+    - Breast Cancer HQNC: examples/breast-cancer-hqnc.md
+    - Concrete Strength HQNR: examples/cement-hqnr.md
+    - Pollution Time Series (HQNR vs RecurrentHQNR): examples/pollution-timeseries-hqnr.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+      # `language-python` on each block, so its Markdown copy keeps the language.
+      pygments_lang_class: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path: [.]
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.arithmatex:
+      generic: true
+  - attr_list
+  - md_in_html
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - javascripts/mermaid-size.js
+  - javascripts/box-drawing.js
+  - javascripts/page-actions.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+extra_css:
+  - stylesheets/theme-images.css
+  - stylesheets/math.css
+  - stylesheets/mermaid.css
+  - stylesheets/typography.css
+  - stylesheets/brand.css
+  - stylesheets/page-actions.css

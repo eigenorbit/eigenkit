@@ -1,0 +1,92 @@
+name: Bug report
+description: Report a problem with eigenkit
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug.
+        Please do not report a security vulnerability here; see [SECURITY.md](https://github.com/eigenorbit/eigenkit/blob/main/SECURITY.md).
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What went wrong?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: The smallest code sample that shows the problem.
+      render: python
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened instead, with the full traceback if there is one.
+      render: shell
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: eigenkit version
+      description: The output of `python -c "import eigenkit; print(eigenkit.__version__)"`.
+    validations:
+      required: true
+
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "3.13.x"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: "macOS 15 / Ubuntu 24.04 / Windows 11"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Backend
+      multiple: true
+      options:
+        - numpy (built-in)
+        - PennyLane
+        - Qiskit / Qiskit Aer
+        - Qiskit Runtime
+        - Braket
+        - IQM
+        - CUDA-Q
+        - TensorCircuit
+        - Qulacs
+        - qsim
+        - Perceval (photonics)
+        - not backend-specific
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context

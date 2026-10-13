@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+title: eigenkit
+message: >-
+  If you use eigenkit in your research, please cite it using the metadata
+  below.
+type: software
+authors:
+  - name: EigenOrbit
+    email: info@eigenorbit.com
+    website: "https://eigenorbit.com"
+repository-code: "https://github.com/eigenorbit/eigenkit"
+url: "https://docs.kit.eigenorbit.com"
+abstract: >-
+  eigenkit puts one interface over many quantum backends. A circuit is written
+  once as provider-neutral data, recompiled for each backend (PennyLane,
+  Qiskit, Amazon Braket, IQM, CUDA-Q, TensorCircuit, Qulacs, qsim and a
+  built-in numpy simulator), and returns the same values and gradients on all
+  of them. Quantum machine learning, optimization (QAOA) and chemistry (VQE)
+  sit on that one interface, with PyTorch layers and scikit-learn estimators.
+keywords:
+  - quantum computing
+  - quantum machine learning
+  - variational quantum circuits
+  - QAOA
+  - VQE
+  - pytorch
+  - scikit-learn
+license: Apache-2.0

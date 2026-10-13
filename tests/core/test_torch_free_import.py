@@ -186,3 +186,23 @@ def test_a_missing_extra_names_the_install_command():
         """
     )
     assert result.returncode == 0, result.stderr
+
+
+def test_pennylane_is_not_offered_without_its_package():
+    """Without PennyLane the provider list does not name it, and asking for it
+    names the extra to install."""
+    result = _run(
+        """
+        import sys
+        sys.modules["pennylane"] = None
+        from eigenkit.core.provider import get, registered_names
+        assert "pennylane" not in registered_names(), registered_names()
+        try:
+            get("pennylane")
+        except KeyError as error:
+            assert "pip install eigenkit[pennylane]" in str(error), str(error)
+        else:
+            raise AssertionError("pennylane resolved without its package")
+        """
+    )
+    assert result.returncode == 0, result.stderr

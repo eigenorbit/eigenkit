@@ -7,6 +7,16 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@600;700;800&display=swap">
 {% endblock %}
 
+{#- Search engines show the home page's title; the others keep Material's.
+    `page.is_homepage` is false here because index.md sits in a nav section. -#}
+{% block htmltitle %}
+  {% if page and page.file.src_uri == "index.md" %}
+    <title>eigenkit: Python library for quantum computing | EigenOrbit</title>
+  {% else %}
+    {{ super() }}
+  {% endif %}
+{% endblock %}
+
 {#- Points agents at the page's Markdown copy, written by mkdocs-llmstxt. -#}
 {% block extrahead %}
   {% if page and page.canonical_url and page.canonical_url.endswith("/") %}

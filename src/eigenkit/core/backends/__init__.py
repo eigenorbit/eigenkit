@@ -7,9 +7,9 @@ imports nothing, and its software development kit (PyTorch, PennyLane, Qiskit
 or Braket) is imported only when a circuit first uses that provider. This keeps
 `import eigenkit` and `import eigenkit.core` free of these large dependencies.
 
-`"pennylane"` is always registered lazily. `"qiskit"`, `"braket"` and the other
-optional backends are registered only when their extra is installed. `cudaq` is
-not registered automatically: once it is installed, register it explicitly:
+`"pennylane"`, `"qiskit"`, `"braket"` and the other optional backends are
+registered only when their extra is installed. `cudaq` is not registered
+automatically: once it is installed, register it explicitly:
 
 ```python
 from eigenkit import CudaQuantumBackend, register
@@ -43,7 +43,8 @@ def _loader(module_name: str, class_name: str):
     return load
 
 
-register_lazy("pennylane", _loader("pennylane_backend", "PennyLaneBackend"))
+if importlib.util.find_spec("pennylane") is not None:
+    register_lazy("pennylane", _loader("pennylane_backend", "PennyLaneBackend"))
 if importlib.util.find_spec("qiskit") is not None:
     register_lazy("qiskit", _loader("qiskit_backend", "QiskitBackend"))
 # qiskit-aer ships in the [qiskit] extra: statevector (exact) + MPS (bond-truncated) methods.

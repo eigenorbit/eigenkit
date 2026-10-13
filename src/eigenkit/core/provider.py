@@ -19,7 +19,7 @@ Example:
     ```python
     from eigenkit.core.provider import get, registered_names
 
-    print(registered_names())   # ['numpy', 'pennylane'] when no extra is installed
+    print(registered_names())   # ['numpy'] when no extra is installed
 
     backend = get("numpy")
     print(backend.gradient_method)                 # adjoint

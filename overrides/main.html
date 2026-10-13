@@ -11,15 +11,62 @@
     `page.is_homepage` is false here because index.md sits in a nav section. -#}
 {% block htmltitle %}
   {% if page and page.file.src_uri == "index.md" %}
-    <title>eigenkit: Python library for quantum computing | EigenOrbit</title>
+    <title>{{ config.extra.home_title }}</title>
   {% else %}
     {{ super() }}
   {% endif %}
 {% endblock %}
 
-{#- Points agents at the page's Markdown copy, written by mkdocs-llmstxt. -#}
 {% block extrahead %}
+  {#- Points agents at the page's Markdown copy, written by mkdocs-llmstxt. -#}
   {% if page and page.canonical_url and page.canonical_url.endswith("/") %}
     <link rel="alternate" type="text/markdown" href="{{ page.canonical_url }}index.md">
+  {% endif %}
+
+  {#- Link previews in chats and social networks: the same title and
+      description as the page's <title> and meta description. -#}
+  {% set is_home = page and page.file.src_uri == "index.md" %}
+  {% if is_home %}
+    {% set preview_title = config.extra.home_title %}
+  {% elif page and page.title %}
+    {% set preview_title = (page.title | striptags) ~ " - " ~ config.site_name %}
+  {% else %}
+    {% set preview_title = config.site_name %}
+  {% endif %}
+  {% set preview_description = page.meta.description if page and page.meta and page.meta.description else config.site_description %}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ config.site_name }}">
+  <meta property="og:title" content="{{ preview_title }}">
+  <meta property="og:description" content="{{ preview_description }}">
+  {% if page and page.canonical_url %}
+    <meta property="og:url" content="{{ page.canonical_url }}">
+  {% endif %}
+  <meta property="og:image" content="{{ config.site_url }}assets/eigenkit-og.png">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="640">
+  <meta property="og:image:alt" content="eigenkit: Python library for quantum computing, by EigenOrbit">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ preview_title }}">
+  <meta name="twitter:description" content="{{ preview_description }}">
+  <meta name="twitter:image" content="{{ config.site_url }}assets/eigenkit-og.png">
+
+  {#- Tells search engines what eigenkit is and that the docs, the repository
+      and the PyPI project are one thing. -#}
+  {% if is_home %}
+    <script type="application/ld+json">
+      {{ {
+        "@context": "https://schema.org",
+        "@type": "SoftwareSourceCode",
+        "name": config.site_name,
+        "description": config.site_description,
+        "url": config.site_url,
+        "codeRepository": config.repo_url,
+        "programmingLanguage": "Python",
+        "license": "https://www.apache.org/licenses/LICENSE-2.0",
+        "author": {"@type": "Organization", "name": "EigenOrbit", "url": "https://eigenorbit.com"},
+        "publisher": {"@type": "Organization", "name": "EigenOrbit", "url": "https://eigenorbit.com"},
+        "sameAs": [config.repo_url, "https://pypi.org/project/eigenkit/"]
+      } | tojson }}
+    </script>
   {% endif %}
 {% endblock %}

@@ -7,7 +7,7 @@
 
 **Build quantum algorithms once. Run them anywhere.**
 
-eigenkit is a provider-neutral quantum computing library by
+eigenkit is an open-source Python library for quantum computing by
 [EigenOrbit](https://eigenorbit.com). It separates the definition of a quantum
 algorithm from the backend that executes it. A circuit is described once as
 data: the gates, the qubits they act on, and parameters that are constants or

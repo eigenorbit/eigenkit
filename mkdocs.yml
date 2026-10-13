@@ -1,5 +1,8 @@
 site_name: eigenkit
 site_url: https://docs.kit.eigenorbit.com
+site_description: >-
+  eigenkit is an open-source Python library for quantum computing and quantum
+  machine learning. Write an algorithm once, run it on any simulator or QPU.
 repo_url: https://github.com/eigenorbit/eigenkit
 repo_name: eigenkit
 edit_uri: ""
@@ -69,7 +72,7 @@ plugins:
       full_output: llms-full.txt
       preprocess: docs/llms_preprocess.py
       markdown_description: |
-        eigenkit is a provider-neutral quantum computing library by EigenOrbit:
+        eigenkit is an open-source Python library for quantum computing by EigenOrbit:
         a circuit is defined once and runs on any supported simulator or
         quantum processor by changing the `provider=` argument. Install with
         `pip install eigenkit`.

@@ -1,7 +1,7 @@
 [project]
 name = "eigenkit"
 version = "1.0.0"
-description = "Build quantum algorithms once. Run them anywhere."
+description = "Open-source Python library for quantum computing. Build quantum algorithms once, run them on any simulator or quantum computer."
 readme = "README.md"
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE"]

@@ -7,9 +7,9 @@ imports nothing, and its software development kit (PyTorch, PennyLane, Qiskit
 or Braket) is imported only when a circuit first uses that provider. This keeps
 `import eigenkit` and `import eigenkit.core` free of these large dependencies.
 
-`"pennylane"`, `"qiskit"`, `"braket"` and the other optional backends are
-registered only when their extra is installed. `cudaq` is not registered
-automatically: once it is installed, register it explicitly:
+`"pennylane"`, `"qiskit"`, `"braket"`, `"router"` and the other optional
+backends are registered only when their extra is installed. `cudaq` is not
+registered automatically: once it is installed, register it explicitly:
 
 ```python
 from eigenkit import CudaQuantumBackend, register
@@ -88,6 +88,20 @@ if importlib.util.find_spec("tensorcircuit") is not None:
     )
 if importlib.util.find_spec("qulacs") is not None:
     register_lazy("qulacs", _loader("qulacs_backend", "QulacsBackend"))
+
+
+# EigenOrbit Router through eigenorbit-router-client (the `router` extra). The
+# backend lives in that package, not under this one, so it gets its own loader.
+# `find_spec` on a top-level name locates the package without importing it, so
+# `import eigenkit` pulls neither the client nor httpx.
+def _router_backend():
+    return importlib.import_module("eigenorbit_router_client").RouterBackend()
+
+
+if importlib.util.find_spec("eigenorbit_router_client") is not None:
+    register_lazy("router", _router_backend)
+
+
 # Lazy class/config re-exports: name -> defining module (under this package).
 _LAZY_EXPORTS = {
     "BraketBackend": "braket_backend",

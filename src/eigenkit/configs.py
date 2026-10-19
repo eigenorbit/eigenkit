@@ -28,6 +28,10 @@ below, and the other configurations are documented with their backends:
 - [`TensorCircuitConfig`][eigenkit.core.backends.tensorcircuit_backend.TensorCircuitConfig]
 - [`QulacsConfig`][eigenkit.core.backends.qulacs_backend.QulacsConfig]
 - [`QsimConfig`][eigenkit.core.backends.qsim_backend.QsimConfig]
+- `RouterConfig`: the EigenOrbit Router, which runs circuits on real quantum
+  hardware with one EigenOrbit API key. It is the class of
+  eigenorbit-router-client and needs the `router` extra
+  (`pip install eigenkit[router]`).
 
 The blocks and `NumpyConfig` are imported with this module, because they only
 need NumPy. The other configurations are imported when they are first used, so
@@ -63,6 +67,7 @@ from .core.backends.numpy_backend import NumpyConfig
 from .core.blocks import AngleEncoding as Encoding
 from .core.blocks import BasicVariational as Variational
 from .core.blocks import Reuploading, StrongVariational
+from .core.provider import _EXTRA_HINT
 
 
 # config name -> defining backend module (under eigenkit.core.backends)
@@ -80,7 +85,25 @@ _LAZY_CONFIGS = {
 }
 
 
+# Configs that live in another distribution: config name -> (module, extra).
+# They stay out of `_LAZY_CONFIGS` and `__all__`, so a star import and the
+# lazy-config roster never need that distribution.
+_EXTERNAL_CONFIGS = {"RouterConfig": ("eigenorbit_router_client", "router")}
+
+
 def __getattr__(name: str):
+    external = _EXTERNAL_CONFIGS.get(name)
+    if external is not None:
+        module_name, extra = external
+        try:
+            module = importlib.import_module(module_name)
+        except ModuleNotFoundError as exc:
+            if exc.name != module_name:
+                raise
+            raise ImportError(
+                f"{name} needs {module_name} ({_EXTRA_HINT[extra]})"
+            ) from exc
+        return getattr(module, name)
     module_name = _LAZY_CONFIGS.get(name)
     if module_name is not None:
         module = importlib.import_module(f"eigenkit.core.backends.{module_name}")

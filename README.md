@@ -104,6 +104,7 @@ pip install "eigenkit[all]"
 | `qulacs`      | Qulacs                                            | `provider="qulacs"`                                                    |
 | `qsim`        | qsimcirq + Cirq                                   | `provider="qsim"` (single-precision, ~1e-6 residual)                   |
 | `perceval`    | Perceval (Quandela's photonic SDK)                | `eigenkit.photonics` (local simulation, Quandela Cloud)                |
+| `router`      | eigenorbit-router-client                          | `provider="router"`, `RouterConfig` (EigenOrbit Router: real QPUs with one EigenOrbit API key) |
 | `qml`         | scikit-learn (torch-free)                         | `QuantumKernel`, `QSVC`/`QSVR`                                         |
 | `datasets`    | scikit-learn                                      | `eigenkit.datasets`                                                    |
 | `benchmark`   | matplotlib + pandas + scikit-learn                | the model comparison harness                                           |

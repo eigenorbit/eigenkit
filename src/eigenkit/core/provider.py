@@ -316,6 +316,7 @@ _EXTRA_HINT = {
     "iqm": "install with `pip install eigenkit[iqm]`",
     "qiskit-aer": "install with `pip install eigenkit[qiskit]`",
     "qiskit-aer-mps": "install with `pip install eigenkit[qiskit]`",
+    "router": "install with `pip install eigenkit[router]`",
     "cudaq": (
         "opt-in and Linux/arm64-macOS only: after installing it, register it "
         "yourself with `register('cudaq', CudaQuantumBackend())`"

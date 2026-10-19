@@ -124,6 +124,10 @@ qsim = [
 perceval = [
     "perceval-quandela>=1.3,<2",
 ]
+# EigenOrbit Router client: real QPUs with one EigenOrbit API key.
+router = [
+    "eigenorbit-router-client>=0.1,<1",
+]
 # Synthetic + real datasets and the sklearn baselines used by them.
 datasets = [
     "scikit-learn>=1.3,<2",
@@ -159,7 +163,7 @@ qml = [
     "scikit-learn>=1.3,<2",
 ]
 all = [
-    "eigenkit[torch,pennylane,qiskit,braket,iqm,tensorcircuit,cudaquantum,qulacs,qsim,benchmark,datasets,chemistry,qml,viz]",
+    "eigenkit[torch,pennylane,qiskit,braket,iqm,tensorcircuit,cudaquantum,qulacs,qsim,router,benchmark,datasets,chemistry,qml,viz]",
 ]
 
 [project.urls]

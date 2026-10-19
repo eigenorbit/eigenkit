@@ -55,9 +55,9 @@ def test_hqnc_save_load_roundtrip(tmp_path):
     model.fit(X_tr, y_tr)
     pred_before = model.predict(X_te)
 
-    spk = tmp_path / "hqnc"
-    model.save(spk)
-    loaded = HQNC.load(spk)
+    bundle_path = tmp_path / "hqnc"
+    model.save(bundle_path)
+    loaded = HQNC.load(bundle_path)
     np.testing.assert_array_equal(pred_before, loaded.predict(X_te))
 
 
@@ -78,9 +78,9 @@ def test_recurrent_hqnr_save_load_roundtrip(tmp_path):
     model.fit(X_tr, y_tr)
     pred_before = model.predict(X_te)
 
-    spk = tmp_path / "recurrent_hqnr.eigenkit"
-    model.save(spk)
-    loaded = RecurrentHQNR.load(spk)
+    bundle_path = tmp_path / "recurrent_hqnr.eigenkit"
+    model.save(bundle_path)
+    loaded = RecurrentHQNR.load(bundle_path)
     np.testing.assert_allclose(pred_before, loaded.predict(X_te), rtol=1e-5, atol=1e-5)
 
 
@@ -101,9 +101,9 @@ def test_recurrent_hqnc_save_load_roundtrip(tmp_path):
     model.fit(X_tr, y_tr)
     pred_before = model.predict(X_te)
 
-    spk = tmp_path / "recurrent_hqnc.eigenkit"
-    model.save(spk)
-    loaded = RecurrentHQNC.load(spk)
+    bundle_path = tmp_path / "recurrent_hqnc.eigenkit"
+    model.save(bundle_path)
+    loaded = RecurrentHQNC.load(bundle_path)
     np.testing.assert_array_equal(pred_before, loaded.predict(X_te))
 
 
@@ -119,9 +119,9 @@ def test_hqnr_save_load_roundtrip(tmp_path, reg_data):
     model.fit(X_tr, y_tr)
     pred_before = model.predict(X_te)
 
-    spk = tmp_path / "hqnr.eigenkit"
-    model.save(spk)
-    loaded = HQNR.load(spk)
+    bundle_path = tmp_path / "hqnr.eigenkit"
+    model.save(bundle_path)
+    loaded = HQNR.load(bundle_path)
     np.testing.assert_allclose(pred_before, loaded.predict(X_te), rtol=1e-5, atol=1e-5)
 
 
@@ -131,21 +131,25 @@ def test_qsvc_save_load_roundtrip(tmp_path, clf_data):
     model.fit(X_tr, y_tr)
     pred_before = model.predict(X_te)
 
-    spk = tmp_path / "qsvc.eigenkit"
-    model.save(spk)
-    loaded = QSVC.load(spk)
+    bundle_path = tmp_path / "qsvc.eigenkit"
+    model.save(bundle_path)
+    loaded = QSVC.load(bundle_path)
     np.testing.assert_array_equal(pred_before, loaded.predict(X_te))
 
 
 def test_a_failed_save_keeps_the_previous_bundle(tmp_path):
-    spk = tmp_path / "model.eigenkit"
-    save_bundle(spk, metadata={"v": 1}, params={}, circuit_spec=None, state={})
-    before = spk.read_bytes()
+    bundle_path = tmp_path / "model.eigenkit"
+    save_bundle(bundle_path, metadata={"v": 1}, params={}, circuit_spec=None, state={})
+    before = bundle_path.read_bytes()
     with pytest.raises(TypeError):
         save_bundle(
-            spk, metadata={"v": 2}, params={"x": object()}, circuit_spec=None, state={}
+            bundle_path,
+            metadata={"v": 2},
+            params={"x": object()},
+            circuit_spec=None,
+            state={},
         )
-    assert spk.read_bytes() == before
+    assert bundle_path.read_bytes() == before
 
 
 def test_qsvr_save_load_roundtrip(tmp_path, reg_data):
@@ -154,9 +158,9 @@ def test_qsvr_save_load_roundtrip(tmp_path, reg_data):
     model.fit(X_tr, y_tr)
     pred_before = model.predict(X_te)
 
-    spk = tmp_path / "qsvr.eigenkit"
-    model.save(spk)
-    loaded = QSVR.load(spk)
+    bundle_path = tmp_path / "qsvr.eigenkit"
+    model.save(bundle_path)
+    loaded = QSVR.load(bundle_path)
     np.testing.assert_allclose(pred_before, loaded.predict(X_te), rtol=1e-5, atol=1e-5)
 
 
@@ -173,9 +177,9 @@ def test_custom_classifier_save_load_roundtrip(tmp_path, clf_data):
     model.fit(X_tr, y_tr)
     pred_before = model.predict(X_te)
 
-    spk = tmp_path / "custom_clf.eigenkit"
-    model.save(spk)
-    loaded = CustomQuantumClassifier.load(spk)
+    bundle_path = tmp_path / "custom_clf.eigenkit"
+    model.save(bundle_path)
+    loaded = CustomQuantumClassifier.load(bundle_path)
     np.testing.assert_array_equal(pred_before, loaded.predict(X_te))
 
 
@@ -192,9 +196,9 @@ def test_custom_regressor_save_load_roundtrip(tmp_path, reg_data):
     model.fit(X_tr, y_tr)
     pred_before = model.predict(X_te)
 
-    spk = tmp_path / "custom_reg.eigenkit"
-    model.save(spk)
-    loaded = CustomQuantumRegressor.load(spk)
+    bundle_path = tmp_path / "custom_reg.eigenkit"
+    model.save(bundle_path)
+    loaded = CustomQuantumRegressor.load(bundle_path)
     np.testing.assert_allclose(pred_before, loaded.predict(X_te), rtol=1e-5, atol=1e-5)
 
 
@@ -208,10 +212,10 @@ def test_provider_override_on_load(tmp_path, clf_data):
         show_progress=False,
     )
     model.fit(X_tr, y_tr)
-    spk = tmp_path / "hqnc_provider.eigenkit"
-    model.save(spk)
+    bundle_path = tmp_path / "hqnc_provider.eigenkit"
+    model.save(bundle_path)
 
-    loaded = HQNC.load(spk, provider=NumpyConfig())
+    loaded = HQNC.load(bundle_path, provider=NumpyConfig())
     assert loaded.provider == NumpyConfig()
     assert loaded.predict(X_te).shape == (len(X_te),)
 
@@ -231,9 +235,9 @@ def test_load_model_without_class_svm(tmp_path, clf_data, reg_data, estimator_cl
         pred_before = model.predict(X_te)
         rtol, atol = 1e-5, 1e-5
 
-    spk = tmp_path / f"{estimator_cls.__name__}_load_model.eigenkit"
-    model.save(spk)
-    loaded = load_model(spk)
+    bundle_path = tmp_path / f"{estimator_cls.__name__}_load_model.eigenkit"
+    model.save(bundle_path)
+    loaded = load_model(bundle_path)
     assert isinstance(loaded, estimator_cls)
     if rtol is None:
         np.testing.assert_array_equal(pred_before, loaded.predict(X_te))
@@ -255,9 +259,9 @@ def test_train_losses_persisted_after_load(tmp_path, clf_data):
     model.fit(X_tr, y_tr)
     losses_before = list(model.train_losses_)
 
-    spk = tmp_path / "hqnc_train_losses.eigenkit"
-    model.save(spk)
-    loaded = HQNC.load(spk)
+    bundle_path = tmp_path / "hqnc_train_losses.eigenkit"
+    model.save(bundle_path)
+    loaded = HQNC.load(bundle_path)
     assert loaded.train_losses_ == losses_before
     assert len(loaded.train_losses_) == 2
 
@@ -274,9 +278,9 @@ def test_load_model_without_class(tmp_path, clf_data):
     model.fit(X_tr, y_tr)
     pred_before = model.predict(X_te)
 
-    spk = tmp_path / "hqnc_load_model.eigenkit"
-    model.save(spk)
-    loaded = load_model(spk)
+    bundle_path = tmp_path / "hqnc_load_model.eigenkit"
+    model.save(bundle_path)
+    loaded = load_model(bundle_path)
     assert isinstance(loaded, HQNC)
     np.testing.assert_array_equal(pred_before, loaded.predict(X_te))
 
@@ -291,10 +295,10 @@ def test_bundle_format_no_pickle(tmp_path, clf_data):
         show_progress=False,
     )
     model.fit(X_tr, y_tr)
-    spk = tmp_path / "bundle.eigenkit"
-    model.save(spk)
+    bundle_path = tmp_path / "bundle.eigenkit"
+    model.save(bundle_path)
 
-    with zipfile.ZipFile(spk, "r") as zf:
+    with zipfile.ZipFile(bundle_path, "r") as zf:
         names = set(zf.namelist())
         assert "metadata.json" in names
         assert "params.json" in names
@@ -583,10 +587,10 @@ def test_qtsr_save_load_roundtrip(tmp_path, ts_data):
     model.fit(X, y)
     pred_before = model.predict(X[:20])
 
-    spk = tmp_path / "qtsr.eigenkit"
-    model.save(spk)
+    bundle_path = tmp_path / "qtsr.eigenkit"
+    model.save(bundle_path)
 
-    loaded = QuantumTimeSeriesRegressor.load(spk)
+    loaded = QuantumTimeSeriesRegressor.load(bundle_path)
     np.testing.assert_allclose(pred_before, loaded.predict(X[:20]), rtol=1e-5, atol=1e-5)
 
 
@@ -609,10 +613,10 @@ def test_qtsr_bundle_contains_format_version(tmp_path, ts_data):
     model = QuantumTimeSeriesRegressor(estimator=inner, in_size=5, shift=1)
     model.fit(X, y)
 
-    spk = tmp_path / "qtsr_meta.eigenkit"
-    model.save(spk)
+    bundle_path = tmp_path / "qtsr_meta.eigenkit"
+    model.save(bundle_path)
 
-    with zipfile.ZipFile(spk, "r") as zf:
+    with zipfile.ZipFile(bundle_path, "r") as zf:
         meta = json.loads(zf.read("metadata.json"))
     assert meta.get("format_version") == 1
     assert meta.get("estimator_class") == "HQNR"
@@ -635,12 +639,12 @@ def test_qtsc_save_load_roundtrip(tmp_path):
     model.fit(X, y)
     pred_before = model.predict(X[:15])
 
-    spk = tmp_path / "qtsc.eigenkit"
-    model.save(spk)
+    bundle_path = tmp_path / "qtsc.eigenkit"
+    model.save(bundle_path)
 
-    loaded = QuantumTimeSeriesClassifier.load(spk)
+    loaded = QuantumTimeSeriesClassifier.load(bundle_path)
     np.testing.assert_array_equal(pred_before, loaded.predict(X[:15]))
-    np.testing.assert_array_equal(pred_before, load_model(spk).predict(X[:15]))
+    np.testing.assert_array_equal(pred_before, load_model(bundle_path).predict(X[:15]))
 
 
 def test_qtsc_bundle_contains_format_version(tmp_path):
@@ -661,10 +665,10 @@ def test_qtsc_bundle_contains_format_version(tmp_path):
     model = QuantumTimeSeriesClassifier(estimator=inner, in_size=3, shift=1)
     model.fit(X, y)
 
-    spk = tmp_path / "qtsc_meta.eigenkit"
-    model.save(spk)
+    bundle_path = tmp_path / "qtsc_meta.eigenkit"
+    model.save(bundle_path)
 
-    with zipfile.ZipFile(spk, "r") as zf:
+    with zipfile.ZipFile(bundle_path, "r") as zf:
         meta = json.loads(zf.read("metadata.json"))
     assert meta.get("format_version") == 1
     assert meta.get("estimator_class") == "RecurrentHQNC"
@@ -690,10 +694,10 @@ def test_qtsc_autoregressive_save_load_roundtrip(tmp_path):
     model.fit(X, y)
     pred_before = model.predict(X[:15], y_history=y[:15])
 
-    spk = tmp_path / "qtsc_ar.eigenkit"
-    model.save(spk)
+    bundle_path = tmp_path / "qtsc_ar.eigenkit"
+    model.save(bundle_path)
 
-    loaded = QuantumTimeSeriesClassifier.load(spk)
+    loaded = QuantumTimeSeriesClassifier.load(bundle_path)
     pred_after = loaded.predict(X[:15], y_history=y[:15])
 
     np.testing.assert_array_equal(pred_before, pred_after)

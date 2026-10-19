@@ -80,6 +80,7 @@ choose a backend for its speed.
 | Qiskit Aer | Lazy (`"qiskit-aer"`). | Parameter shift. | No, it loops. | The dense statevector core of Aer. It comes with the `qiskit` extra, so it adds no dependency. |
 | Qiskit Aer MPS | Lazy (`"qiskit-aer-mps"`). | Parameter shift. | No, it loops. | The same backend, with `method="matrix_product_state"`. It is exact when the bond dimension is not limited. It is the natural point of comparison for a simulation based on the time-evolving block decimation (TEBD) algorithm. |
 | qsim | Lazy (`"qsim"`). | Parameter shift. | No, it loops. | The qsim simulator of Google, through Cirq. It works in **single precision** (`float32`), so it is fast but has a residual error of about `1e-6`. It needs the `qsim` extra. |
+| EigenOrbit Router | Lazy (`"router"`). | None on a QPU, parameter shift on a simulator. | No, one job per sample, submitted in parallel. | Real QPUs and cloud simulators through the hosted EigenOrbit Router, with one EigenOrbit API key and a prepaid balance. Pass `RouterConfig(device=...)` from eigenorbit-router-client: the device has no default, so a bare `provider="router"` raises an error that says so. It needs the `router` extra. |
 
 ## NumPy (built in)
 

@@ -223,15 +223,23 @@ def serialize_provider_param(provider) -> object:
 # Fields that decide where a provider connects. They are never written to a
 # bundle and never read from one: a bundle is data from whoever shared it, and
 # loading it builds the backend with the loader's credentials (IQM_TOKEN,
-# QISKIT_IBM_TOKEN), which must not go to a host the bundle names.
-_ENDPOINT_FIELDS = ("url", "service_kwargs", "provider_kwargs", "backend_instance")
+# QISKIT_IBM_TOKEN, EIGENORBIT_ROUTER_API_KEY), which must not go to a host the
+# bundle names.
+_ENDPOINT_FIELDS = (
+    "url",
+    "service_kwargs",
+    "provider_kwargs",
+    "backend_instance",
+    "base_url",
+)
 
 
 def deserialize_provider_param(value) -> object:
     """Restore a provider value from its JSON form.
 
-    The endpoint fields (`_ENDPOINT_FIELDS`) in the bundle are ignored, with a
-    warning. To connect elsewhere, pass `provider=` to `load()`.
+    The endpoint fields (`_ENDPOINT_FIELDS`) and the secret fields in the bundle
+    are ignored, with a warning. To connect elsewhere or with other credentials,
+    pass `provider=` to `load()`.
 
     Raises:
         SerializationError: If the configuration class is unknown.
@@ -251,15 +259,28 @@ def deserialize_provider_param(value) -> object:
         )
     from eigenkit import configs
 
-    # Every config `eigenkit.configs` exports, so a new one cannot save fine and
+    # Every config `eigenkit.configs` resolves, so a new one cannot save fine and
     # then fail to load. Only the class named is imported: the others may need
-    # SDKs this install lacks.
-    known = sorted({"NumpyConfig", *configs._LAZY_CONFIGS})
+    # SDKs or distributions this install lacks.
+    known = sorted({"NumpyConfig", *configs._LAZY_CONFIGS, *configs._EXTERNAL_CONFIGS})
     if cls_name not in known:
         raise SerializationError(
             f"Unknown provider config class {cls_name!r}. Known: {known}"
         )
-    return getattr(configs, cls_name)(**kwargs)
+    cls = getattr(configs, cls_name)
+    # A credential in the bundle would run the loader's jobs, and send its
+    # inputs, under the bundle author's account; the loader's own is read instead.
+    secrets = sorted(
+        name for name in secret_field_names(cls) if kwargs.pop(name, None) is not None
+    )
+    if secrets:
+        warnings.warn(
+            f"ignored {', '.join(secrets)} in the bundle's {cls_name}: a bundle "
+            "cannot carry credentials. Pass provider= to load() to set them.",
+            UserWarning,
+            stacklevel=2,
+        )
+    return cls(**kwargs)
 
 
 def _observables_to_dict(observables) -> list | dict:

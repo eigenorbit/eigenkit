@@ -147,20 +147,22 @@ reference every other backend is checked against, and it advertises
 `gradient_method="adjoint"`. The remaining backends translate IR to native SDK
 objects; they all implement the same Provider protocol, with these differences:
 
-| | PennyLane | Qiskit | Braket (local/cloud) | Braket (QPU) | Qiskit Runtime | IQM | CudaQuantum | Qulacs |
-|---|---|---|---|---|---|---|---|---|
-| `gradient_method` | `"native"` | `"parameter_shift"` | `"parameter_shift"` | `"none"`¹ | `"none"`¹ | `"none"`¹ | `"parameter_shift"` | `"adjoint"` |
-| Symbolic params | resolved per-call | `qiskit.circuit.Parameter` | `FreeParameter` | `FreeParameter` | `qiskit.circuit.Parameter` (transpiled) | `qiskit.circuit.Parameter` (transpiled) | `make_kernel(list)` | `set_parameter` per-call on a `ParametricQuantumCircuit` |
-| Compile output | device + qnodes + Pauli ops | parametric QuantumCircuit + SparsePauliOp | parametric Circuit + deduplicated result_types | same + lazy `AwsDevice` | transpiled circuit + layout-mapped SparsePauliOp (estimator) or a qubit-wise-commuting measurement plan (sampler) | parametric QuantumCircuit + one transpiled measured circuit per qubit-wise-commuting group (default `transpile_mode="parametric"`) | `make_kernel` + cudaq spin-op hamiltonians | `ParametricQuantumCircuit` + qulacs `Observable`s |
-| Sync `run()` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Async `submit()` | – | – | ✓ (returns `BraketJobHandle`) | ✓ | ✓ (returns `QiskitRuntimeJobHandle`) | ✓ (returns `IQMJobHandle`) | – | – |
-| `dry_run_info()` | – | – | ✓ | ✓ | ✓ | ✓ | – | – |
-| Cost guardrails | – | – | `CostWarning` on cloud compile | + `shots > 0` enforced + `gradient_method="none"`¹ | `CostWarning` on real-hardware compile + `shots > 0` enforced | `CostWarning` on real-hardware compile + `shots > 0` enforced | – | – |
-| Auto-registered | ✓ "pennylane" | ✓ "qiskit" | ✓ "braket" | ✓ "braket" (config flips behaviour) | ✗ opt-in | ✓ "iqm" (when extra installed) | ✗ opt-in (extra dep) | ✓ "qulacs" (when extra installed) |
+| | PennyLane | Qiskit | Braket (local/cloud) | Braket (QPU) | Qiskit Runtime | IQM | CudaQuantum | Qulacs | EigenOrbit Router² |
+|---|---|---|---|---|---|---|---|---|---|
+| `gradient_method` | `"native"` | `"parameter_shift"` | `"parameter_shift"` | `"none"`¹ | `"none"`¹ | `"none"`¹ | `"parameter_shift"` | `"adjoint"` | `"none"` on a QPU, `"parameter_shift"` on a simulator |
+| Symbolic params | resolved per-call | `qiskit.circuit.Parameter` | `FreeParameter` | `FreeParameter` | `qiskit.circuit.Parameter` (transpiled) | `qiskit.circuit.Parameter` (transpiled) | `make_kernel(list)` | `set_parameter` per-call on a `ParametricQuantumCircuit` | – (the circuit goes out as wire JSON; weights per call) |
+| Compile output | device + qnodes + Pauli ops | parametric QuantumCircuit + SparsePauliOp | parametric Circuit + deduplicated result_types | same + lazy `AwsDevice` | transpiled circuit + layout-mapped SparsePauliOp (estimator) or a qubit-wise-commuting measurement plan (sampler) | parametric QuantumCircuit + one transpiled measured circuit per qubit-wise-commuting group (default `transpile_mode="parametric"`) | `make_kernel` + cudaq spin-op hamiltonians | `ParametricQuantumCircuit` + qulacs `Observable`s | wire JSON of the circuit and observables |
+| Sync `run()` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Async `submit()` | – | – | ✓ (returns `BraketJobHandle`) | ✓ | ✓ (returns `QiskitRuntimeJobHandle`) | ✓ (returns `IQMJobHandle`) | – | – | ✓ (returns `RouterJobHandle`) |
+| `dry_run_info()` | – | – | ✓ | ✓ | ✓ | ✓ | – | – | ✓ |
+| Cost guardrails | – | – | `CostWarning` on cloud compile | + `shots > 0` enforced + `gradient_method="none"`¹ | `CostWarning` on real-hardware compile + `shots > 0` enforced | `CostWarning` on real-hardware compile + `shots > 0` enforced | – | – | `CostWarning` with the router's price estimate on compile |
+| Auto-registered | ✓ "pennylane" | ✓ "qiskit" | ✓ "braket" | ✓ "braket" (config flips behaviour) | ✗ opt-in | ✓ "iqm" (when extra installed) | ✗ opt-in (extra dep) | ✓ "qulacs" (when extra installed) | ✓ "router" (when extra installed) |
 
 ¹ `"parameter_shift"` when the device config sets `enable_gradients=True`; compiling against a paid device then raises a second `CostWarning` quoting the job count of one backward pass. Every gradient path (torch backward, `jacobian()`, the variational spine) goes through `Circuit._gradient_jacobians`, which refuses a `"none"` backend; torch's `_NoGradFn` and `variational()` refuse earlier, with messages specific to their path.
 
-Async `submit()` covers Braket, Qiskit Runtime and IQM.
+² The `router` extra installs eigenorbit-router-client, which ships this backend and `RouterConfig`; eigenkit registers `"router"` lazily when that package is importable. It runs circuits on the EigenOrbit Router, a hosted service that reaches real QPUs with one EigenOrbit API key.
+
+Async `submit()` covers Braket, Qiskit Runtime, IQM and EigenOrbit Router.
 
 Read PennyLane and Qiskit first (the simpler pair); Braket and CudaQuantum
 follow the same shape with backend-specific quirks.

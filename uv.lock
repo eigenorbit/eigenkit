@@ -101,6 +101,19 @@ wheels = [
 ]
 
 [[package]]
+name = "anyio"
+version = "4.15.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "idna" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a9/d2/f4d173e22df740bc37b1db102b386ba719b66e95b0f0d751f556b387e6d2/anyio-4.15.1.tar.gz", hash = "sha256:9f28306018cbd6d329e64a36d58256edff76dd996fe423bc957326e578b82a94", size = 276966, upload-time = "2026-09-05T10:42:39.44Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/12/b8/4bd346e22b28902df4d651910f5242c28d84e4a5c2435ca5c3f797ed7e2e/anyio-4.15.1-py3-none-any.whl", hash = "sha256:6152fdbbf9a77fdec97731721bebf7c4c44f7c29b424b0065826173efc7ed101", size = 132079, upload-time = "2026-09-05T10:42:37.923Z" },
+]
+
+[[package]]
 name = "appdirs"
 version = "1.4.4"
 source = { registry = "https://pypi.org/simple" }
@@ -1039,6 +1052,7 @@ all = [
     { name = "cirq-core" },
     { name = "cuda-quantum-cu13", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or sys_platform == 'linux'" },
     { name = "cudaq", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or sys_platform == 'linux'" },
+    { name = "eigenorbit-router-client" },
     { name = "iqm-client", extra = ["qiskit"], marker = "python_full_version < '3.14'" },
     { name = "jax" },
     { name = "matplotlib" },
@@ -1116,6 +1130,9 @@ qsim = [
 qulacs = [
     { name = "qulacs", marker = "python_full_version < '3.14'" },
 ]
+router = [
+    { name = "eigenorbit-router-client" },
+]
 tensorcircuit = [
     { name = "jax" },
     { name = "tensorcircuit-ng" },
@@ -1157,7 +1174,8 @@ requires-dist = [
     { name = "cudaq", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin' and extra == 'cudaquantum') or (sys_platform == 'linux' and extra == 'cudaquantum')", specifier = ">=0.14.0" },
     { name = "eigenkit", extras = ["qiskit"], marker = "extra == 'iqm'" },
     { name = "eigenkit", extras = ["qml"], marker = "extra == 'torch'" },
-    { name = "eigenkit", extras = ["torch", "pennylane", "qiskit", "braket", "iqm", "tensorcircuit", "cudaquantum", "qulacs", "qsim", "benchmark", "datasets", "chemistry", "qml", "viz"], marker = "extra == 'all'" },
+    { name = "eigenkit", extras = ["torch", "pennylane", "qiskit", "braket", "iqm", "tensorcircuit", "cudaquantum", "qulacs", "qsim", "router", "benchmark", "datasets", "chemistry", "qml", "viz"], marker = "extra == 'all'" },
+    { name = "eigenorbit-router-client", marker = "extra == 'router'", specifier = ">=0.1,<1" },
     { name = "iqm-client", extras = ["qiskit"], marker = "python_full_version < '3.14' and extra == 'iqm'", specifier = ">=35,<36" },
     { name = "jax", marker = "extra == 'tensorcircuit'", specifier = ">=0.4" },
     { name = "matplotlib", marker = "extra == 'benchmark'", specifier = ">=3.7" },
@@ -1188,7 +1206,7 @@ requires-dist = [
     { name = "torch", marker = "sys_platform != 'darwin' and extra == 'torch'", specifier = ">=2.5,<3", index = "https://download.pytorch.org/whl/cu126" },
     { name = "tqdm", marker = "extra == 'torch'", specifier = ">=4.66,<5" },
 ]
-provides-extras = ["torch", "pennylane", "qiskit", "braket", "iqm", "tensorcircuit", "cudaquantum", "qulacs", "qsim", "perceval", "datasets", "benchmark", "viz", "chemistry", "qml", "all"]
+provides-extras = ["torch", "pennylane", "qiskit", "braket", "iqm", "tensorcircuit", "cudaquantum", "qulacs", "qsim", "perceval", "router", "datasets", "benchmark", "viz", "chemistry", "qml", "all"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -1205,6 +1223,20 @@ dev = [
     { name = "pytest-cov", specifier = ">=6.0" },
     { name = "python-semantic-release", specifier = ">=10.7.0" },
     { name = "ruff", specifier = ">=0.16.10" },
+]
+
+[[package]]
+name = "eigenorbit-router-client"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "eigenkit" },
+    { name = "httpx" },
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/16/00/0ec3bd0d4cfedb1456fc8a7ff1b0178af45ceddac2ed28a040a6dca03d51/eigenorbit_router_client-0.1.0.tar.gz", hash = "sha256:24c08a51dac4aaeceb6ac4f761e50c073de3548909e8b24be2cf21ee6f8bb94d", size = 227544, upload-time = "2026-10-19T08:28:13.404Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8f/25/9589071692b9b852851e2337e5b7dbd3eee29c82d32c4a1acdae6217b79d/eigenorbit_router_client-0.1.0-py3-none-any.whl", hash = "sha256:32e4cef3c55536be91670a5d6f65f4c2b4caaba04a5f10939592b54d6ff8ea1f", size = 28742, upload-time = "2026-10-19T08:28:12.116Z" },
 ]
 
 [[package]]
@@ -1492,6 +1524,15 @@ wheels = [
 ]
 
 [[package]]
+name = "h11"
+version = "0.16.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/01/ee/02a2c011bdab74c6fb3c75474d40b3052059d95df7e73351460c8588d963/h11-0.16.0.tar.gz", hash = "sha256:4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1", size = 101250, upload-time = "2025-04-24T03:35:25.427Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl", hash = "sha256:63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86", size = 37515, upload-time = "2025-04-24T03:35:24.344Z" },
+]
+
+[[package]]
 name = "h5py"
 version = "3.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1532,6 +1573,34 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/41/8c/bbe98f813722b4873818a8db3e15aa3e625b59278566905ac439725e8070/h5py-3.16.0-cp314-cp314t-musllinux_1_2_x86_64.whl", hash = "sha256:346df559a0f7dcb31cf8e44805319e2ab24b8957c45e7708ce503b2ec79ba725", size = 5300253, upload-time = "2026-03-06T13:49:02.033Z" },
     { url = "https://files.pythonhosted.org/packages/32/9e/87e6705b4d6890e7cecdf876e2a7d3e40654a2ae37482d79a6f1b87f7b92/h5py-3.16.0-cp314-cp314t-win_amd64.whl", hash = "sha256:4c6ab014ab704b4feaa719ae783b86522ed0bf1f82184704ed3c9e4e3228796e", size = 3381671, upload-time = "2026-03-06T13:49:04.351Z" },
     { url = "https://files.pythonhosted.org/packages/96/91/9fad90cfc5f9b2489c7c26ad897157bce82f0e9534a986a221b99760b23b/h5py-3.16.0-cp314-cp314t-win_arm64.whl", hash = "sha256:faca8fb4e4319c09d83337adc80b2ca7d5c5a343c2d6f1b6388f32cfecca13c1", size = 2740706, upload-time = "2026-03-06T13:49:06.347Z" },
+]
+
+[[package]]
+name = "httpcore"
+version = "1.0.9"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "certifi" },
+    { name = "h11" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/06/94/82699a10bca87a5556c9c59b5963f2d039dbd239f25bc2a63907a05a14cb/httpcore-1.0.9.tar.gz", hash = "sha256:6e34463af53fd2ab5d807f399a9b45ea31c3dfa2276f15a2c3f00afff6e176e8", size = 85484, upload-time = "2025-04-24T22:06:22.219Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7e/f5/f66802a942d491edb555dd61e3a9961140fd64c90bce1eafd741609d334d/httpcore-1.0.9-py3-none-any.whl", hash = "sha256:2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55", size = 78784, upload-time = "2025-04-24T22:06:20.566Z" },
+]
+
+[[package]]
+name = "httpx"
+version = "0.28.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "certifi" },
+    { name = "httpcore" },
+    { name = "idna" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b1/df/48c586a5fe32a0f01324ee087459e112ebb7224f646c0b5023f5e79e9956/httpx-0.28.1.tar.gz", hash = "sha256:75e98c5f16b0f35b567856f597f06ff2270a374470a5c2392242528e3e3e42fc", size = 141406, upload-time = "2024-12-06T15:37:23.222Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2a/39/e50c7c3a983047577ee07d2a9e53faf5a69493943ec3f6a384bdc792deb2/httpx-0.28.1-py3-none-any.whl", hash = "sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad", size = 73517, upload-time = "2024-12-06T15:37:21.509Z" },
 ]
 
 [[package]]

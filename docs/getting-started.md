@@ -58,12 +58,13 @@ pip install "eigenkit[all]"
 | `qulacs`      | Qulacs                              | `provider="qulacs"`                                                 |
 | `qsim`        | qsimcirq + Cirq                     | `provider="qsim"` (single-precision)                                |
 | `perceval`    | Perceval (Quandela's photonic SDK)  | `eigenkit.photonics` (local simulation, Quandela Cloud)   |
+| `router`      | eigenorbit-router-client            | `provider="router"`, `RouterConfig` (EigenOrbit Router: real QPUs with one EigenOrbit API key) |
 | `qml`         | scikit-learn (no PyTorch)           | `QuantumKernel`, `QSVC`/`QSVR`                                      |
 | `datasets`    | scikit-learn                        | `eigenkit.datasets`                                       |
 | `benchmark`   | matplotlib + pandas + scikit-learn  | the comparison harness                                              |
 | `chemistry`   | PySCF + OpenFermion (no PySCF on Windows) | real molecules (`molecular_hamiltonian`, `hydrogen_molecule`)  |
 | `viz`         | matplotlib                          | `Circuit.draw_mpl()` (the text drawer needs nothing)                |
-| `all`         | every extra above except `perceval` | —                                                                   |
+| `all`         | every extra above except `perceval`              | —                                                      |
 
 Backend classes and their configurations are always available for import,
 even when their optional dependencies are not installed. However, attempting to

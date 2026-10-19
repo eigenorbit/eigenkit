@@ -4,6 +4,7 @@
 [![Python](https://img.shields.io/pypi/pyversions/eigenkit)](https://pypi.org/project/eigenkit/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/eigenorbit/eigenkit/blob/main/LICENSE)
 [![Docs](https://img.shields.io/badge/docs-docs.kit.eigenorbit.com-informational)](https://docs.kit.eigenorbit.com)
+[![Qiskit Ecosystem](https://qisk.it/e-df43ee68)](https://qisk.it/e)
 
 **Build quantum algorithms once. Run them anywhere.**
 

@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v1.1.0 (2026-10-19)
+
+### Documentation
+
+- Add the Qiskit Ecosystem badge ([#19](https://github.com/eigenorbit/eigenkit/pull/19),
+  [`091edeb`](https://github.com/eigenorbit/eigenkit/commit/091edebc4ac3d0855eb1988ab8e1bcf7a62b96a8))
+
+### Features
+
+- Add the router provider for eigenorbit-router-client
+  ([#18](https://github.com/eigenorbit/eigenkit/pull/18),
+  [`80a2b10`](https://github.com/eigenorbit/eigenkit/commit/80a2b105129498c1ca756a8e5c4931a33656a2e4))
+
+
 ## v1.0.1 (2026-10-13)
 
 ### Bug Fixes

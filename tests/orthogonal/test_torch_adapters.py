@@ -360,3 +360,10 @@ def test_an_estimator_refuses_an_adapted_model_and_leaves_it_intact():
     with pytest.raises(RuntimeError, match="cannot be re-initialised"):
         clf.fit(X, np.arange(12) % 3)
     assert torch.equal(model[0].base.weight, pretrained)
+
+
+def test_a_single_name_is_one_layer_not_its_characters():
+    model = nn.Sequential(*[nn.Linear(8, 8) for _ in range(11)])
+    apply_orthogonal_adapters(model, "10")
+    adapted = [n for n, m in model.named_children() if isinstance(m, OrthogonalAdapter)]
+    assert adapted == ["10"]

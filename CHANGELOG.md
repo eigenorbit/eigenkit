@@ -2,6 +2,50 @@
 
 <!-- version list -->
 
+## v1.2.0 (2026-11-05)
+
+### Bug Fixes
+
+- **orthogonal**: Exact certificate distances, single adapter names
+  ([#34](https://github.com/eigenorbit/eigenkit/pull/34),
+  [`8d617a2`](https://github.com/eigenorbit/eigenkit/commit/8d617a212b699c76caa5a93ae15cb89bb019b900))
+
+### Chores
+
+- **deps**: Bump amazon-braket-sdk, pytest and jax
+  ([#36](https://github.com/eigenorbit/eigenkit/pull/36),
+  [`54a9e34`](https://github.com/eigenorbit/eigenkit/commit/54a9e3467883456ff171ad4992f0b206abcc6fe1))
+
+- **deps**: Bump vulnerable locked dependencies
+  ([#27](https://github.com/eigenorbit/eigenkit/pull/27),
+  [`8bf972b`](https://github.com/eigenorbit/eigenkit/commit/8bf972b978f2656ee0f64e75715ed0238d42b0bb))
+
+### Continuous Integration
+
+- Publish a docs preview for each pull request
+  ([#33](https://github.com/eigenorbit/eigenkit/pull/33),
+  [`a2ff611`](https://github.com/eigenorbit/eigenkit/commit/a2ff6115e8ae53c68bbd52b6e718a8bd3b2de32c))
+
+- **deps**: Bump astral-sh/setup-uv from 10.3.2 to 10.3.3
+  ([#23](https://github.com/eigenorbit/eigenkit/pull/23),
+  [`bf13039`](https://github.com/eigenorbit/eigenkit/commit/bf130392e056fdc3e98b51c36e6867e87088b162))
+
+### Documentation
+
+- Write formulas in MathJax ([#35](https://github.com/eigenorbit/eigenkit/pull/35),
+  [`f0275ea`](https://github.com/eigenorbit/eigenkit/commit/f0275ea2c30a221f7a05963b5c5f579322b3ecab))
+
+### Features
+
+- Add eigenkit.orthogonal (orthogonal networks, certified robustness, OrthogonalQNN)
+  ([#32](https://github.com/eigenorbit/eigenkit/pull/32),
+  [`a4bca92`](https://github.com/eigenorbit/eigenkit/commit/a4bca921bf9dd5a796dfe5488b632bfeabbd7781))
+
+- Pass primitive options to the Qiskit Runtime primitives
+  ([#31](https://github.com/eigenorbit/eigenkit/pull/31),
+  [`65164a3`](https://github.com/eigenorbit/eigenkit/commit/65164a3ea09e57e0519a6c93e0737ea09ee1cd4f))
+
+
 ## v1.1.0 (2026-10-19)
 
 ### Documentation

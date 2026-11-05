@@ -354,6 +354,7 @@ The available layers are:
 - `Basic` — one Encoding + one Variational + measurement.
 - `Reupload` — standard data reuploading (optionally with trainable scale).
 - `Ensemble` — N independent circuits over input chunks.
+- `OrthogonalQNN` — a unary loader and an orthogonal network of RBS gates.
 - `MinMaxNorm` — feature-wise min/max normalisation.
 
 See the [User Guide](user-guide/encoding.md) for block-level control or

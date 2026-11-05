@@ -3,6 +3,8 @@
 - `Basic`: one `Encoding`, one `Variational` block and a measurement.
 - `Reupload`: standard data reuploading, optionally with a trainable scale.
 - `Ensemble`: `N` independent circuits, one for each chunk of the input.
+- `OrthogonalQNN`: a unary loader, an orthogonal network of RBS gates, and the
+  probability of each wire.
 - `MinMaxNorm`: min-max normalisation of each feature, in the style of
   `BatchNorm`.
 """
@@ -10,6 +12,7 @@
 from .basic import Basic
 from .ensemble import Ensemble
 from .minmax import MinMaxNorm
+from .orthogonal_qnn import OrthogonalQNN
 from .reupload import Reupload
 
 
@@ -17,5 +20,6 @@ __all__ = [
     "Basic",
     "Ensemble",
     "MinMaxNorm",
+    "OrthogonalQNN",
     "Reupload",
 ]

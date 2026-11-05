@@ -404,6 +404,7 @@ Friendly alias module so users can import everything from one place.
 📄 [src/eigenkit/torch/layers/basic.py](src/eigenkit/torch/layers/basic.py) — `Basic`, one Encoding + one Variational
 📄 [src/eigenkit/torch/layers/reupload.py](src/eigenkit/torch/layers/reupload.py) — `Reupload`, data reuploading
 📄 [src/eigenkit/torch/layers/ensemble.py](src/eigenkit/torch/layers/ensemble.py) — N independent circuits over input chunks
+📄 [src/eigenkit/torch/layers/orthogonal_qnn.py](src/eigenkit/torch/layers/orthogonal_qnn.py) — `OrthogonalQNN`, unary loader + RBS network
 📄 [src/eigenkit/torch/layers/minmax.py](src/eigenkit/torch/layers/minmax.py) — `MinMaxNorm`, BatchNorm-style feature-wise [a, b] normalization
 ✅ [tests/layers/](tests/layers/)
 
@@ -411,7 +412,7 @@ The layers live in the **torch ring** (`eigenkit/torch/layers/`):
 each is a thin nn.Module on top of a `TorchCircuit` (or, for `MinMaxNorm`,
 purely classical). Recommended reading order: `basic.py` first (the
 thinnest wrapper, one Encoding + one Variational), then `reupload.py`,
-`ensemble.py`, and `minmax.py`.
+`ensemble.py`, `orthogonal_qnn.py` and `minmax.py`.
 
 ---
 
@@ -447,6 +448,7 @@ thinnest wrapper, one Encoding + one Variational), then `reupload.py`,
   benchmark/     comparison harness                       (`benchmark` extra)
   datasets/      dataset registry and loaders             (`datasets` extra)
   photonics/     linear-optics IR, Perceval executors     (`perceval` extra)
+  orthogonal/    RBS networks: matrix, circuit, adapters  (numpy; .torch: `torch` extra)
   torch/         TorchCircuit, layers, hybrid estimators  (`torch` extra)
 ```
 
@@ -454,8 +456,10 @@ Everything in `core/` except the SDK adapters in `core/backends/` is pure
 numpy/scipy with no third-party framework import; import-linter enforces this
 in CI for the core modules, `numpy_backend` and the numpy domain rings. The
 photonics ring has its own contract: its IR, executor protocol and gradients
-import neither perceval nor any framework. The rings depend on core, never the
-reverse: the torch interface registers itself into `core/interfaces.py` lazily,
+import neither perceval nor any framework. So does the orthogonal ring: its
+topologies, matrices and circuit blocks are numpy only, and its PyTorch part,
+`orthogonal.torch`, is loaded lazily on first access. The rings depend on core,
+never the reverse: the torch interface registers itself into `core/interfaces.py` lazily,
 and the SDK backends register into the provider registry — so `import
 eigenkit` stays lightweight and a numpy-only environment never loads
 torch, pennylane, or sklearn.
@@ -647,6 +651,13 @@ src/eigenkit/
 │   ├── _serialization.py  ← .eigenkit bundles (torch imported lazily)
 │   ├── qsvc.py / qsvr.py  ← quantum-kernel SVMs
 │   └── qrc.py             ← the sklearn-facing reservoir estimators
+├── orthogonal/            ← RING (numpy; torch part = `torch` extra): orthogonal
+│   │                        networks of RBS (Givens) rotations; own import-linter contract
+│   ├── topology.py        ← Topology + butterfly/pyramid/x/diagonal/brick layouts
+│   ├── matrix.py          ← orthogonal_matrix and its jacobian (numpy)
+│   ├── blocks.py          ← RBSNetwork, UnaryLoader, unary readout (circuit blocks)
+│   ├── circuit.py         ← to_block / to_circuit: trained angles -> CircuitSpec
+│   └── torch/             ← Orthogonal, PartitionedOrthogonal, adapters, certification
 ├── photonics/             ← RING (`perceval` extra): linear optics, its own paradigm
 │   │                        (not a qubit Provider); own import-linter contract
 │   ├── ir.py              ← PhotonicCircuitSpec + components (core's Parameter tree)
@@ -660,7 +671,7 @@ src/eigenkit/
 ├── torch/                 ← RING (torch): differentiable interface + estimators
 │   ├── circuit.py         ← TorchCircuit (nn.Module owning weights)
 │   ├── interface.py       ← torch interface adapter (autograd.Functions)
-│   ├── layers/            ← Basic/Reupload/Ensemble/MinMaxNorm
+│   ├── layers/            ← Basic/Reupload/Ensemble/OrthogonalQNN/MinMaxNorm
 │   └── estimators/        ← HQNC/HQNR/Recurrent*/Custom*/Generic*/Timeseries + _nn.py
 ├── benchmark/             ← comparison harness (`benchmark` extra)
 └── datasets/              ← supervised dataset utilities (`datasets` extra)
@@ -676,6 +687,8 @@ tests/
 ├── optimization/          ← QAOA / QUBO tests
 ├── chemistry/             ← Jordan-Wigner, VQE, UCCSD, molecules (some need extra)
 ├── reservoir/             ← reservoir computing and its backend parity
+├── orthogonal/            ← topologies, matrices, circuit parity, loaders, torch modules
+│                            and adapters against a reference implementation, certification
 ├── photonics/             ← photonic IR, executors, gradients, torch, import surface
 ├── benchmark/             ← comparison-harness tests
 ├── datasets/              ← dataset utility tests

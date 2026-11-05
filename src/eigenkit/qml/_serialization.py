@@ -10,6 +10,7 @@ support for TensorFlow models is added. safetensors is not a dependency yet.
 from __future__ import annotations
 
 import dataclasses
+import importlib
 import io
 import json
 import warnings
@@ -91,24 +92,42 @@ def resolve_bundle_path(path: str | Path) -> Path:
     return _append_suffix(path, ".eigenkit")
 
 
-_BLOCK_TYPES = {
-    "AngleEncoding": AngleEncoding,
-    "Encoding": AngleEncoding,  # public alias (configs.Encoding)
-    "BasicVariational": BasicVariational,
-    "Variational": BasicVariational,  # public alias (configs.Variational)
-    "StrongVariational": StrongVariational,
-    "Reuploading": Reuploading,
-    # QAE / QPE blocks
-    "AmplitudeEncoding": AmplitudeEncoding,
-    "S0": S0,
-    "QubitUnitary": QubitUnitary,
-    "Grover": Grover,
-    "QFTBlock": QFTBlock,
-    "QPEBlock": QPEBlock,
-    "ControlledUnitaryBlock": ControlledUnitaryBlock,
-    "TrotterBlock": TrotterBlock,
-    "HamiltonianQPEBlock": HamiltonianQPEBlock,
+# Block types of the other rings, by the module that defines them. They are imported
+# on first lookup, so this module, and the qml tier that imports it, do not import
+# those rings.
+_LAZY_BLOCK_TYPES = {
+    "RBSNetwork": "eigenkit.orthogonal.blocks",
+    "UnaryLoader": "eigenkit.orthogonal.blocks",
 }
+
+
+class _BlockTypes(dict):
+    def __missing__(self, name: str):
+        cls = getattr(importlib.import_module(_LAZY_BLOCK_TYPES[name]), name)
+        self[name] = cls
+        return cls
+
+
+_BLOCK_TYPES = _BlockTypes(
+    {
+        "AngleEncoding": AngleEncoding,
+        "Encoding": AngleEncoding,  # public alias (configs.Encoding)
+        "BasicVariational": BasicVariational,
+        "Variational": BasicVariational,  # public alias (configs.Variational)
+        "StrongVariational": StrongVariational,
+        "Reuploading": Reuploading,
+        # QAE / QPE blocks
+        "AmplitudeEncoding": AmplitudeEncoding,
+        "S0": S0,
+        "QubitUnitary": QubitUnitary,
+        "Grover": Grover,
+        "QFTBlock": QFTBlock,
+        "QPEBlock": QPEBlock,
+        "ControlledUnitaryBlock": ControlledUnitaryBlock,
+        "TrotterBlock": TrotterBlock,
+        "HamiltonianQPEBlock": HamiltonianQPEBlock,
+    }
+)
 
 
 # ---- IR gate serialization (used by CustomBlock) ----
@@ -177,10 +196,9 @@ def _block_from_dict(d: dict):
     t = d.get("type")
     if t == "CustomBlock":
         return _custom_block_from_dict(d)
-    if t not in _BLOCK_TYPES:
-        raise SerializationError(
-            f"Unknown block type: {t!r}. Known: {sorted({*_BLOCK_TYPES, 'CustomBlock'})}"
-        )
+    if t not in _BLOCK_TYPES and t not in _LAZY_BLOCK_TYPES:
+        known = sorted({*_BLOCK_TYPES, *_LAZY_BLOCK_TYPES, "CustomBlock"})
+        raise SerializationError(f"Unknown block type: {t!r}. Known: {known}")
     return _BLOCK_TYPES[t].from_dict(d)
 
 

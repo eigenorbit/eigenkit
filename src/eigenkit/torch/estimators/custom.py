@@ -81,6 +81,12 @@ class CustomQuantumClassifier(ModelAccessMixin, BaseQuantumClassifier):
     data differs from the number of inputs that the circuit expects, an
     `nn.Linear` adapter is added in front automatically.
 
+    The number of inputs of the circuit is read from the first `Encoding` or
+    `Reuploading` block, so `blocks` must contain one. A circuit whose inputs
+    enter through another block, such as the `UnaryLoader` of
+    `eigenkit.orthogonal`, is not supported yet and raises a `ValueError` in
+    `fit()`, even with `in_features` given.
+
     Args:
         blocks: The list of blocks, in order.
         observables: The observables. It takes the same options as
@@ -316,6 +322,10 @@ class CustomQuantumRegressor(ModelAccessMixin, BaseQuantumRegressor):
     with the chosen regression loss. An `nn.Linear` input adapter is added when the
     number of features of the data differs from the number of inputs of the
     circuit.
+
+    As for the classifier, the number of inputs of the circuit is read from the
+    first `Encoding` or `Reuploading` block, so `blocks` must contain one; a
+    `UnaryLoader` is not supported yet and raises a `ValueError` in `fit()`.
 
     Args:
         blocks: The list of blocks, in order.

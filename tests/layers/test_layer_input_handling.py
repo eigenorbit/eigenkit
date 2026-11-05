@@ -25,6 +25,7 @@ from eigenkit.torch.layers import (
     Basic,
     Ensemble,
     MinMaxNorm,
+    OrthogonalQNN,
     Reupload,
 )
 
@@ -33,6 +34,7 @@ LAYERS = [
     (Basic, dict(n_qubits=2, depth=1), 2),
     (Reupload, dict(n_qubits=2, depth=1), 2),
     (Ensemble, dict(in_features=2, n_qubits=2, depth=1), 2),
+    (OrthogonalQNN, dict(n_qubits=2), 2),
 ]
 IDS = [c.__name__ for c, _, _ in LAYERS]
 

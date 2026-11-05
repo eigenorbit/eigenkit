@@ -101,6 +101,7 @@ _LAZY_NAMES = {
     "Reupload": "eigenkit.torch.layers",
     "Ensemble": "eigenkit.torch.layers",
     "MinMaxNorm": "eigenkit.torch.layers",
+    "OrthogonalQNN": "eigenkit.torch.layers",
     # backend classes + async handles (resolved lazily through `core`)
     "BraketBackend": "eigenkit.core",
     "CudaQuantumBackend": "eigenkit.core",
@@ -247,6 +248,7 @@ __all__ = [
     "Reupload",
     "Ensemble",
     "MinMaxNorm",
+    "OrthogonalQNN",
     # block classes
     "Encoding",
     "Variational",

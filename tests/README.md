@@ -9,7 +9,7 @@ which layer it is allowed to depend on.
 | Directory | Covers |
 |---|---|
 | `core/` | The framework-free compute layer: IR, `CircuitSpec`, builder, blocks, observables, the numpy reference simulator, and every backend adapter (PennyLane, Qiskit, Aer, Braket, Qiskit Runtime, CUDA-Q, TensorCircuit, Qulacs, qsim). Cross-backend parity lives here. |
-| `layers/` | The torch ring's `nn.Module` layers — `Basic`, `Reupload`, `Ensemble`, `MinMaxNorm`. |
+| `layers/` | The torch ring's `nn.Module` layers — `Basic`, `Reupload`, `Ensemble`, `OrthogonalQNN`, `MinMaxNorm`. |
 | `algorithms/` | The scikit-learn-style estimators (`HQNC`/`HQNR`, the recurrent and generic variants, `QSVC`/`QSVR`, `QRC`), plus `HHL`, `IQAE` and portfolio risk. |
 | `chemistry/` | Fermionic operators, Jordan-Wigner / Bravyi-Kitaev mappings, UCCSD, molecules, VQE. |
 | `optimization/` | QUBO/Ising problems and QAOA. |

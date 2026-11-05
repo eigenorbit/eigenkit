@@ -217,6 +217,46 @@ These papers cover hybrid quantum neural networks (HQNN).
   [arXiv:2102.11831](https://arxiv.org/abs/2102.11831). It explains why dissipation, and
   not unitarity, is what gives a reservoir a memory that can be used.
 
+## Orthogonal networks
+
+These papers cover the orthogonal networks of `eigenkit.orthogonal`.
+
+- **The pyramid layer.** J. Landman, N. Mathur, Y. Y. Li, M. Strahm, S. Kazdaghli,
+  A. Prakash, I. Kerenidis, *Quantum Methods for Neural Networks and Application to
+  Medical Image Classification*, Quantum 6, 881 (2022),
+  [arXiv:2212.07389](https://arxiv.org/abs/2212.07389). It introduces the quantum
+  orthogonal layer with the pyramid layout, and the final Z gate for determinant -1.
+- **The butterfly and X layouts.** E. A. Cherrat, I. Kerenidis, N. Mathur,
+  J. Landman, M. Strahm, Y. Y. Li, *Quantum Vision Transformers*, Quantum 8, 1265
+  (2024), [arXiv:2209.08167](https://arxiv.org/abs/2209.08167). It defines the RBS gate
+  (Eq. 1), the three layouts (Table 1, Figs. 7-9) and the three loaders (Fig. 14).
+- **The unary loader.** S. Johri, S. Debnath, A. Mocherla, A. Singk, A. Prakash,
+  J. Kim, I. Kerenidis, *Nearest centroid classification on a trapped ion quantum
+  computer*, npj Quantum Information 7, 122 (2021).
+- **Unitary networks from rotations.** L. Jing, Y. Shen, T. Dubček, J. Peurifoy,
+  S. Skirlo, Y. LeCun, M. Tegmark, M. Soljačić, *Tunable Efficient Unitary Neural
+  Networks (EUNN) and their application to RNNs*, ICML (2017),
+  [arXiv:1612.05231](https://arxiv.org/abs/1612.05231).
+- **The certificate.** Y. Tsuzuku, I. Sato, M. Sugiyama, *Lipschitz-Margin Training:
+  Scalable Certification of Perturbation Invariance for Deep Neural Networks*, NeurIPS
+  (2018), [arXiv:1802.04034](https://arxiv.org/abs/1802.04034); S. Singla, S. Singla,
+  S. Feizi, *Improved Deterministic l2 Robustness on CIFAR-10 and CIFAR-100*, ICLR
+  (2022), [arXiv:2108.04062](https://arxiv.org/abs/2108.04062), which defines the
+  last-layer normalisation of `LLNHead`.
+- **The activation.** C. Anil, J. Lucas, R. Grosse, *Sorting Out Lipschitz Function
+  Approximation*, ICML (2019), [arXiv:1811.05381](https://arxiv.org/abs/1811.05381).
+  It introduces GroupSort, the `"adjacent"` pairing of `MaxMin`.
+- **Block reflector orthogonal layers.** B.-H. Lai, P.-H. Huang, B.-H. Kung,
+  S.-T. Chen, *Enhancing Certified Robustness via Block Reflector Orthogonal Layers
+  and Logit Annealing Loss*, ICML (2025),
+  [arXiv:2505.15174](https://arxiv.org/abs/2505.15174). BRONet uses the `"halves"`
+  pairing of `MaxMin` and an LLN head.
+- **Orthogonal fine-tuning.** W. Liu, Z. Qiu et al., *Parameter-Efficient Orthogonal
+  Finetuning via Butterfly Factorization*, ICLR (2024),
+  [arXiv:2311.06243](https://arxiv.org/abs/2311.06243); X. Ma et al., *Parameter
+  Efficient Quasi-Orthogonal Fine-Tuning via Givens Rotation*, ICML (2024),
+  [arXiv:2404.04316](https://arxiv.org/abs/2404.04316).
+
 ## Cross-cutting foundations
 
 These papers are used across several pages.

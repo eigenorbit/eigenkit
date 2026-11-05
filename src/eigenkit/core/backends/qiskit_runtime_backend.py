@@ -279,6 +279,20 @@ class QiskitRuntimeConfig(SecretFieldsMixin):
             at least `2 * n_weights` times the jobs of a forward call. When it is on,
             compiling for a paid device gives a `CostWarning` that states this
             cost.
+        primitive_options: Options applied to every `SamplerV2` and `EstimatorV2`
+            that the backend builds, through `options.update(**primitive_options)`,
+            for example
+            `{"dynamical_decoupling": {"enable": True, "sequence_type": "XpXm"}}`
+            or `{"twirling": {"enable_gates": True}}`. Nested dictionaries merge
+            into the primitive's defaults. Qiskit Runtime validates the names and
+            values when the primitive is built, before anything is submitted, so
+            an option that the primitive in use does not know raises there:
+            `sample()` and `probabilities()` always use `SamplerV2`, which has no
+            `resilience_level`. `shots` and the job tags are set after these
+            options, so they cannot be changed here. With twirling, Qiskit Runtime
+            runs `num_randomizations * shots_per_randomization` shots, rounding
+            up when one of them is `"auto"`, which can be more than `shots`. The
+            default, `{}`, applies nothing.
     """
 
     backend_name: str | None = None
@@ -295,9 +309,11 @@ class QiskitRuntimeConfig(SecretFieldsMixin):
     service_kwargs: dict = field(default_factory=dict)
     poll_timeout_seconds: int = 3600
     enable_gradients: bool = False
+    primitive_options: dict = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        """Reject an unknown primitive when the configuration is built.
+        """Reject an unknown primitive or non-mapping primitive options when the
+        configuration is built.
 
         If the check waited for the first submission, the error would come as a
         confusing failure on a paid backend, after the transpilation and the cost
@@ -306,6 +322,11 @@ class QiskitRuntimeConfig(SecretFieldsMixin):
         if self.primitive not in ("estimator", "sampler"):
             raise ValueError(
                 f"primitive must be 'estimator' or 'sampler', got {self.primitive!r}"
+            )
+        if not isinstance(self.primitive_options, Mapping):
+            raise TypeError(
+                "primitive_options must be a mapping of Qiskit Runtime options, "
+                f"got {type(self.primitive_options).__name__}"
             )
 
     def make_backend(self) -> "QiskitRuntimeBackend":
@@ -819,6 +840,8 @@ class QiskitRuntimeCompiled(CompiledCircuit):
         from qiskit_ibm_runtime import EstimatorV2
 
         estimator = EstimatorV2(mode=self._backend)
+        # The configured options first, so that they cannot override the shots.
+        estimator.options.update(**self._config.primitive_options)
         estimator.options.default_shots = self._config.shots
         return estimator
 
@@ -829,6 +852,8 @@ class QiskitRuntimeCompiled(CompiledCircuit):
         from qiskit_ibm_runtime import SamplerV2
 
         sampler = SamplerV2(mode=self._backend)
+        # The configured options first, so that they cannot override the shots.
+        sampler.options.update(**self._config.primitive_options)
         sampler.options.default_shots = self._config.shots
         return sampler
 

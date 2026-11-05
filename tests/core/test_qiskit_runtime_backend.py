@@ -362,6 +362,88 @@ class TestSubmit:
         assert abs(a - b) < 0.15  # noise bound; 8192 shots gives ~0.01 stderr
 
 
+DD_AND_TWIRLING = {
+    "dynamical_decoupling": {"enable": True, "sequence_type": "XpXm"},
+    "twirling": {
+        "enable_gates": True,
+        "num_randomizations": 4,
+        "shots_per_randomization": 64,
+    },
+}
+
+
+class TestPrimitiveOptions:
+    def _compiled(self, fake_backend, small_circuit, **config):
+        layer = Circuit(
+            blocks=small_circuit,
+            observables=Z(0),
+            provider=QiskitRuntimeConfig(
+                backend_instance=fake_backend, shots=256, **config
+            ),
+        )
+        return layer, layer._inner.compiled
+
+    def test_no_options_leave_the_primitives_unchanged(self, fake_backend, small_circuit):
+        _, compiled = self._compiled(fake_backend, small_circuit)
+        for primitive in (compiled._sampler(), compiled._estimator()):
+            assert (
+                primitive.options.dynamical_decoupling.enable
+                is qiskit_ibm_runtime.options.utils.Unset
+            )
+            assert (
+                primitive.options.twirling.enable_gates
+                is qiskit_ibm_runtime.options.utils.Unset
+            )
+            assert primitive.options.default_shots == 256
+
+    def test_options_reach_the_sampler_and_the_estimator(
+        self, fake_backend, small_circuit
+    ):
+        _, compiled = self._compiled(
+            fake_backend, small_circuit, primitive_options=DD_AND_TWIRLING
+        )
+        for primitive in (compiled._sampler(), compiled._estimator()):
+            assert primitive.options.dynamical_decoupling.enable is True
+            assert primitive.options.dynamical_decoupling.sequence_type == "XpXm"
+            assert primitive.options.twirling.enable_gates is True
+            assert primitive.options.twirling.num_randomizations == 4
+            assert primitive.options.twirling.shots_per_randomization == 64
+
+    def test_options_cannot_override_the_shots(self, fake_backend, small_circuit):
+        _, compiled = self._compiled(
+            fake_backend, small_circuit, primitive_options={"default_shots": 7}
+        )
+        assert compiled._sampler().options.default_shots == 256
+        assert compiled._estimator().options.default_shots == 256
+
+    def test_a_job_with_options_runs_on_a_fake_backend(self, fake_backend, small_circuit):
+        layer, _ = self._compiled(
+            fake_backend, small_circuit, primitive_options=DD_AND_TWIRLING
+        )
+        x = torch.tensor([0.3, -0.5], dtype=torch.float64)
+        assert layer.submit(x).result().shape == (1,)
+
+    def test_an_unknown_option_raises_before_anything_is_submitted(
+        self, fake_backend, small_circuit, monkeypatch
+    ):
+        _, compiled = self._compiled(
+            fake_backend, small_circuit, primitive_options={"resilience_level": 1}
+        )
+        runs = []
+        monkeypatch.setattr(
+            qiskit_ibm_runtime.SamplerV2, "run", lambda *a, **k: runs.append(a)
+        )
+        with pytest.raises(Exception, match="resilience_level"):
+            compiled.submit(np.array([0.1, 0.2]), np.array([0.3, -0.5]), method="sample")
+        assert runs == []
+
+    def test_non_mapping_options_are_refused_when_the_config_is_built(self, fake_backend):
+        with pytest.raises(TypeError, match="primitive_options must be a mapping"):
+            QiskitRuntimeConfig(
+                backend_instance=fake_backend, primitive_options=["twirling"]
+            )
+
+
 class TestValidation:
     def test_zero_shots_rejected(self, fake_backend, small_circuit):
         with pytest.raises(ValueError, match="shots > 0"):

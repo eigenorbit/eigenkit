@@ -406,6 +406,31 @@ all-zeros state divided by the number of shots. Above an exact limit, use
 - `sample()` and `probabilities()` go through `SamplerV2`, whichever primitive is
   configured, because `EstimatorV2` has no bitstrings to return. `primitive` only
   chooses how the expectation values are obtained.
+- `primitive_options` passes Qiskit Runtime options to every primitive the backend
+  builds, for example dynamical decoupling and Pauli twirling:
+
+    ```python
+    QiskitRuntimeConfig(
+        backend_name="ibm_fez",
+        shots=4000,
+        primitive_options={
+            "dynamical_decoupling": {"enable": True, "sequence_type": "XpXm"},
+            "twirling": {
+                "enable_gates": True,
+                "num_randomizations": 40,
+                "shots_per_randomization": 100,
+            },
+        },
+    )
+    ```
+
+    Qiskit Runtime checks the options when the primitive is built, before anything
+    is submitted. `shots` and the job tags always come from the configuration and
+    `submit()`. With twirling, the job runs `num_randomizations *
+    shots_per_randomization` shots. Set both so that the product equals `shots`:
+    with `"auto"`, Qiskit Runtime rounds up and can run more shots than asked. The
+    dynamical decoupling pulses are added by Qiskit Runtime after transpilation, so
+    they do not show in `transpiled_circuit()`.
 - Both primitives process a batch at once. The PUBs of `EstimatorV2` and `SamplerV2`
   both accept a `(B, n_params)` array, so a batch of `B` inputs stays one job, with
   one PUB for each observable (or for each group), in place of one job for each

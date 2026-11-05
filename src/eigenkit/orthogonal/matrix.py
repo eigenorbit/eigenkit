@@ -68,8 +68,9 @@ def _layer_indices(topology: Topology) -> list[tuple[np.ndarray, np.ndarray]]:
 
 
 def _apply_layer(W, i_idx, j_idx, c, s):
+    # In place: W[i_idx] and W[j_idx] are copies, so both rows are updated from the
+    # rows before the update. Copying W instead made sparse layouts O(n^3).
     Wi, Wj = W[i_idx], W[j_idx]
-    W = W.copy()
     W[i_idx] = c * Wi + s * Wj
     W[j_idx] = -s * Wi + c * Wj
     return W
@@ -144,7 +145,7 @@ def orthogonal_matrix_jacobian(topology: Topology, theta) -> np.ndarray:
         s = np.sin(theta[at : at + k])[:, None]
         gates.append((at, c, s))
         at += k
-        prefixes.append(_apply_layer(prefixes[-1], i_idx, j_idx, c, s))
+        prefixes.append(_apply_layer(prefixes[-1].copy(), i_idx, j_idx, c, s))
     suffix = np.eye(n)
     if topology.reflection:
         suffix[-1, -1] = -1.0

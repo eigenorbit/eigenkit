@@ -378,3 +378,13 @@ def test_the_gram_matrix_of_a_wide_output_layer_is_small(monkeypatch):
     )
     lipschitz_bound(nn.Linear(2, 3000))
     assert sides == [(2, 3000)]
+
+
+def test_head_distances_stay_exact_above_25_classes():
+    # Above 25 rows the default cdist switches to a matrix product, which shrinks
+    # a small distance by about 10% here and so overstates the certified radius.
+    g = torch.Generator().manual_seed(0)
+    w = torch.randn(30, 588, dtype=torch.float64, generator=g)
+    u = torch.randn(588, dtype=torch.float64, generator=g)
+    w[1] = w[0] + 1e-6 * u / u.norm()
+    assert head_distances(w)[0, 1].item() == pytest.approx(1e-6, rel=1e-6)

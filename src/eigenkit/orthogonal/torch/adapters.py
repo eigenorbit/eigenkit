@@ -198,10 +198,10 @@ def apply_orthogonal_adapters(
 
     Args:
         model (nn.Module): The model to adapt.
-        target_modules (Iterable[str] | Callable[[str, nn.Module], bool]): The
-            qualified names of the layers to adapt (as in `named_modules()`), or a
-            predicate on the name and the module. Only `nn.Linear` and `nn.Conv2d`
-            layers can be adapted.
+        target_modules (str | Iterable[str] | Callable[[str, nn.Module], bool]):
+            The qualified name of the layer to adapt, or the names of several
+            layers (as in `named_modules()`), or a predicate on the name and the
+            module. Only `nn.Linear` and `nn.Conv2d` layers can be adapted.
         topology (TopologyName | Topology): The layout of every rotation.
             Default: `"butterfly"`.
         side (Side): `"out"` or `"in"`. Default: `"out"`.
@@ -230,7 +230,9 @@ def apply_orthogonal_adapters(
             and target_modules(name, module)
         ]
     else:
-        names = list(target_modules)
+        names = (
+            [target_modules] if isinstance(target_modules, str) else list(target_modules)
+        )
         for name in names:
             if name not in modules or not name:
                 raise KeyError(f"model has no submodule {name!r}")

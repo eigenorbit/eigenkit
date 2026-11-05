@@ -166,7 +166,10 @@ def head_distances(head_weight: torch.Tensor) -> torch.Tensor:
     in float64.
 
     Numerical contract: `w = head_weight.detach().double()`, then
-    `torch.cdist(w, w)`.
+    `torch.cdist(w, w, compute_mode="donot_use_mm_for_euclid_dist")`. The direct
+    differences keep small distances exact; the default mode switches to a matrix
+    product above 25 rows, which can shrink a small distance and so overstate a
+    certified radius.
 
     Args:
         head_weight (torch.Tensor): The head weight `(K, D)`.
@@ -175,7 +178,7 @@ def head_distances(head_weight: torch.Tensor) -> torch.Tensor:
         torch.Tensor: The `(K, K)` matrix of distances.
     """
     w = head_weight.detach().double()
-    return torch.cdist(w, w)
+    return torch.cdist(w, w, compute_mode="donot_use_mm_for_euclid_dist")
 
 
 @torch.no_grad()

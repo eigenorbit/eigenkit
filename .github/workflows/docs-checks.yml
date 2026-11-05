@@ -23,6 +23,10 @@ name: docs-checks
 # with an `if:` if that ever needs to change — a job skipped by its own `if:`
 # does report, and does satisfy branch protection.
 #
+# The `preview` job is the exception: it publishes the site, it does not check
+# it, so it must not be required. A preview that fails to deploy does not block
+# a merge.
+#
 # Not here yet: executing the snippets in `docs/`. That waits on the runtime of
 # `docs/user-guide/estimators.md`, which is over four hours.
 
@@ -40,8 +44,8 @@ permissions:
 
 jobs:
   docs:
-    # Moved verbatim from `ci.yml`. Needs every extra, because mkdocstrings
-    # imports the modules it documents.
+    # Moved from `ci.yml`; the last step keeps the site for `preview`. Needs
+    # every extra, because mkdocstrings imports the modules it documents.
     runs-on: ubuntu-latest
     steps:
       - name: Check-out repository
@@ -66,6 +70,69 @@ jobs:
 
       - name: Build documentation
         run: uv run mkdocs build --strict
+
+      - name: Keep the site for the preview
+        if: github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'
+        uses: actions/upload-artifact@v7
+        with:
+          name: site
+          path: site/
+          retention-days: 1
+
+  preview:
+    # Publishes the site that `docs` built to Cloudflare Pages, at
+    # https://pr-<number>.eigenkit-docs.pages.dev, and links it on the pull request
+    # as the `docs-preview` deployment. The job never checks out or runs the
+    # pull request's code: it only uploads the built files.
+    #
+    # Only for pull requests from branches of this repository. A pull request
+    # from a fork gets no secrets, and Dependabot's runs see only Dependabot
+    # secrets, so both skip the job instead of failing it.
+    #
+    # Setup: a Cloudflare Pages project named `eigenkit-docs` (Direct Upload),
+    # and a GitHub environment `docs-preview` with the secret
+    # `CLOUDFLARE_API_TOKEN` (an API token limited to Cloudflare Pages: Edit on
+    # that account) and the variable `CLOUDFLARE_ACCOUNT_ID`.
+    needs: docs
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write  # the comment with the link
+    environment:
+      name: docs-preview
+      url: https://pr-${{ github.event.pull_request.number }}.eigenkit-docs.pages.dev
+    steps:
+      - name: Download the site
+        uses: actions/download-artifact@v8
+        with:
+          name: site
+          path: site
+
+      # Wrangler from npm at an exact version, not cloudflare/wrangler-action:
+      # the repository allows only a short list of third-party actions.
+      - name: Deploy the preview
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          BRANCH: pr-${{ github.event.pull_request.number }}
+        run: |
+          npx --yes wrangler@4.155.0 pages deploy site --project-name=eigenkit-docs --branch="$BRANCH"
+          echo "### Docs preview: https://$BRANCH.eigenkit-docs.pages.dev" >> "$GITHUB_STEP_SUMMARY"
+
+      # One comment per pull request: the link never changes, so the comment is
+      # posted once and found again by its marker on later runs.
+      - name: Comment the link on the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          marker='<!-- docs-preview -->'
+          found=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | startswith(\"$marker\"))) | .id")
+          if [ -z "$found" ]; then
+            gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" \
+              -f body="$(printf '%s\n**Docs preview:** https://pr-%s.eigenkit-docs.pages.dev' "$marker" "$PR")" > /dev/null
+          fi
 
   docstrings:
     # Six checkers, all of them standard-library only: they parse `src/` with

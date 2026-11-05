@@ -2,6 +2,21 @@
 
 <!-- version list -->
 
+## v1.2.1 (2026-11-05)
+
+### Bug Fixes
+
+- Require eigenorbit-router-client 0.2 in the router extra
+  ([#38](https://github.com/eigenorbit/eigenkit/pull/38),
+  [`bc0eb8e`](https://github.com/eigenorbit/eigenkit/commit/bc0eb8e955c6d7fc1260c16fd7953a30c5207649))
+
+### Chores
+
+- **release**: Order changelog sections by importance
+  ([#37](https://github.com/eigenorbit/eigenkit/pull/37),
+  [`a35c5ff`](https://github.com/eigenorbit/eigenkit/commit/a35c5ff4f6730f0be4a45cb7b0fc647cd3b3719d))
+
+
 ## v1.2.0 (2026-11-05)
 
 ### Features

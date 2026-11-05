@@ -59,10 +59,11 @@ def generate_checkerboard(
     grid_size: int = 2,
     random_state: int | None = 42,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Generate a dataset with a checkerboard pattern.
+    r"""Generate a dataset with a checkerboard pattern.
 
-    The points are drawn uniformly in `[0, grid_size]²`. The label is
-    `(floor(x) + floor(y)) % 2`, which gives regions of alternating classes.
+    The points are drawn uniformly in \([0, \mathrm{grid\_size}]^2\). The label is
+    \((\lfloor x \rfloor + \lfloor y \rfloor) \bmod 2\), which gives regions of
+    alternating classes.
 
     Args:
         n_samples: The number of points to generate.
@@ -114,12 +115,13 @@ def generate_ad_hoc(
     gap: float = 0.3,
     random_state: int | None = 42,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Generate the "ad hoc" dataset of Havlíček et al., Nature 567, 209 (2019).
+    r"""Generate the "ad hoc" dataset of Havlíček et al., Nature 567, 209 (2019).
 
-    The dataset is designed so that a quantum kernel separates it. Each point `x` in
-    `[0, 2π)^n` is encoded with the ZZ feature map, with two repetitions as in
-    Qiskit's `ZZFeatureMap`. Its label is the sign of `⟨ψ(x)| V† Z^{⊗n} V |ψ(x)⟩`
-    for a fixed random unitary `V`. The points closer than `gap` to the decision
+    The dataset is designed so that a quantum kernel separates it. Each point \(x\)
+    in \([0, 2\pi)^n\) is encoded with the ZZ feature map, with two repetitions as in
+    Qiskit's `ZZFeatureMap`. Its label is the sign of
+    \(\langle \psi(x) | V^\dagger Z^{\otimes n} V | \psi(x) \rangle\) for a fixed
+    random unitary \(V\). The points closer than `gap` to the decision
     boundary are dropped, and the two classes are balanced. A kernel built from the
     same ZZ feature map classifies the data almost perfectly, and classical kernels
     usually do not.
@@ -128,15 +130,15 @@ def generate_ad_hoc(
         n_samples: The number of points, split evenly between the two classes.
         n_qubits: The number of features, which is also the number of qubits of the
             circuit that generates the data.
-        gap: The margin around the decision boundary, in `[0, 1)`.
-        random_state: The seed of the unitary `V` and of the sampled points.
+        gap: The margin around the decision boundary, in \([0, 1)\).
+        random_state: The seed of the unitary \(V\) and of the sampled points.
 
     Returns:
         The pair `(X, y)`, with `X` of shape `(n_samples, n_qubits)` and `y` of
             shape `(n_samples,)`. The labels are `0` and `1`.
 
     Raises:
-        ValueError: If `gap` is not in `[0, 1)`, or if `n_qubits < 1`.
+        ValueError: If `gap` is not in \([0, 1)\), or if `n_qubits < 1`.
     """
     if not 0 <= gap < 1:
         raise ValueError(f"gap must be in [0, 1), got {gap}")
@@ -210,7 +212,7 @@ def generate_timeseries(
     noise: float = 0.05,
     random_state: int | None = 42,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Generate a 1-D time series, as the pair `(t, y)`.
+    r"""Generate a 1-D time series, as the pair `(t, y)`.
 
     Args:
         n_samples: The number of time steps.
@@ -221,7 +223,7 @@ def generate_timeseries(
 
     Returns:
         The pair `(t, y)`, two arrays of shape `(n_samples,)` and type `float32`.
-            `t` holds time values spaced evenly in `[0, 1]`, and `y` is the signal.
+            `t` holds time values spaced evenly in \([0, 1]\), and `y` is the signal.
             The arrays are not cut into windows, because the algorithms do that.
     """
     if kind not in ("sine", "ar"):

@@ -63,7 +63,7 @@ class Compiled(Protocol):
         need_weight_grad: bool = True,
         need_input_grad: bool = True,
     ):
-        """Compute the gradient of one observable with respect to weights and inputs.
+        r"""Compute the gradient of one observable with respect to weights and inputs.
 
         Args:
             weights (np.ndarray): The 1-D weight vector.
@@ -78,10 +78,12 @@ class Compiled(Protocol):
                 with respect to the inputs.
 
         Returns:
-            weight_jac (np.ndarray | None): The derivatives `d<O>/d weights`, or
-                `None` if they were not requested.
-            input_jac (np.ndarray | None): The derivatives `d<O>/d inputs`, or `None`
-                if they were not requested.
+            weight_jac (np.ndarray | None): The derivatives
+                \(d\langle O \rangle / d(\mathrm{weights})\), or `None` if they were
+                not requested.
+            input_jac (np.ndarray | None): The derivatives
+                \(d\langle O \rangle / d(\mathrm{inputs})\), or `None` if they were
+                not requested.
         """
         ...
 

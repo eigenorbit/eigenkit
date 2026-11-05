@@ -26,7 +26,7 @@ ShotMode = Literal["auto", "synthetic", "provider"]
 
 @dataclass(frozen=True, eq=False)
 class IQAEResult(ValueEquality):
-    """Outcome of a completed Iterative Quantum Amplitude Estimation (IQAE) run.
+    r"""Outcome of a completed Iterative Quantum Amplitude Estimation (IQAE) run.
 
     The result is read-only. Assigning to a field raises `FrozenInstanceError`, so
     a mistyped `=` (instead of `==`) cannot change a result. This type holds no
@@ -37,7 +37,7 @@ class IQAEResult(ValueEquality):
     correctly and efficiently.
 
     Attributes:
-        estimation: The point estimate of the amplitude `a`.
+        estimation: The point estimate of the amplitude \(a\).
         confidence_interval: The `(lower, upper)` Clopper-Pearson interval at the
             requested confidence level `1 - alpha`.
         n_rounds: The number of rounds that the run executed. It can also be read
@@ -72,13 +72,14 @@ class IQAEResult(ValueEquality):
 class IQAE(BaseQuantumSolver):
     r"""Iterative Quantum Amplitude Estimation (IQAE).
 
-    Estimates `a = |⟨ψ₁|A|0⟩|²` to an additive precision `epsilon`, with a failure
-    probability of at most `alpha`. It uses the Grover operator
-    `Q = A S₀ A† S_ψ₁`, built from the oracle `A` that you provide.
+    Estimates \(a = \lvert \langle \psi_1 | A | 0 \rangle \rvert^2\) to an additive
+    precision `epsilon`, with a failure probability of at most `alpha`. It uses the Grover
+    operator \(Q = A S_0 A^\dagger S_{\psi_1}\), built from the oracle \(A\) that you
+    provide.
 
     The oracle can be given in two forms:
 
-    * A **PennyLane callable** `oracle(wires)`, which applies the circuit `A` in
+    * A **PennyLane callable** `oracle(wires)`, which applies the circuit \(A\) in
       place. The last wire (`wires[-1]`) must be the ancilla qubit:
 
       ```python
@@ -97,11 +98,11 @@ class IQAE(BaseQuantumSolver):
 
     Args:
         epsilon: The additive precision to reach, that is, the half-width of the
-            final confidence interval for `a`. It must be in `(0, π/8)`.
+            final confidence interval for \(a\). It must be in \((0, \pi/8)\).
         alpha: The total failure probability. The algorithm applies a Bonferroni
             correction, so the confidence interval of each round is valid at level
-            `alpha / T`, where `T = ceil(log2(π / (8 * epsilon)))` is the maximum
-            number of rounds. It must be in `(0, 1)`.
+            \(\alpha / T\), where \(T = \lceil \log_2(\pi / (8\varepsilon)) \rceil\) is
+            the maximum number of rounds. It must be in \((0, 1)\).
         n_qubits: The total number of qubits, including the ancilla.
         provider: The backend to use: a registered name (`"numpy"`, `"pennylane"`,
             `"qiskit"` and so on), a config instance, or a backend object. The
@@ -120,7 +121,7 @@ class IQAE(BaseQuantumSolver):
             a finite `shots`, and synthetic binomial noise is used otherwise.
             `"provider"` always samples from the backend. `"synthetic"` always uses
             exact expectation values plus seeded binomial noise.
-        min_ratio: The minimum ratio `K_{i+1} / K_i` between the Grover powers of
+        min_ratio: The minimum ratio \(K_{i+1} / K_i\) between the Grover powers of
             consecutive rounds. It must be greater than 1.
         random_state: The seed of the random number generator used for the shot
             noise. An integer gives reproducible results, and `None` uses a
@@ -203,11 +204,11 @@ class IQAE(BaseQuantumSolver):
     _REQUIRED_GATES: frozenset[str] = frozenset({"QubitUnitary", "X", "MCZ", "Z"})
 
     def solve(self, oracle: Callable | CircuitSpec) -> IQAEResult:
-        """Estimate the amplitude `a = |⟨ψ₁|A|0⟩|²`.
+        r"""Estimate the amplitude \(a = \lvert \langle \psi_1 | A | 0 \rangle \rvert^2\).
 
         Args:
             oracle: Either a PennyLane callable `oracle(wires)` that builds the
-                state-preparation circuit `A`, or a
+                state-preparation circuit \(A\), or a
                 [`CircuitSpec`][eigenkit.core.ir.CircuitSpec] produced by
                 [`CircuitBuilder`][eigenkit.core.builder.CircuitBuilder]. In both
                 cases, the last qubit is treated as the ancilla.

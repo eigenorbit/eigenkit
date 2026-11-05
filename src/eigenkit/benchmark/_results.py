@@ -534,15 +534,15 @@ class BenchmarkResult:
         return annotations
 
     def table(self, show_significance: bool = False) -> str:
-        """Return the results as a text table.
+        r"""Return the results as a text table.
 
         The table is drawn with Unicode box-drawing characters and needs no optional
         dependency.
 
         Args:
             show_significance: If `True`, mark the best model with `*` or `**` when a
-                Wilcoxon signed-rank test against another model gives `p < 0.05` or
-                `p < 0.01`. The test needs at least `6` seeds shared by both models, so
+                Wilcoxon signed-rank test against another model gives \(p < 0.05\) or
+                \(p < 0.01\). The test needs at least `6` seeds shared by both models, so
                 with fewer seeds no model is marked, and a warning explains why.
                 The test needs pandas, from the `benchmark` extra.
 

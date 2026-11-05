@@ -98,7 +98,7 @@ circuit = Circuit(
 circuit(np.zeros(circuit.spec.n_weights), np.array([0.3, -0.2]))
 ```
 
-Gradients use the analytic **adjoint** method, which is exact and costs `O(1)` in the
+Gradients use the analytic **adjoint** method, which is exact and costs \(O(1)\) in the
 number of parameters on statevector simulators. The simulator takes the simple speed
 gains that NumPy allows. A batch of inputs evolves in one vectorised sweep, with a
 leading batch axis on the state tensor, which is about `30×` faster than a loop over
@@ -294,7 +294,7 @@ compiled C++ core, where the NumPy reference is written in Python and NumPy. It 
 **native adjoint gradient** (`ParametricQuantumCircuit.backprop`), so it declares
 `gradient_method="adjoint"`, like the NumPy reference simulator. One `backprop` sweep
 per observable gives the gradient of every gate angle in reverse mode, at a cost of
-`O(1)` in the number of parameters. These gradients are mapped onto the weights and
+\(O(1)\) in the number of parameters. These gradients are mapped onto the weights and
 the inputs with the chain factors of the intermediate representation, so
 `Reuploading(trainable_scale=True)` and other angles with `Scale` or `Multiply` are
 differentiated correctly. The forward values, the gradients,
@@ -303,7 +303,8 @@ writing of `statevector` all agree with the NumPy reference to machine precision
 
 The full set of gates is supported. Gates for which qulacs has no parametric
 primitive are decomposed onto parametric rotations, so that they stay differentiable:
-`PhaseShift` becomes `RZ`, `CRY` becomes `RY·CX·RY·CX`, and `CPHASE` becomes three
+`PhaseShift` becomes `RZ`, `CRY` becomes
+\(\mathrm{RY}\, \mathrm{CX}\, \mathrm{RY}\, \mathrm{CX}\), and `CPHASE` becomes three
 `RZ` and `CX` gates. `adjoint(AmplitudeEncoding)` is not supported, as with Qiskit,
 because a state preparation cannot be inverted as a gate. Install it with
 `pip install eigenkit[qulacs]`.

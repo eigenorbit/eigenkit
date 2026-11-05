@@ -1,4 +1,4 @@
-"""Functions and classes that make observables easy to write.
+r"""Functions and classes that make observables easy to write.
 
 There are three ways to choose what a circuit measures:
 
@@ -16,8 +16,8 @@ observable = Observable.z(0)
 `PauliExpr` is a simple builder. It collects terms, each made of a coefficient
 and a tensor product of Pauli operators, and it converts them to an `Observable`
 when needed. A product of two operators on the same qubit is simplified when the
-two operators are equal (`P * P = I`). A product of different Pauli operators on
-the same qubit (`X * Y = iZ` and so on) needs complex arithmetic and is not
+two operators are equal (\(P \cdot P = I\)). A product of different Pauli operators
+on the same qubit (\(X \cdot Y = iZ\) and so on) needs complex arithmetic and is not
 supported.
 """
 
@@ -171,13 +171,13 @@ class PauliExpr:
         return sum(term.coeff for term in self._terms if not term.paulis)
 
     def to_observable(self) -> Observable:
-        """Convert the expression to an `Observable`.
+        r"""Convert the expression to an `Observable`.
 
         The terms with the same Pauli string are combined, and the terms whose
         coefficient is `0` (at most `1e-15` in magnitude) are dropped.
 
         An `Observable` holds only Pauli terms, so a non-zero identity term raises
-        an error. Such a term comes from a scalar offset, or from `P * P = I`.
+        an error. Such a term comes from a scalar offset, or from \(P \cdot P = I\).
         Dropping it without an error would shift every expectation value. To
         measure such an expression, measure `expr - expr.constant` and add
         `expr.constant` to the result. The chemistry entry points take this

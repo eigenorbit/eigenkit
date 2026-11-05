@@ -132,7 +132,7 @@ class _ReservoirMixin:
 
 @register_estimator
 class QuantumReservoirRegressor(_ReservoirMixin, BaseQuantumRegressor):
-    """Quantum reservoir regressor: a fixed random reservoir and a ridge readout.
+    r"""Quantum reservoir regressor: a fixed random reservoir and a ridge readout.
 
     Args:
         blocks: The architecture of the reservoir circuit, a list of blocks that
@@ -142,12 +142,13 @@ class QuantumReservoirRegressor(_ReservoirMixin, BaseQuantumRegressor):
             timestep.
         state_policy: `"carry"` (the unitary of the circuit carries the state
             from one step to the next), `"stateless"` (each step starts from
-            `|0…0⟩` and encodes a sliding window of inputs), or `"leaky"` (the
-            carried state is mixed with a reset state and renormalised).
+            \(|0 \cdots 0\rangle\) and encodes a sliding window of inputs), or
+            `"leaky"` (the carried state is mixed with a reset state and
+            renormalised).
         window: The length of the sliding window, for `state_policy="stateless"`.
         leak: The mixing coefficient `alpha`, for `state_policy="leaky"`.
         features: The features read from the reservoir. It is `"z"` (the value
-            of `⟨Z⟩` on each qubit, the default), `"probabilities"`,
+            of \(\langle Z \rangle\) on each qubit, the default), `"probabilities"`,
             `"amplitudes"`, a Pauli or Hamiltonian string (for example
             `"0.5 Z0 X1 - 0.3 Y0"`), or a list of such strings, to read out any
             observables.
@@ -234,7 +235,7 @@ class QuantumReservoirRegressor(_ReservoirMixin, BaseQuantumRegressor):
         return preds.reshape(B, T) if preds.ndim == 1 else preds.reshape(B, T, -1)
 
     def score(self, X: np.ndarray, y: np.ndarray) -> float:
-        """Score the estimator on `X` against `y`.
+        r"""Score the estimator on `X` against `y`.
 
         Args:
             X (np.ndarray): The sequences, of shape
@@ -243,7 +244,7 @@ class QuantumReservoirRegressor(_ReservoirMixin, BaseQuantumRegressor):
                 `(n_sequences, n_timesteps)`.
 
         Returns:
-            The coefficient of determination `R²` of the predictions, over every
+            The coefficient of determination \(R^2\) of the predictions, over every
                 timestep of every sequence.
         """
         from sklearn.metrics import r2_score
@@ -278,7 +279,7 @@ class QuantumReservoirRegressor(_ReservoirMixin, BaseQuantumRegressor):
 
 @register_estimator
 class QuantumReservoirClassifier(_ReservoirMixin, BaseQuantumClassifier):
-    """Quantum reservoir classifier: a fixed random reservoir and a logistic readout.
+    r"""Quantum reservoir classifier: a fixed random reservoir and a logistic readout.
 
     It uses the same reservoir as
     [`QuantumReservoirRegressor`][eigenkit.qml.qrc.QuantumReservoirRegressor].
@@ -294,12 +295,13 @@ class QuantumReservoirClassifier(_ReservoirMixin, BaseQuantumClassifier):
             timestep.
         state_policy: `"carry"` (the unitary of the circuit carries the state
             from one step to the next), `"stateless"` (each step starts from
-            `|0…0⟩` and encodes a sliding window of inputs), or `"leaky"` (the
-            carried state is mixed with a reset state and renormalised).
+            \(|0 \cdots 0\rangle\) and encodes a sliding window of inputs), or
+            `"leaky"` (the carried state is mixed with a reset state and
+            renormalised).
         window: The length of the sliding window, for `state_policy="stateless"`.
         leak: The mixing coefficient `alpha`, for `state_policy="leaky"`.
         features: The features read from the reservoir. It is `"z"` (the value
-            of `⟨Z⟩` on each qubit, the default), `"probabilities"`,
+            of \(\langle Z \rangle\) on each qubit, the default), `"probabilities"`,
             `"amplitudes"`, a Pauli or Hamiltonian string (for example
             `"0.5 Z0 X1 - 0.3 Y0"`), or a list of such strings, to read out any
             observables.

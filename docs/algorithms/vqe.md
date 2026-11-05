@@ -4,7 +4,7 @@
 
 Chemistry asks for the lowest energy that a molecule can have, which is the energy of
 its ground state. This energy is the smallest eigenvalue of a Hamiltonian. The matrix
-of this Hamiltonian grows as `2ⁿ` with the number `n` of spin-orbitals, so exact
+of this Hamiltonian grows as \(2^n\) with the number \(n\) of spin-orbitals, so exact
 diagonalisation runs out of memory quickly.
 
 The Variational Quantum Eigensolver (VQE) replaces this diagonalisation with a search.
@@ -41,7 +41,8 @@ print(exact_ground_state_energy(observable, 4, offset=offset))  # -1.236068
 
 `offset` is the constant term. The Pauli backends reject a term that holds only the
 identity, so the mapping returns the constant separately, and the solver adds it to
-`⟨H⟩` at the end. If you forget to pass it, every energy is wrong by this amount.
+\(\langle H \rangle\) at the end. If you forget to pass it, every energy is wrong by this
+amount.
 
 ## How it works
 
@@ -56,22 +57,23 @@ annihilation operators, which follow this rule.
 Qubits do not antisymmetrise on their own, so the mapping must impose this rule.
 **Jordan-Wigner** does it with a string of `Z` operators:
 
-```text
-a_j  = (Π_{k<j} Z_k) (X_j + iY_j)/2
-a_j† = (Π_{k<j} Z_k) (X_j - iY_j)/2
-```
+\[
+a_j = \Big(\prod_{k<j} Z_k\Big)\,\frac{X_j + i Y_j}{2}
+\qquad
+a_j^\dagger = \Big(\prod_{k<j} Z_k\Big)\,\frac{X_j - i Y_j}{2}
+\]
 
-There is one qubit per spin-orbital, and `|1⟩` means that the spin-orbital is
-occupied, so the number operator becomes `(I - Z_j)/2`. The parity string
-`Π_{k<j} Z_k` is what gives the change of sign, and it is also the cost: an operator
-that acts on orbital `j` touches every qubit below it, so the Pauli strings become
-long in large molecules.
+There is one qubit per spin-orbital, and \(|1\rangle\) means that the spin-orbital is
+occupied, so the number operator becomes \((I - Z_j)/2\). The parity string
+\(\prod_{k<j} Z_k\) is what gives the change of sign, and it is also the cost: an
+operator that acts on orbital \(j\) touches every qubit below it, so the Pauli strings
+become long in large molecules.
 
 **Bravyi-Kitaev** ([Bravyi and Kitaev](https://arxiv.org/abs/quant-ph/0003137),
 applied to electronic structure by
 [Seeley, Richard and Love](https://arxiv.org/abs/1208.5986)) stores the occupations
 and the parities in a balanced tree instead, which shortens these strings to
-`O(log n)`. In this library, `jordan_wigner` is written in the library itself, while
+\(O(\log n)\). In this library, `jordan_wigner` is written in the library itself, while
 `bravyi_kitaev` calls OpenFermion, and therefore needs the `chemistry` extra.
 
 ### Step 3: choose an ansatz
@@ -100,9 +102,9 @@ hardware-efficient circuit, and much cheaper to optimise.
 ### Step 4: optimise
 
 The loop is the variational loop of the library, which uses NumPy: it evaluates
-`⟨H⟩`, takes the gradient with the backend's own method, lets SciPy take a step, and
-repeats. `restarts` runs the loop from several random starting points and keeps the
-best result. This is how the solver avoids stopping at the nearest local minimum
+\(\langle H \rangle\), takes the gradient with the backend's own method, lets SciPy take a
+step, and repeats. `restarts` runs the loop from several random starting points and keeps
+the best result. This is how the solver avoids stopping at the nearest local minimum
 instead of the global one.
 
 ## Guarantees and limits

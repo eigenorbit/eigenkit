@@ -13,16 +13,17 @@ import numpy as np
 
 
 class LinearReadout:
-    """Ridge regression in closed form, with a bias term.
+    r"""Ridge regression in closed form, with a bias term.
 
-    It solves `W = (XᵀX + λI)⁻¹ XᵀY`, and the bias column is not regularised. `Y`
-    can have one output or several. `ridge` is the strength `λ` of the L2 penalty,
-    which adds `λ‖W‖²` to the squared error of the fit. A small positive value
+    It solves \(W = (X^\top X + \lambda I)^{-1} X^\top Y\), and the bias column is not
+    regularised. \(Y\) can have one output or several. `ridge` is the strength
+    \(\lambda\) of the L2 penalty, which adds \(\lambda \lVert W \rVert^2\) to the
+    squared error of the fit. A small positive value
     also keeps the solution numerically stable when the reservoir features are
     collinear.
 
     Args:
-        ridge: The strength `λ` of the L2 penalty. Raise it when the readout
+        ridge: The strength \(\lambda\) of the L2 penalty. Raise it when the readout
             overfits or the feature matrix is nearly singular, and lower it when the
             readout underfits. The default is `1e-06`.
     """

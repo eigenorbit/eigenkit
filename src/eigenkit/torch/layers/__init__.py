@@ -1,8 +1,8 @@
-"""Quantum layers for the standard patterns.
+r"""Quantum layers for the standard patterns.
 
 - `Basic`: one `Encoding`, one `Variational` block and a measurement.
 - `Reupload`: standard data reuploading, optionally with a trainable scale.
-- `Ensemble`: `N` independent circuits, one for each chunk of the input.
+- `Ensemble`: \(N\) independent circuits, one for each chunk of the input.
 - `OrthogonalQNN`: a unary loader, an orthogonal network of RBS gates, and the
   probability of each wire.
 - `MinMaxNorm`: min-max normalisation of each feature, in the style of

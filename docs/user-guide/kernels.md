@@ -30,7 +30,7 @@ K_test = qk.compute_kernel_matrix(X_test, X_train)  # (20, 50)
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `n_features` | `int` | Required | The number of features. For the built-in maps, it is also the number of qubits. |
-| `feature_map` | `str`, `CircuitSpec`, `CircuitBuilder`, a block or blocks, or a callable | `"AngleCNOT"` | `"Angle"`, `"AngleCNOT"`, or a custom forward map `U(x; w)`. See [Custom feature maps](#custom-feature-maps). |
+| `feature_map` | `str`, `CircuitSpec`, `CircuitBuilder`, a block or blocks, or a callable | `"AngleCNOT"` | `"Angle"`, `"AngleCNOT"`, or a custom forward map \(U(x; w)\). See [Custom feature maps](#custom-feature-maps). |
 | `reps` | `int` | `2` | The number of repetitions of a built-in map. It is ignored for a custom map. |
 | `provider` | `ProviderSpec` | `"numpy"` | The backend, with the same options as `Circuit(provider=...)`. |
 | `weights` | array | `None` | The trainable weights of the feature map. `None` means zeros. |
@@ -51,12 +51,12 @@ K_test = qk.compute_kernel_matrix(X_test, X_train)  # (20, 50)
 `feature_map="AngleCNOT"`.
 
 `"Angle"` prepares a product state, so its kernel factorises into
-`prod_q cos^2((x_q - x'_q) / 2)`, which is a classical kernel. Use an entangling map
+\(\prod_q \cos^2((x_q - x'_q) / 2)\), which is a classical kernel. Use an entangling map
 when you want a kernel that a classical computer cannot write down in one line.
 
 ### Custom feature maps
 
-Pass the forward map `U(x; w)` itself. The inversion circuit is derived with
+Pass the forward map \(U(x; w)\) itself. The inversion circuit is derived with
 `adjoint()`, and the two halves share the weights:
 
 ```python
@@ -82,7 +82,7 @@ qk.draw_mpl(style="eigen")
 `CircuitBuilder`, a block such as `Encoding(3, rotation="RX")`, or a list of blocks.
 The map must read exactly `n_features` inputs.
 
-The circuits are public. `qk.feature_map_circuit` is the forward map `U(x; w)`,
+The circuits are public. `qk.feature_map_circuit` is the forward map \(U(x; w)\),
 `qk.circuit` is the inversion circuit that shot-based backends run, and
 `qk.kernel_spec` is the `CircuitSpec` of the inversion circuit.
 `qk.draw_mpl(inversion=True)` draws the circuit that a quantum processing unit (QPU)
@@ -147,26 +147,26 @@ wide and expressive maps suffer from. `QSVC(scale=...)` exposes the same setting
 
 ## How the kernel value is computed
 
-For two inputs `x_i` and `x_j`, the kernel value is the fidelity of the two state
+For two inputs \(x_i\) and \(x_j\), the kernel value is the fidelity of the two state
 preparations:
 
-```text
-K[i, j] = |<0...0| U^dag(x_j) U(x_i) |0...0>|^2
-```
+\[
+K_{ij} = \lvert \langle 0 \cdots 0 | U^\dagger(x_j)\, U(x_i) | 0 \cdots 0 \rangle \rvert^2
+\]
 
 How this value is obtained depends on the backend, and the two ways differ in cost:
 
 - **Backends that expose a statevector** (NumPy, PennyLane in analytic mode, Qiskit,
   Qiskit Aer, Qulacs, qsim). The whole Gram matrix comes from one batched state
-  evolution and a single matrix product. This takes `O(N)` state evolutions, and no
+  evolution and a single matrix product. This takes \(O(N)\) state evolutions, and no
   inversion circuit is involved. The kernel tries this way on first use, and keeps
   it when it works.
 - **Shot-based and QPU backends** (Qiskit Runtime, IQM, Braket, PennyLane with
-  shots). The kernel uses the inversion circuit: it applies `U(x_i)`, then the adjoint
-  of `U(x_j)`, and reads the probability of the all-zeros state. On Qiskit Runtime
+  shots). The kernel uses the inversion circuit: it applies \(U(x_i)\), then the adjoint
+  of \(U(x_j)\), and reads the probability of the all-zeros state. On Qiskit Runtime
   and IQM, all the pairs go into one batched call, which is a single job. The other
   backends evaluate the pairs in smaller calls. A Gram matrix measures only the
-  `N(N-1)/2` pairs above its diagonal.
+  \(N(N-1)/2\) pairs above its diagonal.
 
 A Gram matrix with shot noise can have small negative eigenvalues.
 `QuantumKernel(psd_projection=True)` clips them, and `project_psd(K)` from

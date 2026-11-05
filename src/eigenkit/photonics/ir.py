@@ -50,9 +50,9 @@ def _coerce(obj, *fields) -> None:
 
 @dataclass(frozen=True)
 class PhaseShifter:
-    """A phase shift `exp(i·phi·n̂)` on a single mode.
+    r"""A phase shift \(\exp(i \cdot \mathrm{phi} \cdot \hat{n})\) on a single mode.
 
-    `n̂` is the photon-number operator of the mode. `phi` is a `Parameter`
+    \(\hat{n}\) is the photon-number operator of the mode. `phi` is a `Parameter`
     expression or a plain number, and a plain number is stored as a `Constant`.
     """
 
@@ -65,11 +65,12 @@ class PhaseShifter:
 
 @dataclass(frozen=True)
 class BeamSplitter:
-    """A beam splitter on two modes.
+    r"""A beam splitter on two modes.
 
     `modes` are two adjacent modes `(m, m + 1)`, because Perceval can place a beam
     splitter only on adjacent modes. `theta` sets the reflectivity, with the
-    Perceval convention `R = cos²(theta/2)`, so `theta = π/2` gives a balanced
+    Perceval convention \(R = \cos^2(\mathrm{theta}/2)\), so \(\mathrm{theta} = \pi/2\)
+    gives a balanced
     50:50 beam splitter. `phi` is a relative phase. Each angle is a `Parameter`
     expression or a plain number, and a plain number is stored as a `Constant`.
     The exact unitary is set by the executor, which maps the component to Perceval's
@@ -180,16 +181,17 @@ class PhotonicCircuitSpec:
 
 @dataclass(frozen=True)
 class PhotonNumber:
-    """The expected number of photons in a mode: `<O> = <n̂_mode>`."""
+    r"""The expected number of photons in a mode:
+    \(\langle O \rangle = \langle \hat{n}_{\mathrm{mode}} \rangle\)."""
 
     mode: int
 
 
 @dataclass(frozen=True)
 class FockProbability:
-    """The probability of detecting exactly the output Fock state `target`.
+    r"""The probability of detecting exactly the output Fock state `target`.
 
-    In formula form, `<O> = P(target)`.
+    In formula form, \(\langle O \rangle = P(\mathrm{target})\).
     """
 
     target: tuple[int, ...]

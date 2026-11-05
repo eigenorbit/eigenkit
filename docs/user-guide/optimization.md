@@ -49,9 +49,9 @@ always come in pairs. Compare energies, not bitstrings.
 
 ## Stating the problem
 
-`QUBO` minimises `xᵀQx + constant` over `x ∈ {0,1}ⁿ`. `energy` gives the cost of any
-candidate. This is the quickest way to check a formulation before you spend time on
-a solve:
+`QUBO` minimises \(x^\top Q x + \mathrm{constant}\) over \(x \in \{0, 1\}^n\). `energy`
+gives the cost of any candidate. This is the quickest way to check a formulation
+before you spend time on a solve:
 
 ```python
 import numpy as np
@@ -68,7 +68,8 @@ print(QAOA(layers=2, random_state=0).solve(qubo).best_bitstring)  # (1, 1)
 ```
 
 `Ising` is the same problem in spin variables. It minimises
-`Σᵢhᵢsᵢ + Σᵢ<ⱼJᵢⱼsᵢsⱼ + constant` over `s ∈ {−1,+1}ⁿ`. The two forms are
+\(\sum_i h_i s_i + \sum_{i<j} J_{ij} s_i s_j + \mathrm{constant}\) over
+\(s \in \{-1, +1\}^n\). The two forms are
 equivalent, and `QUBO.to_ising()` converts a `QUBO` to an `Ising` model:
 
 ```python
@@ -100,7 +101,7 @@ the graph has isolated nodes that the list of edges never mentions.
 | `best_bitstring` | The best assignment found, as a tuple of `0` and `1` values. |
 | `best_energy` | Its exact classical cost. This is the answer you would act on. |
 | `expectation` | The mean cost over the whole distribution. This is the quantity that QAOA minimises. |
-| `probabilities` | The whole distribution over all `2**n` bitstrings. |
+| `probabilities` | The whole distribution over all \(2^n\) bitstrings. |
 | `optimal_parameters` | The optimised angles. There are `2 * layers` of them. |
 | `n_iterations` | The number of steps of the optimiser. |
 | `success` | Whether the optimiser reported convergence. |
@@ -122,20 +123,20 @@ distribution, and it is the quantity that QAOA actually minimises. The differenc
 between them comes from the circuit not putting all its amplitude on one solution.
 More `layers` make it smaller.
 
-`probabilities` is the whole distribution over all `2ⁿ` bitstrings, so you can also
+`probabilities` is the whole distribution over all \(2^n\) bitstrings, so you can also
 look at the solutions that come after the best one. To choose `best_bitstring`,
 `solve` scores the most probable bitstrings with the `energy` of the problem. By
 default, it scores the `64` most probable ones, or all of them when there are fewer.
 Pass `top_k=` to `solve` to change how many bitstrings are scored, which matters once
-`n` is large.
+\(n\) is large.
 
 ## The circuit behind it
 
 `QAOA` builds the cost Hamiltonian and the ansatz itself, but you can also get both
 separately, to inspect or reuse them. `to_hamiltonian()` turns a problem into the
 pair `(Observable, offset)`, with the same convention as the chemistry mappings.
-`qaoa_ansatz` builds the standard circuit: `|+⟩ⁿ`, followed by `layers` repetitions
-of the cost unitary and the mixer.
+`qaoa_ansatz` builds the standard circuit: \(|+\rangle^{\otimes n}\), followed by `layers`
+repetitions of the cost unitary and the mixer.
 
 ```python
 from eigenkit import Circuit

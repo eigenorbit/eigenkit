@@ -1,12 +1,13 @@
-"""Combinatorial problems as Ising and QUBO models, and their qubit Hamiltonians.
+r"""Combinatorial problems as Ising and QUBO models, and their qubit Hamiltonians.
 
 QUBO means quadratic unconstrained binary optimisation. The mapping convention is
-that the spin `s_i = +1` is the qubit state `|0⟩` and `s_i = -1` is `|1⟩`, which
-are the eigenvalues of `Z`. So a bitstring `b`, with qubit values `b_i ∈ {0, 1}`,
-corresponds to `s_i = 1 - 2 b_i`. `to_hamiltonian()` returns the pair
+that the spin \(s_i = +1\) is the qubit state \(|0\rangle\) and \(s_i = -1\) is
+\(|1\rangle\), which are the eigenvalues of \(Z\). So a bitstring \(b\), with qubit
+values \(b_i \in \{0, 1\}\), corresponds to \(s_i = 1 - 2 b_i\). `to_hamiltonian()`
+returns the pair
 `(Observable, offset)`. The Pauli sum holds only the `Z` and `ZZ` terms, and the
 constant is kept apart, because the Pauli backends reject terms made only of the
-identity. The solver adds `offset` back to `⟨H⟩`.
+identity. The solver adds `offset` back to \(\langle H \rangle\).
 """
 
 from __future__ import annotations
@@ -38,10 +39,11 @@ def _brute_force(energy, n: int) -> tuple[tuple[int, ...], float]:
 
 @dataclass
 class Ising:
-    """An Ising problem, which minimises `Σ h_i s_i + Σ_{i<j} J_ij s_i s_j + constant`.
+    r"""An Ising problem, which minimises
+    \(\sum_i h_i s_i + \sum_{i<j} J_{ij} s_i s_j + \mathrm{constant}\).
 
-    The minimum is taken over `s ∈ {+1, -1}^n`. Only the strict upper triangle of `J`
-    (`i < j`) is used.
+    The minimum is taken over \(s \in \{+1, -1\}^n\). Only the strict upper triangle of
+    `J` (\(i < j\)) is used.
 
     Attributes:
         h: The linear field, of shape `(n,)`, with one bias per spin.
@@ -63,9 +65,9 @@ class Ising:
         return len(self.h)
 
     def to_hamiltonian(self) -> tuple[Observable, float]:
-        """Return the qubit Hamiltonian of the problem, with the constant kept apart.
+        r"""Return the qubit Hamiltonian of the problem, with the constant kept apart.
 
-        The Hamiltonian is `Σ h_i Z_i + Σ_{i<j} J_ij Z_i Z_j`.
+        The Hamiltonian is \(\sum_i h_i Z_i + \sum_{i<j} J_{ij} Z_i Z_j\).
 
         Returns:
             observable: The Hamiltonian, as an `Observable`.
@@ -90,10 +92,10 @@ class Ising:
         return Observable(terms=tuple(terms)), float(self.constant)
 
     def energy(self, bits: Iterable[int]) -> float:
-        """Return the energy of one assignment.
+        r"""Return the energy of one assignment.
 
-        The bits are converted to spins with `s = 1 - 2b`, so a `0` is the spin `+1` and
-        a `1` is the spin `-1`.
+        The bits are converted to spins with \(s = 1 - 2b\), so a `0` is the spin `+1`
+        and a `1` is the spin `-1`.
 
         Args:
             bits (Iterable[int]): One bit per variable, in the order of the variables.
@@ -112,9 +114,9 @@ class Ising:
         return float(self.h @ s) + coupling + self.constant
 
     def brute_force(self) -> tuple[tuple[int, ...], float]:
-        """Find the exact minimum by trying every assignment.
+        r"""Find the exact minimum by trying every assignment.
 
-        This is practical only for a small `n`.
+        This is practical only for a small \(n\).
 
         Returns:
             bitstring: The assignment with the lowest energy.
@@ -125,13 +127,13 @@ class Ising:
 
 @dataclass
 class QUBO:
-    """A quadratic unconstrained binary optimisation (QUBO) problem.
+    r"""A quadratic unconstrained binary optimisation (QUBO) problem.
 
-    It minimises `xᵀQx + constant` over `x ∈ {0, 1}^n`.
+    It minimises \(x^\top Q x + \mathrm{constant}\) over \(x \in \{0, 1\}^n\).
 
     Attributes:
         Q: The cost matrix, of shape `(n, n)`. The diagonal entries are the linear
-            terms, because `x_i² = x_i` for binary variables.
+            terms, because \(x_i^2 = x_i\) for binary variables.
         constant: An energy offset added to every configuration. Default: `0.0`.
     """
 
@@ -144,7 +146,7 @@ class QUBO:
         return self.Q.shape[0]
 
     def to_ising(self) -> Ising:
-        """Convert the problem exactly to an `Ising` model, with `x_i = (1 - s_i) / 2`.
+        r"""Convert the problem exactly to an `Ising` model, with \(x_i = (1 - s_i) / 2\).
 
         Returns:
             The equivalent `Ising` model.
@@ -183,9 +185,9 @@ class QUBO:
         return float(x @ self.Q @ x) + self.constant
 
     def brute_force(self) -> tuple[tuple[int, ...], float]:
-        """Find the exact minimum by trying every assignment.
+        r"""Find the exact minimum by trying every assignment.
 
-        This is practical only for a small `n`.
+        This is practical only for a small \(n\).
 
         Returns:
             bitstring: The assignment with the lowest energy.

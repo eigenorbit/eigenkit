@@ -19,7 +19,7 @@ classical baselines.
 ## The shared pipeline
 
 The base estimators use the same structure: an optional linear adapter, a
-`MinMaxNorm` layer that rescales the inputs into `[0, π]`, the quantum layer, a cast
+`MinMaxNorm` layer that rescales the inputs into \([0, \pi]\), the quantum layer, a cast
 to float32, and a linear head. The quantum layer encodes the data as rotation
 angles, runs a variational circuit, and measures one Pauli expectation value per
 qubit. The training is the usual PyTorch loop, with one optimiser that updates the

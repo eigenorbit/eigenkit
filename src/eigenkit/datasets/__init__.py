@@ -57,7 +57,7 @@ def load_dataset(
     random_state: int | None = 42,
     cache_dir: str | None = None,
 ) -> dict:
-    """Load a dataset by name.
+    r"""Load a dataset by name.
 
     Args:
         name: The name of the dataset in `REGISTRY`, for example `"iris"`.
@@ -85,7 +85,7 @@ def load_dataset(
 
     Raises:
         ValueError: If `name` is not in the registry, if `validation_size` is not in
-            `[0, 1)`, or if `test_size + validation_size` is `1` or more with
+            \([0, 1)\), or if `test_size + validation_size` is `1` or more with
             `split=True`.
 
     Example:

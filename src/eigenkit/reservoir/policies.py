@@ -10,9 +10,9 @@ Two execution shapes, because they are genuinely different computations:
   [`LeakyCarry`][eigenkit.reservoir.policies.LeakyCarry]).
 - **Parallel (a map over time).** The quantum state carries nothing between steps — each
   step's input is a pure function of the raw input sequence (e.g. a sliding window).
-  These policies expose ``expand_inputs(sequences)`` and the driver runs all ``B·T``
-  evaluations in **one batched sweep** instead of a Python timestep loop
-  ([`Stateless`][eigenkit.reservoir.policies.Stateless]).
+  These policies expose ``expand_inputs(sequences)`` and the driver runs all
+  \(B \cdot T\) evaluations in **one batched sweep** instead of a Python timestep
+  loop ([`Stateless`][eigenkit.reservoir.policies.Stateless]).
 
 The driver prefers ``expand_inputs`` when a policy has it (idiomatic optional
 method, like the backends' ``statevector`` / ``probabilities``).
@@ -28,15 +28,16 @@ import numpy as np
 
 @dataclass
 class ReservoirState:
-    """The state that sequential policies carry from one timestep to the next.
+    r"""The state that sequential policies carry from one timestep to the next.
 
     `vector` is the `(B, 2**n)` statevector to inject at the next step, and `None`
-    means that the step starts from `|0…0⟩`. `history` holds the recent raw inputs,
-    of shape `(B, k, F)`, for a sequential policy that encodes a window of inputs.
+    means that the step starts from \(|0 \cdots 0\rangle\). `history` holds the recent
+    raw inputs, of shape `(B, k, F)`, for a sequential policy that encodes a window of
+    inputs.
 
     Attributes:
         vector: The statevector to inject at the next step, of shape `(B, 2**n)`.
-            `None` means that the step starts from `|0…0⟩`.
+            `None` means that the step starts from \(|0 \cdots 0\rangle\).
         history: The last `k` raw inputs, of shape `(B, k, F)`, for a policy that
             encodes a window of them. It is `None` when the policy keeps no history.
     """
@@ -69,7 +70,7 @@ class ReservoirPolicy(Protocol):
     def inject(
         self, x_t: np.ndarray, state: ReservoirState
     ) -> tuple[np.ndarray | None, np.ndarray]:
-        """Turn the input of this timestep into the arguments of the circuit call.
+        r"""Turn the input of this timestep into the arguments of the circuit call.
 
         Args:
             x_t (np.ndarray): The input of this timestep, of shape `(B, F)`.
@@ -77,7 +78,7 @@ class ReservoirPolicy(Protocol):
 
         Returns:
             initial_state: The state to evaluate the circuit from, or `None` to start
-                from `|0…0⟩`.
+                from \(|0 \cdots 0\rangle\).
             gate_inputs: The values to pass to the gates of the circuit.
         """
         ...
@@ -100,11 +101,11 @@ class ReservoirPolicy(Protocol):
 
 @dataclass
 class Stateless:
-    """Parallel policy that carries no state.
+    r"""Parallel policy that carries no state.
 
-    Every step starts from `|0…0⟩`, and the last `window` inputs are encoded as
-    rotation angles of the circuit's gates. The memory is purely classical (the
-    window), and the quantum state carries nothing from one step to the next.
+    Every step starts from \(|0 \cdots 0\rangle\), and the last `window` inputs are
+    encoded as rotation angles of the circuit's gates. The memory is purely classical
+    (the window), and the quantum state carries nothing from one step to the next.
     Every timestep is therefore independent, and the driver evaluates all of them
     in one batched run. With `window=1`, the policy has no memory: it encodes only
     the current input.
@@ -150,10 +151,11 @@ class Stateless:
 
 @dataclass
 class Carry:
-    """Policy that applies the circuit to the carried state: `ψ_t = U(x_t) ψ_{t-1}`.
+    r"""Policy that applies the circuit to the carried state:
+    \(\psi_t = U(x_t)\, \psi_{t-1}\).
 
     The quantum state is the memory of the reservoir, and the first step starts
-    from `|0…0⟩`. This policy is equivalent to `LeakyCarry(alpha=1.0)`.
+    from \(|0 \cdots 0\rangle\). This policy is equivalent to `LeakyCarry(alpha=1.0)`.
     """
 
     def initial(self, batch: int) -> ReservoirState:
@@ -170,7 +172,7 @@ class Carry:
     def inject(
         self, x_t: np.ndarray, state: ReservoirState
     ) -> tuple[np.ndarray | None, np.ndarray]:
-        """Turn the input of this timestep into the arguments of the circuit call.
+        r"""Turn the input of this timestep into the arguments of the circuit call.
 
         Args:
             x_t (np.ndarray): The input of this timestep, of shape `(B, F)`.
@@ -178,7 +180,7 @@ class Carry:
 
         Returns:
             initial_state: The state to evaluate the circuit from, or `None` to start
-                from `|0…0⟩`.
+                from \(|0 \cdots 0\rangle\).
             gate_inputs: The values to pass to the gates of the circuit.
         """
         return state.vector, x_t
@@ -201,22 +203,26 @@ class Carry:
 
 @dataclass
 class LeakyCarry:
-    """Policy that mixes the carried state with a reset state and renormalises it.
+    r"""Policy that mixes the carried state with a reset state and renormalises it.
 
     It approximates a leaky, dissipative reservoir with pure states:
-    `ψ_t = normalise(α U(x_t) ψ_{t-1} + (1 − α) reset)`.
 
-    `reset` defaults to `|0…0⟩` and should be a normalised statevector; this is not
-    checked. With `alpha=1`, the policy is exactly
+    \[
+    \psi_t = \mathrm{normalise}\big(\alpha\, U(x_t)\, \psi_{t-1}
+    + (1 - \alpha)\, \mathrm{reset}\big).
+    \]
+
+    `reset` defaults to \(|0 \cdots 0\rangle\) and should be a normalised statevector;
+    this is not checked. With `alpha=1`, the policy is exactly
     [`Carry`][eigenkit.reservoir.policies.Carry]. This is not a true dissipative
     channel, which would need density matrices that the pure-state backends do not
     provide. It is an approximation that uses pure states only.
 
     Attributes:
-        alpha: The mixing weight of the carried state, in `[0, 1]`. Lower values
+        alpha: The mixing weight of the carried state, in \([0, 1]\). Lower values
             forget faster, and `1` keeps everything, which is exactly `Carry`.
         reset: The state that is mixed in, a normalised statevector. `None` means
-            `|0…0⟩`. The default is `None`.
+            \(|0 \cdots 0\rangle\). The default is `None`.
     """
 
     alpha: float
@@ -240,7 +246,7 @@ class LeakyCarry:
     def inject(
         self, x_t: np.ndarray, state: ReservoirState
     ) -> tuple[np.ndarray | None, np.ndarray]:
-        """Turn the input of this timestep into the arguments of the circuit call.
+        r"""Turn the input of this timestep into the arguments of the circuit call.
 
         Args:
             x_t (np.ndarray): The input of this timestep, of shape `(B, F)`.
@@ -248,7 +254,7 @@ class LeakyCarry:
 
         Returns:
             initial_state: The state to evaluate the circuit from, or `None` to start
-                from `|0…0⟩`.
+                from \(|0 \cdots 0\rangle\).
             gate_inputs: The values to pass to the gates of the circuit.
         """
         return state.vector, x_t

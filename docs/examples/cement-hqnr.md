@@ -156,7 +156,7 @@ with matplotlib.rc_context(rc_params(theme="light")):
 ## Takeaway
 
 An HQNR with 8 qubits and `depth=2` explains 65% of the variance of the compressive
-strength on the held-out test set (its coefficient of determination R² is `0.6531`).
+strength on the held-out test set (its coefficient of determination \(R^2\) is `0.6531`).
 Its mean absolute error (MAE) is `7.89` MPa, and its root mean squared error (RMSE)
 is `9.96` MPa, on test values that range from `7.3` to `82.6` MPa. The average error
 is roughly a tenth of that range. The model uses only the composition of the mix and

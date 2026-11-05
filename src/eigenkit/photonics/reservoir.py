@@ -68,7 +68,8 @@ def fock_probability_features(dist: dict, basis: list[tuple[int, ...]]) -> np.nd
 
 
 def photon_number_features(dist: dict, n_modes: int) -> np.ndarray:
-    """Return the expected number of photons `<n̂_m>` in each mode `m`.
+    r"""Return the expected number of photons \(\langle \hat{n}_m \rangle\) in each
+    mode \(m\).
 
     This readout is compact, and easy to measure with detectors.
 
@@ -92,14 +93,14 @@ def random_reservoir_spec(
     input_scale: float = 1.0,
     rng: np.random.Generator | None = None,
 ) -> tuple[PhotonicCircuitSpec, np.ndarray]:
-    """Build a fixed, random photonic reservoir and its frozen weights.
+    r"""Build a fixed, random photonic reservoir and its frozen weights.
 
     A mixing layer comes first, so that the photons are spread over the modes. Then
     the `n_inputs` features are encoded as phases on the modes `0` to
     `n_inputs - 1` (each multiplied by `input_scale`), and `depth` more mixing
     layers follow. A mixing layer is a beam splitter on every pair of neighbouring
     modes, followed by a phase shifter on every mode. All their angles are random
-    weights, drawn uniformly from `[0, 2π)`.
+    weights, drawn uniformly from \([0, 2\pi)\).
 
     Args:
         n_modes (int): The number of optical modes. It must be at least `2`.
@@ -190,7 +191,7 @@ def run_photonic_reservoir(
     policy=None,
     features: str = "fock",
 ) -> np.ndarray:
-    """Run the fixed reservoir over input sequences, and return the features.
+    r"""Run the fixed reservoir over input sequences, and return the features.
 
     The reservoir `spec`, with its frozen `weights`, is evaluated at every timestep
     of `sequences`, of shape `(B, T, F)`. The result is the sequence of features, of
@@ -211,7 +212,7 @@ def run_photonic_reservoir(
         features (str): `"fock"` gives the probabilities of all the states of the
             Fock basis with the input number of photons. This is the default, and
             gives the most features. `"photon_number"` gives the expected number of
-            photons `<n̂_m>` in each mode.
+            photons \(\langle \hat{n}_m \rangle\) in each mode.
 
     Returns:
         The features, of shape `(B, T, n_features)`. `n_features` is the number of

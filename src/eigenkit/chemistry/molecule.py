@@ -1,11 +1,12 @@
-"""Real-molecule Hamiltonians via PySCF + OpenFermion (the ``chemistry`` extra).
+r"""Real-molecule Hamiltonians via PySCF + OpenFermion (the ``chemistry`` extra).
 
 We use OpenFermion + openfermion-pyscf for the *classical* chemistry — molecular
 integrals and the fermionic Hamiltonian — and keep the quantum mapping ours:
 the returned `Molecule.fermion_operator` is our `FermionOperator`, ready for
 `jordan_wigner` (or `bravyi_kitaev`). The constant (nuclear repulsion + core
 energy) is included as the identity term, so `jordan_wigner`'s ``offset`` is the
-full energy shift and ``min<H> + offset`` is the total molecular energy.
+full energy shift and \(\min \langle H \rangle + \mathrm{offset}\) is the total molecular
+energy.
 
 Optional deps are imported lazily; install with
 ``pip install eigenkit[chemistry]``.
@@ -82,7 +83,7 @@ def molecular_hamiltonian(
     multiplicity: int = 1,
     run_fci: bool = False,
 ) -> Molecule:
-    """Build a `Molecule` from a geometry, with PySCF and OpenFermion.
+    r"""Build a `Molecule` from a geometry, with PySCF and OpenFermion.
 
     Args:
         geometry: A list of `(element, (x, y, z))` entries, with the coordinates in
@@ -90,7 +91,7 @@ def molecular_hamiltonian(
         basis: The name of the PySCF basis set. The default is the minimal basis
             set `"sto-3g"`.
         charge: The total charge of the molecule.
-        multiplicity: The spin multiplicity, `2S + 1`.
+        multiplicity: The spin multiplicity, \(2S + 1\).
         run_fci: Whether to also compute the FCI energy, which is exact in this
             basis set and a useful target for VQE. It needs an exact
             diagonalisation, so it is only possible for small systems.
@@ -120,7 +121,7 @@ def molecular_hamiltonian(
 def hydrogen_molecule(
     bond_length: float = 0.7414, *, basis: str = "sto-3g", run_fci: bool = False
 ) -> Molecule:
-    """The hydrogen molecule `H₂` at the given bond length, in angstroms.
+    r"""The hydrogen molecule \(\mathrm{H}_2\) at the given bond length, in angstroms.
 
     In the minimal STO-3G basis set, this is the standard 4-qubit benchmark for VQE.
     Its FCI ground-state energy is about `-1.137` Hartree at equilibrium.

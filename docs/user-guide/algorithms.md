@@ -18,7 +18,7 @@ and defaults, with notes on every argument.
 
 | Solver | Answers | Result carries |
 |---|---|---|
-| [`HHL`](#hhl-linear-systems) | the solution `x` of `Ax = b` | `solution`, `euclidean_norm`, `residual`, `success_probability`, `readout_probability`, `raw_solution` |
+| [`HHL`](#hhl-linear-systems) | the solution \(x\) of \(Ax = b\) | `solution`, `euclidean_norm`, `residual`, `success_probability`, `readout_probability`, `raw_solution` |
 | [`IQAE`](#iqae-amplitude-estimation) | an unknown amplitude, with an interval | `estimation`, `confidence_interval`, `n_rounds`, `n_oracle_calls` |
 | [`PortfolioRiskEstimator`](#portfolioriskestimator-var-and-cvar) | the Value at Risk (VaR) and the Conditional Value at Risk (CVaR) | `var`, `cvar`, `tail_probability`, `confidence_interval`, `iqae_result` |
 
@@ -59,10 +59,10 @@ directly.
 
 ## HHL: Linear systems
 
-`HHL` solves `Ax = b`. If `A` is Hermitian, it is used directly, even when it is
-not positive semidefinite. Any other invertible square matrix is converted to the normal
-equations `A†Ax = A†b`, which have the same solution and a Hermitian system
-matrix.
+`HHL` solves \(Ax = b\). If \(A\) is Hermitian, it is used directly, even when it
+is not positive semidefinite. Any other invertible square matrix is converted to the
+normal equations \(A^\dagger A x = A^\dagger b\), which have the same solution and a
+Hermitian system matrix.
 
 ```python
 import numpy as np
@@ -85,9 +85,9 @@ statevector. Use `.real` when the system is real.
 ![The circuit HHL builds (light theme)](images/hhl_light.svg){ .theme-image-light }
 ![The circuit HHL builds (dark theme)](images/hhl_dark.svg){ .theme-image-dark }
 
-The circuit that `solve()` builds has the same stages in both modes. `|b⟩` is
-prepared on the input register. Phase estimation writes the eigenvalues of `A`
-into the clock register, whose size is set by `n_eigenvalue_qubits`. The `1/x`
+The circuit that `solve()` builds has the same stages in both modes. \(|b\rangle\) is
+prepared on the input register. Phase estimation writes the eigenvalues of \(A\)
+into the clock register, whose size is set by `n_eigenvalue_qubits`. The \(1/x\)
 rotation turns each eigenvalue into its reciprocal on the ancilla, and `QPE+`,
 the adjoint of quantum phase estimation (QPE), resets the clock register. The `mode` argument
 changes how the phase-estimation step is built, but not these stages. The
@@ -108,10 +108,10 @@ automatic value. If `t` is too large, phase estimation aliases. The solver
 detects this and reports it, instead of returning a wrong answer.
 
 A third argument, `mode`, chooses which circuit is built. The default,
-`mode="reference"`, computes the eigenvalues classically and applies `e^{iAt}`
+`mode="reference"`, computes the eigenvalues classically and applies \(e^{iAt}\)
 as one dense unitary. It is exact and fast, but its cost does not reflect how
 HHL scales. `mode="honest"` builds the same algorithm from elementary gates
-instead. The evolution is Trotterised from the Pauli decomposition of `A`, and
+instead. The evolution is Trotterised from the Pauli decomposition of \(A\), and
 the evolution time comes from a Gershgorin bound, so no circuit parameter
 depends on an eigendecomposition. This mode needs at least two clock qubits, and
 `trotter_steps` (`"auto"` by default), `trotter_order` and `trotter_tolerance`
@@ -120,11 +120,11 @@ modes, and the [worked example](../examples/hhl-honest.md) measures the cost of
 each one.
 
 The result has six fields. `residual` is the best measure of the quality of a
-run. It is the relative error `‖Ax − b‖ / ‖b‖`, computed against the original
-system, so it measures the answer itself and not the algorithm's own estimate of
-it. `success_probability` matters for anything beyond a simulator. It is the
-probability that the ancilla lands in the useful branch, so its reciprocal is
-roughly the number of times a real device would have to repeat the state
+run. It is the relative error \(\lVert Ax - b \rVert / \lVert b \rVert\), computed
+against the original system, so it measures the answer itself and not the
+algorithm's own estimate of it. `success_probability` matters for anything beyond a
+simulator. It is the probability that the ancilla lands in the useful branch, so its
+reciprocal is roughly the number of times a real device would have to repeat the state
 preparation. `readout_probability` is the narrower physical rate: the
 probability that both the ancilla and the clock register land where the
 solution is read, which is what an estimate from shots needs. `raw_solution`
@@ -139,11 +139,11 @@ processing units (QPUs) raise `NotImplementedError`.
 
 ## IQAE: Amplitude estimation
 
-`IQAE` estimates `a = |⟨ψ₁|A|0⟩|²`, the probability that a state-preparation
-circuit ends in the marked state. The estimate comes with a confidence interval,
-so you do not have to infer one from repeated runs.
+`IQAE` estimates \(a = \lvert \langle \psi_1 | A | 0 \rangle \rvert^2\), the
+probability that a state-preparation circuit ends in the marked state. The estimate
+comes with a confidence interval, so you do not have to infer one from repeated runs.
 
-The oracle is the state preparation `A` itself. It can be given as a
+The oracle is the state preparation \(A\) itself. It can be given as a
 `CircuitSpec` built with `CircuitBuilder`, or as a PennyLane callable
 `oracle(wires)`, which needs `provider="pennylane"`. **The last qubit is the
 ancilla.** The oracle must have no trainable weights and no inputs, and its number
@@ -171,13 +171,14 @@ print(result.n_oracle_calls)  # 2600
 ![The Grover operator amplitude estimation iterates (dark theme)](images/grover_dark.svg){ .theme-image-dark }
 
 This is the operator that IQAE repeats. One repetition applies the state
-preparation `A` (the oracle you pass, drawn as `CU` in the figure), then a phase flip on the
-marked state, then `A†`, then the diffusion operator. Each repetition rotates
-more amplitude onto the marked state. The adaptive rule of Grinko et al. decides how
-the number of repetitions grows from one round to the next, and `n_oracle_calls` counts the
-applications of `A` and `A†` over the whole run. The Hadamard layer at the start
-comes from Grover search, where `A` prepares the uniform superposition. In IQAE,
-the initial state is whatever your oracle prepares.
+preparation \(A\) (the oracle you pass, drawn as `CU` in the figure), then a phase
+flip on the marked state, then \(A^\dagger\), then the diffusion operator. Each
+repetition rotates more amplitude onto the marked state. The adaptive rule of Grinko
+et al. decides how the number of repetitions grows from one round to the next, and
+`n_oracle_calls` counts the applications of \(A\) and \(A^\dagger\) over the whole
+run. The Hadamard layer at the start comes from Grover search, where \(A\) prepares
+the uniform superposition. In IQAE, the initial state is whatever your oracle
+prepares.
 {: .figure-caption }
 
 `epsilon`, `alpha` and `n_qubits` are required and have no default values.
@@ -191,8 +192,8 @@ seeded from it.
 The result contains the estimate, its interval, and two cost counters. Use
 `n_oracle_calls` when comparing against classical sampling, because the
 advantage of the algorithm is its convergence rate: as `epsilon` gets smaller,
-the error decreases roughly as `1/n_oracle_calls`, compared with `1/√n` when
-drawing `n` classical samples.
+the error decreases roughly as `1/n_oracle_calls`, compared with \(1/\sqrt{n}\) when
+drawing \(n\) classical samples.
 
 ## PortfolioRiskEstimator: VaR and CVaR
 
@@ -263,7 +264,7 @@ A confidence level below `0.5` is valid (the VaR at `0.5` is the median loss), b
 such values also look like a series of returns or normalised features, so
 `var_at()` issues a warning in that case. Passing such an array is the only
 mistake that this method does not reject with an error. A price series is rejected
-because prices are not in `(0, 1)`, and a price matrix is rejected because it is
+because prices are not in \((0, 1)\), and a price matrix is rejected because it is
 not 1-D.
 
 ## API reference

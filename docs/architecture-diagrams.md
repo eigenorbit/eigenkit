@@ -192,11 +192,11 @@ All backends in `eigenkit` use the same provider-neutral representation: a
 
 One important feature of this representation is that gate angles can be
 symbolic expressions rather than fixed numerical values. Instead of specifying
-an angle directly, users can define expressions such as `2π·x₀` or `w₀·x₁`,
-where `x` represents input data and `w` represents trainable parameters. This
-allows circuits to support operations such as feature scaling without requiring
-users to preprocess their data, while also enabling transformations such as
-`adjoint` to operate on parameterised gates.
+an angle directly, users can define expressions such as \(2\pi \cdot x_0\) or
+\(w_0 \cdot x_1\), where \(x\) represents input data and \(w\) represents trainable
+parameters. This allows circuits to support operations such as feature scaling
+without requiring users to preprocess their data, while also enabling
+transformations such as `adjoint` to operate on parameterised gates.
 
 ```mermaid
 classDiagram
@@ -281,10 +281,10 @@ as illustrated in the data flow diagram in Section 2.
 | `Constant(0.5)` | literal | `RX(0.5)` |
 | `WeightRef(3)` | `weights[3]` | trainable rotations |
 | `InputRef(0)` | `inputs[0]` | data encoding |
-| `Scale(expression, factor)` | `factor · expression` | `RY(2π·x)` |
-| `Negate(expression)` | `−expression` | adjoint of a trainable |
-| `Sum(expressions)` | `e1 + e2 + …` | data reuploading |
-| `Multiply(a, b)` | `a · b` (bilinear) | trainable feature scaling |
+| `Scale(expression, factor)` | `factor * expression` | \(\mathrm{RY}(2\pi \cdot x)\) |
+| `Negate(expression)` | `-expression` | adjoint of a trainable |
+| `Sum(expressions)` | \(e_1 + e_2 + \dots\) | data reuploading |
+| `Multiply(a, b)` | `a * b` (bilinear) | trainable feature scaling |
 
 ### Gate representation
 

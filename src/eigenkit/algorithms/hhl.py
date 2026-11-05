@@ -41,7 +41,7 @@ _RESIDUAL_WARN_THRESHOLD = 0.25
 
 @dataclass(frozen=True, eq=False)
 class HHLResult(ValueEquality):
-    """Output of [`HHL.solve()`][eigenkit.algorithms.HHL.solve].
+    r"""Output of [`HHL.solve()`][eigenkit.algorithms.HHL.solve].
 
     The result is read-only. Assigning to a field raises `FrozenInstanceError`, and
     writing into an array field raises `ValueError`. This prevents a mistyped `=`
@@ -54,19 +54,19 @@ class HHLResult(ValueEquality):
     of a float array is expensive to compute.
 
     Attributes:
-        solution: The best-fit `x` with `Ax ≈ b`. It is `float64` for real inputs,
-            and `complex128` when `A` or `b` has a non-zero imaginary part.
-        euclidean_norm: The norm `‖solution‖` of the returned solution. It is
-            computed after the classical least-squares rescaling, so it is not a
-            norm that HHL itself measures.
-        residual: The relative error `‖Ax − b‖ / ‖b‖`, computed with the original
-            `A` and `b`.
-        success_probability: The probability that the ancilla is in `|1⟩`, summed
+        solution: The best-fit \(x\) with \(Ax \approx b\). It is `float64` for real
+            inputs, and `complex128` when `A` or `b` has a non-zero imaginary part.
+        euclidean_norm: The norm \(\lVert\mathrm{solution}\rVert\) of the returned solution.
+            It is computed after the classical least-squares rescaling, so it is not
+            a norm that HHL itself measures.
+        residual: The relative error \(\lVert Ax - b \rVert / \lVert b \rVert\),
+            computed with the original `A` and `b`.
+        success_probability: The probability that the ancilla is in \(|1\rangle\), summed
             over all states of the clock register.
         readout_probability: The probability of the joint event from which the
-            solution is read: the ancilla in `|1⟩` and the clock register in
-            `|0…0⟩`. This is the physical post-selection rate. It is never larger
-            than `success_probability`, so use it to estimate the number of shots.
+            solution is read: the ancilla in \(|1\rangle\) and the clock register in
+            \(|0 \cdots 0\rangle\). This is the physical post-selection rate. It is never
+            larger than `success_probability`, so use it to estimate the number of shots.
         raw_solution: The post-selected amplitudes as the circuit produced them.
             They are complex, and they come before the imaginary part is dropped
             and before the rescaling, so this is the only part of the output that
@@ -76,24 +76,25 @@ class HHLResult(ValueEquality):
             a small amount of weight into the zero padding.
 
     !!! note
-        HHL produces the quantum state `|x⟩`, not a vector of numbers. The full
+        HHL produces the quantum state \(|x\rangle\), not a vector of numbers. The full
         array in this result is read from the simulator's statevector, which only a
         simulator can provide. On hardware, only expectation values can be
-        measured, and extracting all `N` components of `|x⟩` costs `O(N)`
-        measurements, which cancels the speedup. In practice, `|x⟩` is passed to
+        measured, and extracting all \(N\) components of \(|x\rangle\) costs \(O(N)\)
+        measurements, which cancels the speedup. In practice, \(|x\rangle\) is passed to
         another quantum routine, or used to estimate one observable. Recovering the
-        sign of `1/λ` needs a separate protocol. All of this applies to both values
-        of `mode`.
+        sign of \(1/\lambda\) needs a separate protocol. All of this applies to both
+        values of `mode`.
 
     !!! warning
         `solution` is completed by two classical steps that hardware cannot
         perform. For real inputs, the imaginary part is discarded. The magnitude
         and the sign then come from a least-squares projection,
-        `x = raw · ⟨A·raw, b⟩ / ‖A·raw‖²`, which uses the full classical `A` and
-        `b`. Only the direction of `raw` comes from the quantum computation. The
-        rescaling can change `residual` by an order of magnitude, and for an
-        indefinite `A` its sign correction is not reliable, because
-        `⟨Ax, b⟩ ≥ 0` does not imply `⟨x, A⁻¹b⟩ ≥ 0`.
+        \(x = \mathrm{raw} \cdot \langle A \cdot \mathrm{raw}, b\rangle /
+        \lVert A \cdot \mathrm{raw} \rVert^2\), which uses the full classical \(A\) and
+        \(b\). Only the direction of \(\mathrm{raw}\) comes from the quantum computation.
+        The rescaling can change `residual` by an order of magnitude, and for an
+        indefinite \(A\) its sign correction is not reliable, because
+        \(\langle Ax, b\rangle \ge 0\) does not imply \(\langle x, A^{-1}b\rangle \ge 0\).
     """
 
     solution: np.ndarray
@@ -138,20 +139,20 @@ _HHL_HONEST_REQUIRED_GATES: frozenset[str] = frozenset(
 class HHL(BaseQuantumSolver):
     r"""Quantum linear solver based on the algorithm of Harrow, Hassidim and Lloyd (HHL).
 
-    Solves `Ax = b` for any invertible square matrix `A`. If `A` is Hermitian, it is
+    Solves \(Ax = b\) for any invertible square matrix \(A\). If \(A\) is Hermitian, it is
     used directly, even when it is not positive semidefinite. Any other matrix is
-    converted to the normal equations `A†Ax = A†b`, which have the same solution and a
-    Hermitian, positive semidefinite system matrix. The cost of this conversion is
-    that the condition number `κ` is squared.
+    converted to the normal equations \(A^\dagger A x = A^\dagger b\), which have the same
+    solution and a Hermitian, positive semidefinite system matrix. The cost of this
+    conversion is that the condition number \(\kappa\) is squared.
 
     The circuit itself inverts the eigenvalues. It applies controlled `RY`
     rotations to the ancilla, with one fixed angle for each state of the clock
-    register, so the reciprocal `1/λ` of each eigenvalue is encoded in the
+    register, so the reciprocal \(1/\lambda\) of each eigenvalue is encoded in the
     amplitudes without any classical division by the eigenvalues. The readout is
     different: it uses the simulator's full statevector and keeps only the part
-    where the ancilla is in `|1⟩` and the clock register is in `|0⟩`. HHL produces
-    the quantum state `|x⟩`, so reading a classical vector from it is only possible
-    on a simulator. See [`HHLResult`][eigenkit.algorithms.HHLResult].
+    where the ancilla is in \(|1\rangle\) and the clock register is in \(|0\rangle\). HHL
+    produces the quantum state \(|x\rangle\), so reading a classical vector from it is
+    only possible on a simulator. See [`HHLResult`][eigenkit.algorithms.HHLResult].
 
     !!! warning
         The backend must provide `statevector()` on its compiled circuit. The
@@ -160,47 +161,47 @@ class HHL(BaseQuantumSolver):
         [`register()`][eigenkit.core.provider.register] must implement it,
         otherwise `solve()` raises `NotImplementedError`.
 
-    **Scope and scaling.** HHL is efficient only when three conditions hold: `A` is
-    a sum of a few short Pauli terms, `A` is well conditioned, and the state `|b⟩`
-    can be prepared efficiently.
+    **Scope and scaling.** HHL is efficient only when three conditions hold: \(A\) is
+    a sum of a few short Pauli terms, \(A\) is well conditioned, and the state
+    \(|b\rangle\) can be prepared efficiently.
 
-    - *Hamiltonian simulation.* `e^{iAt}` is Trotterised from the Pauli
-      decomposition of `A`, so its cost follows the number of Pauli terms. This
+    - *Hamiltonian simulation.* \(e^{iAt}\) is Trotterised from the Pauli
+      decomposition of \(A\), so its cost follows the number of Pauli terms. This
       means sparsity in the Pauli basis, which is different from sparsity of the
       matrix. The module `algorithms/_hamiltonian_sim.py` explains what this means
       in practice. In short, a sparse matrix is not necessarily cheap to simulate
       here.
-    - *State preparation.* `|b⟩` is prepared with
+    - *State preparation.* \(|b\rangle\) is prepared with
       [`AmplitudeEncoding`][eigenkit.core.blocks.AmplitudeEncoding], which is
-      treated as an oracle of unit cost. Loading general amplitudes costs `O(N)`
-      gates, so a real speedup assumes that `b` comes from a formula, from an
+      treated as an oracle of unit cost. Loading general amplitudes costs \(O(N)\)
+      gates, so a real speedup assumes that \(b\) comes from a formula, from an
       earlier quantum routine, or from a quantum random-access memory (qRAM).
-    - *Conditioning.* The condition number `κ` is never an input. It only bounds
+    - *Conditioning.* The condition number \(\kappa\) is never an input. It only bounds
       the achievable success probability and the size of the clock register.
     - *Inversion angles.* The gates are elementary (see
       `_uniformly_controlled_ry()`), so the circuit built in `"honest"` mode
-      contains no unitary-matrix gate. However, the `2^n_l` angles, where `n_l` is
+      contains no unitary-matrix gate. However, the \(2^{n_l}\) angles, where \(n_l\) is
       the number of clock qubits, are listed one by one instead of being computed
       by the circuit. The classical description of the circuit therefore has size
-      `Θ(2^n_l)`. The circuit can be built from elementary gates, but its
+      \(\Theta(2^{n_l})\). The circuit can be built from elementary gates, but its
       description is not compact.
 
     Solvers for dense matrices, for example the one of Wossnig, Zhao and Prakash,
     reach a quadratic speedup when the spectral norm is bounded. They need a
     specialised memory architecture that this package does not provide.
 
-    **Real and complex inputs.** For real `A` and `b`, the readout discards the
+    **Real and complex inputs.** For real \(A\) and \(b\), the readout discards the
     imaginary part. The leading error of the Trotter eigenvectors enters the raw
     vector as a purely imaginary component, so discarding the imaginary part
     removes it. This matters at `trotter_order=1`, where it improves the
     convergence by one order: the measured error falls as `steps⁻²` for real
-    inputs, and as `steps⁻¹` for a complex Hermitian `A` or a complex `b`, which
-    keep that error. At `trotter_order=2`, the default, the first-order commutator
-    already cancels by construction, so there is nothing left to remove, and real
-    and complex inputs both converge as `steps⁻²`. This advantage was not designed.
-    It depends on the test for real inputs in
-    [`solve()`][eigenkit.algorithms.HHL.solve], so a change to that test changes
-    the convergence rate at order 1.
+    inputs, and as `steps⁻¹` for a complex Hermitian \(A\) or a complex
+    \(b\), which keep that error. At `trotter_order=2`, the default, the first-order
+    commutator already cancels by construction, so there is nothing left to remove, and
+    real and complex inputs both converge as `steps⁻²`. This advantage was
+    not designed. It depends on the test for real inputs in
+    [`solve()`][eigenkit.algorithms.HHL.solve], so a change to that test changes the
+    convergence rate at order 1.
 
     Args:
         n_eigenvalue_qubits: The number of qubits in the clock register.
@@ -208,67 +209,67 @@ class HHL(BaseQuantumSolver):
             value must be at least 1, and at least 2 in `"honest"` mode. More
             qubits give a finer resolution of the spectrum and a larger circuit.
             The default is `4`.
-        t: The evolution time for `U = e^{iAt}`. If given, it must be positive and
+        t: The evolution time for \(U = e^{iAt}\). If given, it must be positive and
             finite. If `None`, it is chosen automatically: from the spectrum in
             `"reference"` mode, and from a Gershgorin bound in `"honest"` mode. The
             default is `None`.
-        epsilon: The relative eigenvalue cutoff, in `[0, 1)`. For a Hermitian `A`,
-            buckets whose estimated eigenvalue is below `epsilon * λ_max` are
-            treated as zero. For the normal equations, the cutoff applies to the
-            singular values instead, and it is implemented as `epsilon²` on the
-            squared spectrum. If no eigenvalue is above the cutoff, `solve()` raises
-            an error. The default is `0.01`.
+        epsilon: The relative eigenvalue cutoff, in \([0, 1)\). For a Hermitian \(A\),
+            buckets whose estimated eigenvalue is below `epsilon` \(\cdot \lambda_{\max}\)
+            are treated as zero. For the normal equations, the cutoff applies to the
+            singular values instead, and it is implemented as `epsilon**2` on the squared
+            spectrum. If no eigenvalue is above the cutoff, `solve()` raises an error. The
+            default is `0.01`.
         provider: The backend to use: a registered name (`"numpy"`, `"pennylane"`,
             `"qiskit"` and so on), a config instance, or a backend object. It must
             provide `statevector()`. The default is `"numpy"`.
         mode: How the circuit is built. This argument is keyword-only.
 
             - `"reference"` (the default): the eigenvalues are computed classically
-              with `eigvalsh`, `e^{iAt}` is a dense `QubitUnitary` computed with
+              with `eigvalsh`, \(e^{iAt}\) is a dense `QubitUnitary` computed with
               `expm`, and `t` is tuned to the known spectrum. This mode is fast and
-              exact, but the `O(N³)` precomputation and the dense unitary mean that
+              exact, but the \(O(N^3)\) precomputation and the dense unitary mean that
               its cost does not follow the scaling of HHL.
             - `"honest"`: the circuit is built as it would be on hardware. No
               eigendecomposition sets any circuit parameter: `t` comes from a
-              Gershgorin bound, the scaling constant `C` of the inversion comes
+              Gershgorin bound, the scaling constant \(C\) of the inversion comes
               from the resolution of the clock register (see
-              `_honest_qpe_params()`), and `e^{iAt}` is Trotterised into elementary
+              `_honest_qpe_params()`), and \(e^{iAt}\) is Trotterised into elementary
               gates. This mode requires `n_eigenvalue_qubits >= 2`. Input
-              validation still runs an `O(N³)` rank check. This check makes the
+              validation still runs an \(O(N^3)\) rank check. This check makes the
               solver safer to use and is not part of the algorithm; see `solve()`.
         trotter_steps: The number of Trotter steps for the base evolution time in
             `"honest"` mode. It is ignored in `"reference"` mode. With `"auto"`,
             the default, the solver picks the smallest number of steps for which a
-            computable bound on the Trotter drift `‖A_eff − A‖` stays below
-            `trotter_tolerance × C`, which is below the eigenvalue resolution of
-            the clock register. This matters because, with a fixed step size, the
-            circuit is exact HHL for an effective matrix `A_eff` whose eigenvectors
-            are rotated even when its eigenvalues are exact. That changes the
-            direction of the answer while every check based on the spectrum
-            reports success. An integer turns off the automatic choice, and the
-            solver warns if the drift bound then exceeds `C/2`. Above that value,
-            an extreme eigenvalue can be captured by the Nyquist bucket or wrap
-            around the branch cut. The automatic choice is limited by a gate
-            budget, and the solver says so when the limit is reached. The default
-            is `"auto"`.
+            computable bound on the Trotter drift \(\lVert A_{\mathrm{eff}} - A \rVert\)
+            stays below `trotter_tolerance` \(\times C\), which is below the eigenvalue
+            resolution of the clock register. This matters because, with a fixed step
+            size, the circuit is exact HHL for an effective matrix \(A_{\mathrm{eff}}\)
+            whose eigenvectors are rotated even when its eigenvalues are exact. That
+            changes the direction of the answer while every check based on the spectrum
+            reports success. An integer turns off the automatic choice, and the solver
+            warns if the drift bound then exceeds \(C/2\). Above that value, an extreme
+            eigenvalue can be captured by the Nyquist bucket or wrap around the branch
+            cut. The automatic choice is limited by a gate budget, and the solver says so
+            when the limit is reached. The default is `"auto"`.
         trotter_order: The Trotter order, 1 or 2. The default is `2`. The
             symmetric product of order 2 is a palindrome, so the first-order
-            commutator cancels, the error falls from `O(τ)` to `O(τ²)`, and `A_eff`
-            stays real for a real `A`. At order 1, `A_eff` picks up `Y`-type terms,
-            and a real system returns a complex state. Order 1 is kept for cost
-            comparisons.
+            commutator cancels, the error falls from \(O(\tau)\) to \(O(\tau^2)\), and
+            \(A_{\mathrm{eff}}\) stays real for a real \(A\). At order 1,
+            \(A_{\mathrm{eff}}\) picks up \(Y\)-type terms, and a real system returns a
+            complex state. Order 1 is kept for cost comparisons.
         trotter_tolerance: The target for `trotter_steps="auto"`. This argument is
-            keyword-only. The drift bound must not exceed `trotter_tolerance × C`.
-            The default, `0.25`, keeps the drift at a quarter of a bucket, below
-            the `C/2` threshold at which the Nyquist bucket can capture an
-            eigenvalue. At order 2, the cost grows as `steps ∝ 1/√tolerance`.
+            keyword-only. The drift bound must not exceed `trotter_tolerance`
+            \(\times C\). The default, `0.25`, keeps the drift at a quarter of a bucket,
+            below the \(C/2\) threshold at which the Nyquist bucket can capture an
+            eigenvalue. At order 2, the cost grows as
+            \(\mathrm{steps} \propto 1/\sqrt{\mathrm{tolerance}}\).
 
     Raises:
         ValueError: If `n_eigenvalue_qubits` is below 1, if `t` is not a positive
-            finite number, or if `epsilon` is outside `[0, 1)`.
+            finite number, or if `epsilon` is outside \([0, 1)\).
 
     Example:
-        This example solves a `2 × 2` Hermitian system:
+        This example solves a \(2 \times 2\) Hermitian system:
 
         ```python
         import numpy as np
@@ -349,7 +350,7 @@ class HHL(BaseQuantumSolver):
         self.trotter_tolerance = trotter_tolerance
 
     def solve(self, A: np.ndarray, b: np.ndarray) -> HHLResult:
-        """Solve the linear system `Ax = b`.
+        r"""Solve the linear system \(Ax = b\).
 
         Args:
             A: A real or complex square matrix, which must be invertible. A
@@ -369,12 +370,12 @@ class HHL(BaseQuantumSolver):
                 if it returns something else, such as a density matrix.
 
         !!! note
-            Validation runs one `O(N³)` singular value decomposition (SVD) to reject a
+            Validation runs one \(O(N^3)\) singular value decomposition (SVD) to reject a
             singular `A` and to compute a condition number for the warnings. No
-            quantity derived from it reaches `t`, `C`, the rotation angles or the
+            quantity derived from it reaches `t`, \(C\), the rotation angles or the
             number of Trotter steps, and changing it would leave the circuit exactly
             the same. `mode="honest"` therefore keeps its defining property, but
-            `solve()` itself still does `O(N³)` work.
+            `solve()` itself still does \(O(N^3)\) work.
         """
         from ._provider_checks import check_required_gates
 

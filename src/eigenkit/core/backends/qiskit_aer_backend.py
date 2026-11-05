@@ -271,7 +271,7 @@ class QiskitAerCompiled(CompiledCircuit):
     def statevector(
         self, weights: np.ndarray, inputs: np.ndarray, initial_state=None
     ) -> np.ndarray:
-        """Return the full complex statevector after the circuit.
+        r"""Return the full complex statevector after the circuit.
 
         In the result, qubit 0 is the most significant bit. When `inputs` is 2-D,
         the method loops over its rows and returns an array of shape
@@ -283,7 +283,7 @@ class QiskitAerCompiled(CompiledCircuit):
             inputs (np.ndarray): The input features: a 1-D array for one sample, or
                 a 2-D array with a leading batch axis.
             initial_state (np.ndarray | None): The state to evolve from instead of
-                `|0…0⟩`. Default: `None`.
+                \(|0 \cdots 0\rangle\). Default: `None`.
 
         Returns:
             The statevector, of shape `(2**n_qubits,)`, or `(B, 2**n_qubits)` for
@@ -329,7 +329,7 @@ class QiskitAerCompiled(CompiledCircuit):
         return self._swap_endianness(sv)
 
     def zero_state_probability(self, weights: np.ndarray, inputs: np.ndarray) -> float:
-        """Return the probability of the all-zeros state for one sample.
+        r"""Return the probability of the all-zeros state for one sample.
 
         It is the squared magnitude of the all-zeros amplitude of the simulated
         statevector, and it is the basic operation of fidelity kernels.
@@ -340,7 +340,7 @@ class QiskitAerCompiled(CompiledCircuit):
                 1-D.
 
         Returns:
-            The probability, a float in `[0, 1]`.
+            The probability, a float in \([0, 1]\).
         """
         sv = self._statevector_one(
             np.asarray(weights, dtype=np.float64),

@@ -274,4 +274,4 @@ class BaseQuantumClassifier(ClassifierMixin, BaseQuantumEstimator):
 
 
 class BaseQuantumRegressor(RegressorMixin, BaseQuantumEstimator):
-    """Base class for quantum regressors. Its `score()` returns `R²`."""
+    r"""Base class for quantum regressors. Its `score()` returns \(R^2\)."""

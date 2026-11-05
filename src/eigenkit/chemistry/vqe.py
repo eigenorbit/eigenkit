@@ -1,13 +1,13 @@
-"""VQE — the Variational Quantum Eigensolver, on the core spine.
+r"""VQE — the Variational Quantum Eigensolver, on the core spine.
 
 Given a qubit Hamiltonian (an `Observable` plus its constant offset), VQE
-minimizes ``<H>`` over a parametrized ansatz to estimate the ground-state
+minimizes \(\langle H \rangle\) over a parametrized ansatz to estimate the ground-state
 energy. It is a thin layer over `minimize_expectation`: build an ansatz, wrap
 it in a numpy `Circuit` whose observable is the Hamiltonian, optimize. Pure
 core (numpy/scipy), torch-free, backend-agnostic.
 
 The default ansatz is a hardware-efficient one (RY/RZ rotations + a linear
-CNOT entangler) starting from |0...0>, so it needs no Hartree-Fock
+CNOT entangler) starting from \(|0 \cdots 0\rangle\), so it needs no Hartree-Fock
 preparation. For a chemistry-specific ansatz, pass `uccsd_ansatz(...)` as
 `ansatz`; it starts from the Hartree-Fock reference itself.
 """

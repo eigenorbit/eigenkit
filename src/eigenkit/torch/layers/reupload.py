@@ -32,15 +32,15 @@ _BASIS_TO_OBSERVABLE = {
 
 
 class Reupload(nn.Module):
-    """The data-reuploading layer (Perez-Salinas 2020; Schuld 2021).
+    r"""The data-reuploading layer (Perez-Salinas 2020; Schuld 2021).
 
     It supports two patterns:
 
     - Standard reuploading (the default). The same input is encoded `depth`
       times, with new variational weights between the encodings.
     - Trainable feature scaling (`trainable_scale=True`). Each encoding rotation
-      becomes `R(lambda * x)`, with a trainable `lambda` for each pair of layer
-      and feature.
+      becomes \(R(\lambda \cdot x)\), with a trainable \(\lambda\) for each pair of
+      layer and feature.
 
     Args:
         n_qubits: The number of qubits, which is also the number of input

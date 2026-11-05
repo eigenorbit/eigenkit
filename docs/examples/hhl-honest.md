@@ -1,17 +1,17 @@
 # Linear Systems with HHL
 
-The **Harrow-Hassidim-Lloyd (HHL)** algorithm solves a linear system `Ax = b` on a
+The **Harrow-Hassidim-Lloyd (HHL)** algorithm solves a linear system \(Ax = b\) on a
 quantum computer. The `eigenkit` implementation has **two modes**:
 
 | `mode` | How the circuit is built | Runs on hardware? |
 |--------|--------------------------|-------------------|
-| `"reference"` (default) | The eigenvalues are found classically (`eigvalsh`), `e^{iAt}` is applied as a dense matrix from `expm`, and the evolution time is tuned to the known spectrum. | ❌ No, it runs on a simulator only. |
-| `"honest"` | There is **no** eigendecomposition, `e^{iAt}` is **Trotterised into elementary gates**, and the time is fixed from a Gershgorin bound that is cheap to compute. | ✅ Yes, the circuit can be built from elementary gates. |
+| `"reference"` (default) | The eigenvalues are found classically (`eigvalsh`), \(e^{iAt}\) is applied as a dense matrix from `expm`, and the evolution time is tuned to the known spectrum. | ❌ No, it runs on a simulator only. |
+| `"honest"` | There is **no** eigendecomposition, \(e^{iAt}\) is **Trotterised into elementary gates**, and the time is fixed from a Gershgorin bound that is cheap to compute. | ✅ Yes, the circuit can be built from elementary gates. |
 
-`"reference"` mode is fast and exact. However, it does `O(N³)` classical work, and it
-applies a `2ⁿ × 2ⁿ` unitary that is given only as a matrix, so it gives **no** quantum
-speedup. `"honest"` mode removes all three shortcuts, so its circuit is one that you
-could, *in principle*, run on real hardware.
+`"reference"` mode is fast and exact. However, it does \(O(N^3)\) classical work, and it
+applies a \(2^n \times 2^n\) unitary that is given only as a matrix, so it gives **no**
+quantum speedup. `"honest"` mode removes all three shortcuts, so its circuit is one that
+you could, *in principle*, run on real hardware.
 
 This example runs on `provider="numpy"`, which is the default of `HHL`, so it needs no
 optional extra. The figures need `matplotlib`. The whole page runs in about ten
@@ -46,7 +46,7 @@ its gate counts are the baseline that `"honest"` mode is defined against. It is 
 shown as an alternative to run.
 
 None of the examples below chooses `n_eigenvalue_qubits` by hand. In the printed rows,
-`n_l` is the number of clock qubits. `P_readout` is the rate at which a device
+\(n_l\) is the number of clock qubits. `P_readout` is the rate at which a device
 post-selects, and it falls by about four times for each added clock qubit. The helper
 below therefore chooses the register: it grows the register until the solver stops
 warning and the residual is good enough, and then it stops. The section on precision
@@ -114,12 +114,13 @@ def solve_at_chosen_clock(A, b, target=0.03, n_l_max=7, **kwargs):
 
 ### A 2×2 diagonal system
 
-```text
-A = [[2, 0],
-     [0, 1]]  =  (3/2)·I + (1/2)·Z,    b = [1, 1]    ⇒    x* = [0.5, 1]
-```
+\[
+A = \begin{pmatrix} 2 & 0 \\ 0 & 1 \end{pmatrix} = \tfrac{3}{2} I + \tfrac{1}{2} Z, \quad
+b = \begin{pmatrix} 1 \\ 1 \end{pmatrix} \quad \Rightarrow \quad
+x^* = \begin{pmatrix} 0.5 \\ 1 \end{pmatrix}
+\]
 
-A diagonal `A` decomposes into `Z` strings only, and these commute with each other, so
+A diagonal \(A\) decomposes into \(Z\) strings only, and these commute with each other, so
 its Trotterisation is **exact**: even `trotter_steps=1` gives a clean answer. The
 residual that is left comes from the resolution of the clock, not from Trotter error.
 This is why the selector below can trade it against the post-selection rate at all.
@@ -138,19 +139,20 @@ _ = solve_at_chosen_clock(np.diag([2.0, 1.0]), np.array([1.0, 1.0]), trotter_ste
 
 ### A system whose Trotterisation is only approximate
 
-```text
-A = [[2, 1],
-     [1, 0]]  =  I + X + Z,    b = [1, 0]    ⇒    x* = [0, 1]
-```
+\[
+A = \begin{pmatrix} 2 & 1 \\ 1 & 0 \end{pmatrix} = I + X + Z, \quad
+b = \begin{pmatrix} 1 \\ 0 \end{pmatrix} \quad \Rightarrow \quad
+x^* = \begin{pmatrix} 0 \\ 1 \end{pmatrix}
+\]
 
-The eigenvalues are `1 ± √2`, so the condition number is `κ(A) ≈ 5.83`, and the
-spectrum is indefinite (it has eigenvalues of both signs). What matters here is that
-`X` and `Z` **anticommute**: the Trotter product `e^{iXτ} e^{iZτ}` is not
-`e^{i(X+Z)τ}`. This is therefore the first example on this page where
-`trotter_steps` changes the answer at all.
+The eigenvalues are \(1 \pm \sqrt{2}\), so the condition number is
+\(\kappa(A) \approx 5.83\), and the spectrum is indefinite (it has eigenvalues of both
+signs). What matters here is that \(X\) and \(Z\) **anticommute**: the Trotter product
+\(e^{iX\tau} e^{iZ\tau}\) is not \(e^{i(X+Z)\tau}\). This is therefore the first example
+on this page where `trotter_steps` changes the answer at all.
 
 The more obvious choice, `[[2, 1], [1, 2]]`, would *not* work as an example. It equals
-`2I + X`, which has exactly one Pauli term that is not the identity. With a single
+\(2I + X\), which has exactly one Pauli term that is not the identity. With a single
 term, the Trotter product is the exact exponential for any number of steps, so
 `trotter_steps` has no effect there. The cell below prints both decompositions, so that
 you can see the difference. An off-diagonal entry is not the same thing as Pauli terms
@@ -209,27 +211,28 @@ RuntimeWarning: HHL(mode='honest'): the Trotter drift bound ‖A_eff − A‖ �
    honest    x = [0.2341 0.4736]
 ```
 
-At `trotter_steps=1`, the residual is `0.2412`, and the cosine with `x*` drops to
+At `trotter_steps=1`, the residual is `0.2412`, and the cosine with \(x^*\) drops to
 `0.8964`. `trotter_steps="auto"` picks 6 steps, and reaches a residual of `0.0003`
 with a cosine of `1.0000`. The single-step run also raises a `RuntimeWarning`. The
-drift bound `‖A_eff − A‖ ≲ 0.42`, where `A_eff` is the Hamiltonian that the Trotter
-circuit actually simulates, exceeds `C/2 = 0.214`, where `C` is the rotation constant.
-Quantum phase estimation (QPE) then measures a perturbed Hamiltonian, and not `A`. This
-warning is the reason for `"auto"`. The selector solves the same bound for the smallest
-number of steps that stays below `trotter_tolerance · C` (the default tolerance is
-`0.25`). When you set the number of steps by hand, the warning gives the number that
-the selector would need (6).
+drift bound \(\lVert A_{\mathrm{eff}} - A \rVert \lesssim 0.42\), where
+\(A_{\mathrm{eff}}\) is the Hamiltonian that the Trotter circuit actually simulates,
+exceeds \(C/2 = 0.214\), where \(C\) is the rotation constant. Quantum phase estimation
+(QPE) then measures a perturbed Hamiltonian, and not \(A\). This warning is the reason for
+`"auto"`. The selector solves the same bound for the smallest number of steps that stays
+below `trotter_tolerance` \(\cdot C\) (the default tolerance is `0.25`). When you set the
+number of steps by hand, the warning gives the number that the selector would need (6).
 
 ### An indefinite system, with a negative eigenvalue
 
-```text
-A = [[0, 1],
-     [1, 0]],    b = [1, 1]    ⇒    x* = [1, 1]
-```
+\[
+A = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}, \quad
+b = \begin{pmatrix} 1 \\ 1 \end{pmatrix} \quad \Rightarrow \quad
+x^* = \begin{pmatrix} 1 \\ 1 \end{pmatrix}
+\]
 
-The eigenvalues are `±1`. The two-sided clock register resolves the sign of each
-eigenvalue, and the controlled `RY` inversion gives `1/λ` the correct sign. Both
-eigenvalues have modulus `1`, so two clock qubits already place them exactly on the
+The eigenvalues are \(\pm 1\). The two-sided clock register resolves the sign of each
+eigenvalue, and the controlled `RY` inversion gives \(1/\lambda\) the correct sign. Both
+eigenvalues have modulus \(1\), so two clock qubits already place them exactly on the
 grid of buckets. This is the best case on the whole page, and it is worth seeing
 once.
 
@@ -247,9 +250,9 @@ _ = solve_at_chosen_clock(
 
 ### Beyond 2×2: a 4×4 and an 8×8
 
-Nothing so far requires the system to be small. The three cases above are `2 × 2` only
-so that their Pauli decompositions fit in a line of text. Here is the
-finite-difference matrix at `N = 4` and `N = 8`, solved from start to finish in
+Nothing so far requires the system to be small. The three cases above are \(2 \times 2\)
+only so that their Pauli decompositions fit in a line of text. Here is the
+finite-difference matrix at \(N = 4\) and \(N = 8\), solved from start to finish in
 `"honest"` mode, with the register chosen in the same way.
 
 ```python
@@ -290,19 +293,19 @@ for dim in (4, 8):
    honest    x = [0.8694 0.7391 0.6207 0.515  0.4105 0.3047 0.2055 0.1027]
 ```
 
-Both systems stop at six clock qubits, with a cosine of `1.0000` for the `4 × 4` and
-`0.9997` for the `8 × 8`. The `8 × 8` has `κ = 32`, which is five times the condition
-number of any of the `2 × 2` examples, and it reaches a residual of `0.019` with one
-usable preparation in 27. The `8 × 8` system is then a circuit of 10 qubits (3 state
-qubits, 6 clock qubits and 1 ancilla), and the whole search takes seconds of
-simulation.
+Both systems stop at six clock qubits, with a cosine of `1.0000` for the \(4 \times 4\)
+and `0.9997` for the \(8 \times 8\). The \(8 \times 8\) has \(\kappa = 32\), which is five
+times the condition number of any of the \(2 \times 2\) examples, and it reaches a
+residual of `0.019` with one usable preparation in 27. The \(8 \times 8\) system is then a
+circuit of 10 qubits (3 state qubits, 6 clock qubits and 1 ancilla), and the whole search
+takes seconds of simulation.
 
-Read the rejected rows, because they show why the warning check is needed. The `8 × 8`
-at `n_l = 5` has a residual of `0.145`, which is bad but not obviously fatal, while its
-cosine is `0.71`. This means that the *direction* of the answer is wrong, and not only
-its scale, which is exactly what a residual cannot tell you. The solver flags this row
-itself: the smallest eigenvalue, `0.121`, is below half the resolution of the clock.
-These rows are also *cheaper* (1 in 22 against 1 in 27), so a selector based on the
+Read the rejected rows, because they show why the warning check is needed. The
+\(8 \times 8\) at \(n_l = 5\) has a residual of `0.145`, which is bad but not obviously
+fatal, while its cosine is `0.71`. This means that the *direction* of the answer is wrong,
+and not only its scale, which is exactly what a residual cannot tell you. The solver flags
+this row itself: the smallest eigenvalue, `0.121`, is below half the resolution of the
+clock. These rows are also *cheaper* (1 in 22 against 1 in 27), so a selector based on the
 post-selection rate alone would have taken one of them. The warning is what rules them
 out.
 
@@ -311,10 +314,9 @@ out.
 Three things distinguish `"honest"` mode from `"reference"` mode. We inspect each of
 them on the following matrix:
 
-```text
-A = [[2, 1],
-     [1, 3]]
-```
+\[
+A = \begin{pmatrix} 2 & 1 \\ 1 & 3 \end{pmatrix}
+\]
 
 ```python
 from eigenkit.algorithms._hamiltonian_sim import pauli_decompose
@@ -338,10 +340,10 @@ Pauli decomposition of A:
 ```
 
 **(i) Parameters without the spectrum.** The `"honest"` path never calls `eigvalsh`.
-The evolution time comes from a Gershgorin upper bound on `‖A‖`, which is the largest
-sum of absolute values over the rows. It costs `O(nnz)`, where `nnz` is the number of
-non-zero entries of `A`. The rotation constant `C` comes from the resolution of the
-clock register. No eigenvalues are needed.
+The evolution time comes from a Gershgorin upper bound on \(\lVert A \rVert\), which is
+the largest sum of absolute values over the rows. It costs \(O(\mathrm{nnz})\), where
+\(\mathrm{nnz}\) is the number of non-zero entries of \(A\). The rotation constant \(C\)
+comes from the resolution of the clock register. No eigenvalues are needed.
 
 ```python
 from eigenkit.algorithms.hhl import (
@@ -372,14 +374,14 @@ evolution time  t           : 0.7363   (fixed; t·bound = 2.9452 < π)
 rotation constant C         : 0.2667   (= register resolution, no spectrum used)
 ```
 
-**(ii) Elementary gates throughout.** In `"reference"` mode, `e^{iAt}` enters QPE as a
-dense `ControlledQubitUnitary` that carries the full `2ⁿ × 2ⁿ` matrix. It is a black
-box with no decomposition into hardware gates. `"honest"` mode replaces it with a
+**(ii) Elementary gates throughout.** In `"reference"` mode, \(e^{iAt}\) enters QPE as a
+dense `ControlledQubitUnitary` that carries the full \(2^n \times 2^n\) matrix. It is a
+black box with no decomposition into hardware gates. `"honest"` mode replaces it with a
 `HamiltonianQPEBlock` built from `H`, `RZ`, controlled-NOT (`CNOT`), `CPHASE`,
-`PhaseShift` and `SWAP` gates (plus `RX` when the decomposition contains `Y` terms,
-which this `A` does not). In both modes, the eigenvalue inversion is a uniformly
-controlled rotation: `2^n_l` `RY` gates and `2^n_l` `CNOT` gates, with no ancillas and
-no multi-controlled gate.
+`PhaseShift` and `SWAP` gates (plus `RX` when the decomposition contains \(Y\) terms,
+which this \(A\) does not). In both modes, the eigenvalue inversion is a uniformly
+controlled rotation: \(2^{n_l}\) `RY` gates and \(2^{n_l}\) `CNOT` gates, with no ancillas
+and no multi-controlled gate.
 
 The cell below counts the gates twice: first in the QPE sub-block on its own, and then
 in the **assembled** HHL circuit. The second count describes the circuit that you would
@@ -468,44 +470,44 @@ honest inversion: 32 RY gates = 2^n_l = 32, each elementary, paired with 32 CNOT
 The two counts show that both stages are elementary. The assembled circuit is the claim
 that matters: it has **no `ControlledQubitUnitary` and no `QubitUnitary` at all**,
 against 10 in the `"reference"` circuit. These 10 gates are exactly the oracle powers
-`e^{iAt·2ᵏ}`. The inversion is shared between the two modes, so it is elementary in
-both, and the dense evolution is the only thing that still separates them.
+\(e^{iAt \cdot 2^k}\). The inversion is shared between the two modes, so it is elementary
+in both, and the dense evolution is the only thing that still separates them.
 
 The evolution is the larger part. The QPE block of `"honest"` mode adds only `H`, `RZ`,
-`CNOT`, `PhaseShift`, `CPHASE` and `SWAP` gates, against the five `2 × 2` oracle powers
-of the `"reference"` block, each of which is a black box with no decomposition into
-hardware gates. The inversion then adds `2^n_l = 32` `RY` gates and 32 `CNOT` gates.
+`CNOT`, `PhaseShift`, `CPHASE` and `SWAP` gates, against the five \(2 \times 2\) oracle
+powers of the `"reference"` block, each of which is a black box with no decomposition into
+hardware gates. The inversion then adds \(2^{n_l} = 32\) `RY` gates and 32 `CNOT` gates.
 This is the uniformly controlled decomposition of
 [Möttönen et al.](https://arxiv.org/abs/quant-ph/0407010), which applies a different
-`RY(θ_j)` exactly for each of the 32 clock buckets, with one `RY` and one `CNOT` for
-each step of a Gray-code walk. Written out literally, as one rotation controlled by
-`n_l` qubits for each bucket, the same stage would be 31 multi-controlled gates.
+\(R_Y(\theta_j)\) exactly for each of the 32 clock buckets, with one `RY` and one `CNOT`
+for each step of a Gray-code walk. Written out literally, as one rotation controlled by
+\(n_l\) qubits for each bucket, the same stage would be 31 multi-controlled gates.
 
 Two claims about this are easy to confuse:
 
 * The **circuit** can be built from elementary gates. Every gate above is one that a
-  device implements directly, and the count is `Θ(2^n_l)`. The ladder of controlled
-  evolutions in QPE already costs this much, and by the no-fast-forwarding theorem, no
-  HHL based on QPE avoids it.
-* The **description** is not compact. The `2^n_l` angles `θ_j = 2 arcsin(C/λ̃_j)` are
-  listed bucket by bucket instead of computed, so the classical description of the
-  circuit has size `Θ(2^n_l)`, and this is not a uniform family of circuits of
-  polynomial size. Making it uniform means evaluating `arcsin(1/λ)` with quantum
-  arithmetic on the clock register. Circuits for the functions that this needs,
-  including the arcsine, are given by Häner et al. 2018
-  ([arXiv:1805.12445](https://arxiv.org/abs/1805.12445)).
+  device implements directly, and the count is \(\Theta(2^{n_l})\). The ladder of
+  controlled evolutions in QPE already costs this much, and by the no-fast-forwarding
+  theorem, no HHL based on QPE avoids it.
+* The **description** is not compact. The \(2^{n_l}\) angles
+  \(\theta_j = 2 \arcsin(C/\tilde{\lambda}_j)\) are listed bucket by bucket instead of
+  computed, so the classical description of the circuit has size \(\Theta(2^{n_l})\), and
+  this is not a uniform family of circuits of polynomial size. Making it uniform means
+  evaluating \(\arcsin(1/\lambda)\) with quantum arithmetic on the clock register.
+  Circuits for the functions that this needs, including the arcsine, are given by
+  Häner et al. 2018 ([arXiv:1805.12445](https://arxiv.org/abs/1805.12445)).
 
 ## Trotter accuracy: `trotter_steps` and `trotter_order`
 
-For an `A` whose Pauli terms do not commute, the Trotter product approximates
-`e^{iAt}` with an error that shrinks as `trotter_steps` grows, and that shrinks
+For an \(A\) whose Pauli terms do not commute, the Trotter product approximates
+\(e^{iAt}\) with an error that shrinks as `trotter_steps` grows, and that shrinks
 *faster* for the symmetric second order. With the default `trotter_steps="auto"`, the
 number of steps is chosen so that this error stays below the limit set by the finite
 resolution of the clock. This is why the anticommuting example above needed
 `trotter_steps=1` to show the effect of this setting at all. To see how the two orders
-scale, we measure the Trotter error of the evolution `e^{iAt}` **directly**, because it
+scale, we measure the Trotter error of the evolution \(e^{iAt}\) **directly**, because it
 is the quantity that ultimately governs the accuracy of `"honest"` mode. We use a
-2-qubit `A` whose terms are strongly non-commuting.
+2-qubit \(A\) whose terms are strongly non-commuting.
 
 ```python
 import scipy.linalg
@@ -607,32 +609,33 @@ for theme in ("light", "dark"):
 ![The Trotter error of the evolution against the number of steps (light theme).](hhl_honest_files/trotter_error_light.png){ .theme-image-light }
 ![The Trotter error of the evolution against the number of steps (dark theme).](hhl_honest_files/trotter_error_dark.png){ .theme-image-dark }
 
-The order-1 error falls as `1/steps` (each doubling halves it), while the order-2 error
-falls as `1/steps²` (each doubling divides it by four). `trotter_order=2` therefore
-reaches a target accuracy with far fewer steps. At `trotter_steps=64`, the two errors
-are `3.1e-02` and `2.7e-04`, a factor of 115.
+The order-1 error falls as \(1/\mathrm{steps}\) (each doubling halves it), while the
+order-2 error falls as \(1/\mathrm{steps}^2\) (each doubling divides it by four).
+`trotter_order=2` therefore reaches a target accuracy with far fewer steps. At
+`trotter_steps=64`, the two errors are `3.1e-02` and `2.7e-04`, a factor of 115.
 
 You do not normally set `trotter_steps` by hand. `"auto"` solves a drift bound for the
-number of steps that keeps `‖A_eff − A‖` below `trotter_tolerance × C`. Lower
-`trotter_tolerance` to get a more accurate and deeper circuit. At order 2, the number
-of steps grows only as `1/√tolerance`.
+number of steps that keeps \(\lVert A_{\mathrm{eff}} - A \rVert\) below
+`trotter_tolerance` \(\times C\). Lower `trotter_tolerance` to get a more accurate and
+deeper circuit. At order 2, the number of steps grows only as
+\(1/\sqrt{\mathrm{tolerance}}\).
 
 ## Precision, and what post-selection costs
 
-`n_eigenvalue_qubits` (`n_l`) sets the resolution of the clock. In `"honest"` mode, it
-also sets the rotation constant `C = 2π/(t · 2^n_l)`, which is the smallest eigenvalue
-that the register can resolve. A smaller `C` handles systems with worse conditioning,
-but it lowers the post-selection probability, which scales as `(C/λ)²`. This section
-makes the trade-off explicit.
+`n_eigenvalue_qubits` (\(n_l\)) sets the resolution of the clock. In `"honest"` mode, it
+also sets the rotation constant \(C = 2\pi/(t \cdot 2^{n_l})\), which is the smallest
+eigenvalue that the register can resolve. A smaller \(C\) handles systems with worse
+conditioning, but it lowers the post-selection probability, which scales as
+\((C/\lambda)^2\). This section makes the trade-off explicit.
 
 Two probabilities come back, and they are not the same number. `success_probability`
-is the weight on `ancilla = |1⟩`, summed over **all** clock states.
-`readout_probability` is the weight on the joint event `ancilla = |1⟩` **and**
-`clock = |0…0⟩`. This is the slice that the solution is actually read from, and the
-rate at which a device would post-select. Use the second one to plan the number of
-shots; the first one overstates it.
+is the weight on \(\mathrm{ancilla} = |1\rangle\), summed over **all** clock states.
+`readout_probability` is the weight on the joint event \(\mathrm{ancilla} = |1\rangle\)
+**and** \(\mathrm{clock} = |0 \cdots 0\rangle\). This is the slice that the solution is
+actually read from, and the rate at which a device would post-select. Use the second one
+to plan the number of shots; the first one overstates it.
 
-We sweep `n_l` on `A = [[3, 1], [1, 2]]` (`κ ≈ 2.62`) with the default
+We sweep \(n_l\) on \(A\) = `[[3, 1], [1, 2]]` (\(\kappa \approx 2.62\)) with the default
 `trotter_steps="auto"`. Each solve is repeated once as a control, at
 `trotter_tolerance=0.01`, which is a Trotter target 25 times tighter. If the control
 follows the series, the error that remains is not Trotter error, and the `off-grid`
@@ -749,68 +752,69 @@ for theme in ("light", "dark"):
 ![The residual, the accuracy of the direction and the post-selection probability against the number of clock qubits (dark theme).](hhl_honest_files/precision_dark.png){ .theme-image-dark }
 
 The residual improves overall, but not monotonically. The measured residuals across
-`n_l = 2…6` are `0.4913`, `0.0640`, `0.0099`, `0.0371` and `0.0079`. Two clock qubits
-are not enough to represent the spectrum at all: the residual is `0.49`, the cosine is
-`0.61`, and `solve()` says so twice. The first warning reports that four clock buckets
-cannot resolve this `κ`, and names the `n_eigenvalue_qubits` that can. The second
-warning flags the residual itself as rough. By `n_l = 6`, the residual is 62 times
-smaller. However, `n_l = 5` is **3.7 times worse than `n_l = 4`**, and the plot shows
+\(n_l = 2, \dots, 6\) are `0.4913`, `0.0640`, `0.0099`, `0.0371` and `0.0079`. Two clock
+qubits are not enough to represent the spectrum at all: the residual is `0.49`, the cosine
+is `0.61`, and `solve()` says so twice. The first warning reports that four clock buckets
+cannot resolve this \(\kappa\), and names the `n_eigenvalue_qubits` that can. The second
+warning flags the residual itself as rough. By \(n_l = 6\), the residual is 62 times
+smaller. However, \(n_l = 5\) is **3.7 times worse than \(n_l = 4\)**, and the plot shows
 this dip instead of a straight line.
 
 This is not Trotter error, and the control shows it. At `trotter_tolerance=0.01`, a
 Trotter target 25 times tighter, every point of the sweep comes back within `0.0001`
-of the default (`n_l = 5` returns the same `0.0371`). The Trotter grid that the
+of the default (\(n_l = 5\) returns the same `0.0371`). The Trotter grid that the
 selector chose was therefore never the limiting factor.
 
-The cause is the readout projection. The solution is read from the `clock = |0…0⟩`
-slice, and this slice weights each eigenvalue by how well it fits the grid of buckets.
-The weight is exact on the grid, and up to about 9 % low at an offset of half a bucket
-(the shortfall is largest for an eigenvalue in the lowest buckets). The pattern changes
-as eigenvalues move on and off the grid when `n_l` changes, and the `off-grid` column
-tracks it: `0.42`/`0.33` at `n_l = 4`, `0.18`/**`0.43`** at `n_l = 5` (close to the
-worst case), and `0.29`/**`0.04`** at `n_l = 6` (almost on the grid). A small irregular
-variation of the residual as `n_l` grows is therefore expected by construction. The
-right way to read the trend is its envelope, not the difference from one point to the
-next.
+The cause is the readout projection. The solution is read from the
+\(\mathrm{clock} = |0 \cdots 0\rangle\) slice, and this slice weights each eigenvalue by
+how well it fits the grid of buckets. The weight is exact on the grid, and up to about 9 %
+low at an offset of half a bucket (the shortfall is largest for an eigenvalue in the
+lowest buckets). The pattern changes as eigenvalues move on and off the grid when \(n_l\)
+changes, and the `off-grid` column tracks it: `0.42`/`0.33` at \(n_l = 4\),
+`0.18`/**`0.43`** at \(n_l = 5\) (close to the worst case), and `0.29`/**`0.04`** at
+\(n_l = 6\) (almost on the grid). A small irregular variation of the residual as \(n_l\)
+grows is therefore expected by construction. The right way to read the trend is its
+envelope, not the difference from one point to the next.
 
 The variation comes from the evolution time. With no spectrum to look at, the
-`"honest"` path takes `t` from the Gershgorin bound, which is `4.0` here against a true
-`|λ|_max` of `3.618`. Where the eigenvalues fall between the centres of the buckets is
-therefore not chosen: it is whatever this `t` and this `n_l` produce. The `off-grid`
-column shows where they fall, and it changes with `n_l` for reasons that have nothing
-to do with an improvement in accuracy. This is the one real cost of not diagonalising
-`A`, and it is a cost in *the alignment of the buckets*, not in the evolution. The
-`trotter_tolerance` control above has already shown that the Trotterisation is not
-what limits the answer.
+`"honest"` path takes \(t\) from the Gershgorin bound, which is `4.0` here against a true
+\(\lvert \lambda \rvert_{\max}\) of `3.618`. Where the eigenvalues fall between the
+centres of the buckets is therefore not chosen: it is whatever this \(t\) and this \(n_l\)
+produce. The `off-grid` column shows where they fall, and it changes with \(n_l\) for
+reasons that have nothing to do with an improvement in accuracy. This is the one real cost
+of not diagonalising \(A\), and it is a cost in *the alignment of the buckets*, not in the
+evolution. The `trotter_tolerance` control above has already shown that the Trotterisation
+is not what limits the answer.
 
 The post-selection panel shows the price. The ancilla weight falls from `0.79` to
 `0.0038` across the sweep. The joint weight of ancilla and clock, which is the rate
-that matters on hardware, falls from `0.69` to `0.0033`. At `n_l = 4`, the two differ
+that matters on hardware, falls from `0.69` to `0.0033`. At \(n_l = 4\), the two differ
 by a factor of `1.4` (`0.090` against `0.064`), so if you quoted `success_probability`
 as the post-selection rate, you would underestimate the number of shots by that factor.
 
 ## Which matrices are actually cheap
 
 The one classical cost that the `"honest"` path *cannot* avoid is the decomposition of
-`A` into Pauli strings, and the number of terms that it finds decides whether a speedup
+\(A\) into Pauli strings, and the number of terms that it finds decides whether a speedup
 exists at all. The property that matters is sparsity **in the Pauli basis**. This is
 not the same property as sparsity of the matrix, and confusing the two is the easiest
-way to claim too much here. Below, `n` is the number of state qubits and `N = 2ⁿ` is
-the dimension of `A`.
+way to claim too much here. Below, \(n\) is the number of state qubits and \(N = 2^n\) is
+the dimension of \(A\).
 
-* Matrices *built* as a short Pauli sum have `O(poly n)` terms. Examples are local spin
-  Hamiltonians, Ising models and `diag(1…N)`. These matrices are really cheap.
+* Matrices *built* as a short Pauli sum have \(O(\mathrm{poly}\, n)\) terms. Examples are
+  local spin Hamiltonians, Ising models and \(\mathrm{diag}(1, \dots, N)\). These matrices
+  are really cheap.
 * A matrix that is sparse can be dense in the Pauli basis. A random **diagonal** matrix
-  has one non-zero entry per row, and still needs `N` terms. The coefficients of its
-  `Z` strings are the Walsh-Hadamard transform of the diagonal, which is dense for a
+  has one non-zero entry per row, and still needs \(N\) terms. The coefficients of its
+  \(Z\) strings are the Walsh-Hadamard transform of the diagonal, which is dense for a
   generic diagonal.
 * The tridiagonal finite-difference matrix is the standard example of a cheap system,
-  and on a log axis next to `4ⁿ` it looks like one. It needs exactly `N = 2ⁿ` terms,
+  and on a log axis next to \(4^n\) it looks like one. It needs exactly \(N = 2^n\) terms,
   which is exponential in the number of qubits. It is cheap *compared with* a dense
   matrix, not cheap in absolute terms.
 
 Keep one thing separate. The efficiency assumption of the 2009 HHL paper uses a
-**different input model**. It assumes an `A` that is `s`-sparse, whose rows can be
+**different input model**. It assumes an \(A\) that is \(s\)-sparse, whose rows can be
 computed efficiently, and that is accessed through a sparse-access oracle. The cost
 analysis of that model does not carry over to a decomposition into Pauli terms or into
 a linear combination of unitaries. The `"honest"` path pays the Pauli cost, so that is
@@ -890,8 +894,8 @@ dim= 64 (n=6):  tridiagonal=  64   rand-diagonal=  64   symmetric(3 per row)= 14
 N=128: symmetric with 3 non-zeros per row -> 5440 Pauli terms, against 8256 for fully dense real symmetric (66% of dense)
 ```
 
-The figure shows the four families against the two reference curves, `4ⁿ` and
-`N = 2ⁿ`:
+The figure shows the four families against the two reference curves, \(4^n\) and
+\(N = 2^n\):
 
 ```python
 ns = [d.bit_length() - 1 for d in sizes]
@@ -936,9 +940,9 @@ for theme in ("light", "dark"):
 ![The number of Pauli terms against the number of qubits for four families of matrices (light theme).](hhl_honest_files/scaling_light.png){ .theme-image-light }
 ![The number of Pauli terms against the number of qubits for four families of matrices (dark theme).](hhl_honest_files/scaling_dark.png){ .theme-image-dark }
 
-The tridiagonal and random diagonal matrices lie exactly on the `N = 2ⁿ` line, with 2,
+The tridiagonal and random diagonal matrices lie exactly on the \(N = 2^n\) line, with 2,
 4, 8, 16, 32 and 64 terms across the sweep, and only the dense Hermitian matrix follows
-`4ⁿ`. The plot therefore does not show a cheap family and an expensive one. It shows
+\(4^n\). The plot therefore does not show a cheap family and an expensive one. It shows
 one family that is exponential with base 2, and one that is exponential with base 4.
 On a log axis, this gap looks like a difference in kind, and it is not.
 
@@ -946,33 +950,34 @@ The third curve is the main point of the section. `sparse_symmetric` is a cycle 
 with its vertices relabelled at random. It has exactly 3 non-zero entries per row,
 which is the number that a tridiagonal matrix has in its interior rows. The relabelling
 changes nothing about the sparsity of the matrix, and everything about the number of
-terms: 1472 terms at `N = 64`, against 64 for the tridiagonal matrix. This is a factor
+terms: 1472 terms at \(N = 64\), against 64 for the tridiagonal matrix. This is a factor
 of 23, and 36 % of the 4096 terms that a dense Hermitian matrix of that size needs. At
-`N = 128`, it reaches 5440 terms, against 8256 for a fully dense real symmetric matrix.
+\(N = 128\), it reaches 5440 terms, against 8256 for a fully dense real symmetric matrix.
 This is 66 % of a dense matrix, from three non-zero entries per row.
 
-The mechanism is the following. A non-zero entry at `(i, j)` contributes to the Pauli
-strings whose `X`/`Y` support is the bit pattern `i ⊕ j`. The number of terms is
-therefore set by how many *distinct* offsets `i ⊕ j` the pattern contains, not by how
-many non-zero entries it has. A band has only the `log₂ N` offsets `2ᵏ − 1`, which
-gives 7 of them at `N = 128`. This is exactly why a real symmetric tridiagonal matrix
-with variable coefficients costs `576 = 64 · 7 + 128` terms. A random pattern uses all
-the offsets. For generic coefficients, the number of terms is exactly `2^(n−1)` for
-each distinct non-zero offset when `A` is real symmetric, or `2ⁿ` when `A` is complex
-Hermitian, plus the number of non-zero Walsh-Hadamard coefficients of the diagonal.
+The mechanism is the following. A non-zero entry at \((i, j)\) contributes to the Pauli
+strings whose \(X\)/\(Y\) support is the bit pattern \(i \oplus j\). The number of terms
+is therefore set by how many *distinct* offsets \(i \oplus j\) the pattern contains, not
+by how many non-zero entries it has. A band has only the \(\log_2 N\) offsets \(2^k - 1\),
+which gives 7 of them at \(N = 128\). This is exactly why a real symmetric tridiagonal
+matrix with variable coefficients costs \(576 = 64 \cdot 7 + 128\) terms. A random pattern
+uses all the offsets. For generic coefficients, the number of terms is exactly \(2^{n-1}\)
+for each distinct non-zero offset when \(A\) is real symmetric, or \(2^n\) when \(A\) is
+complex Hermitian, plus the number of non-zero Walsh-Hadamard coefficients of the
+diagonal.
 
 The `"honest"` path makes this cost *visible*: it is a number of terms that you can
 print before you build a circuit, while a dense `expm` hides it. The speedup of HHL is
-real for a well-conditioned `A` that is a short Pauli sum, with an efficient way to
-prepare `b`. Sparsity of the matrix on its own provides none of these three
+real for a well-conditioned \(A\) that is a short Pauli sum, with an efficient way to
+prepare \(b\). Sparsity of the matrix on its own provides none of these three
 properties.
 
 ### The cheap family, solved
 
 The first bullet above is the constructive case: a matrix *written down* as a short
 Pauli sum, rather than as an array of numbers. A transverse-field Ising Hamiltonian has
-`2n` terms: the identity shift, a nearest-neighbour `ZZ` term for each pair of
-neighbouring sites, and a local `X` term on each site. This is linear in the number of
+\(2n\) terms: the identity shift, a nearest-neighbour \(ZZ\) term for each pair of
+neighbouring sites, and a local \(X\) term on each site. This is linear in the number of
 qubits, so the number of terms is no longer the obstacle. Once it is shifted to be
 positive definite, it is a linear system like any other, and `"honest"` mode solves
 it.
@@ -1034,32 +1039,32 @@ n=4 (N=16):  8 terms written, 8 found by pauli_decompose,  kappa=5.47
 ```
 
 `pauli_decompose` finds exactly the terms that were written, so nothing is hidden: 8
-terms for the `16 × 16` matrix, against the 256 that a dense Hermitian matrix of that
-size needs, and the 16 that a random diagonal one needs. The number of terms grows by
+terms for the \(16 \times 16\) matrix, against the 256 that a dense Hermitian matrix of
+that size needs, and the 16 that a random diagonal one needs. The number of terms grows by
 two for each added qubit, not by a factor of four.
 
 The three sizes stop at three different registers, with 3, 5 and 4 clock qubits, and
 their cosines are `0.9997`, `1.0000` and `0.9993`. The register at which the selector
-stops is therefore not a function of `N`. It depends on where the eigenvalues of that
+stops is therefore not a function of \(N\). It depends on where the eigenvalues of that
 system happen to fall on the grid of buckets, which is the subject of the precision
-section. The `16 × 16` system stops at `n_l = 4`, a circuit of 9 qubits, with one
-usable preparation in 21. This is the cheapest readout of any system of size `8 × 8`
-or larger on this page, and it is the largest system.
+section. The \(16 \times 16\) system stops at \(n_l = 4\), a circuit of 9 qubits, with one
+usable preparation in 21. This is the cheapest readout of any system of size
+\(8 \times 8\) or larger on this page, and it is the largest system.
 
-This last number is the one to plan the number of shots against, and it comes from `κ`
-and the resolution of the clock, not from the Pauli decomposition. Nothing about a
-short Pauli sum makes post-selection cheaper. What it makes cheaper is the circuit that
-has to be built in the first place.
+This last number is the one to plan the number of shots against, and it comes from
+\(\kappa\) and the resolution of the clock, not from the Pauli decomposition. Nothing
+about a short Pauli sum makes post-selection cheaper. What it makes cheaper is the circuit
+that has to be built in the first place.
 
 ## Summary
 
 | | `"reference"` | `"honest"` |
 |---|---|---|
-| Eigenvalues | They are found classically with `eigvalsh` (`O(N³)`). | They are **not computed**. |
-| Evolution `e^{iAt}` | It is a dense black box from `expm`. | It is **Trotterised into elementary gates**. |
-| Evolution time `t` | It is tuned to the known spectrum. | It is fixed from a Gershgorin bound. |
-| Rotation constant `C` | It is the true `λ_min`. | It is the resolution of the clock register. |
-| The evolution `e^{iAt}` can be built from elementary gates | ❌ No, it is a black-box unitary. | ✅ Yes, it uses elementary gates. |
+| Eigenvalues | They are found classically with `eigvalsh` (\(O(N^3)\)). | They are **not computed**. |
+| Evolution \(e^{iAt}\) | It is a dense black box from `expm`. | It is **Trotterised into elementary gates**. |
+| Evolution time \(t\) | It is tuned to the known spectrum. | It is fixed from a Gershgorin bound. |
+| Rotation constant \(C\) | It is the true \(\lambda_{\min}\). | It is the resolution of the clock register. |
+| The evolution \(e^{iAt}\) can be built from elementary gates | ❌ No, it is a black-box unitary. | ✅ Yes, it uses elementary gates. |
 | Accuracy settings | The only one is `n_eigenvalue_qubits`. | They are `n_eigenvalue_qubits`, plus `trotter_steps`, `trotter_order` and `trotter_tolerance`. |
 
 ```python
@@ -1101,17 +1106,18 @@ the start of the page chooses for this system. Six clock qubits would reach a re
 of `0.0085` instead of `0.0091`, and cost one preparation in 154.
 
 `"honest"` mode does not change one thing. In both modes, the eigenvalue inversion
-still uses a table of `2^n_l − 1` angles, one for each clock bucket. It is built from
+still uses a table of \(2^{n_l} - 1\) angles, one for each clock bucket. It is built from
 elementary gates (the uniformly controlled rotation above), so it costs nothing
 asymptotically, because the ladder of controlled evolutions in QPE is already
-`Θ(2^n_l)`. However, it means that the classical description of the circuit grows as
-`Θ(2^n_l)`, so this is not a uniform family of circuits of polynomial size.
+\(\Theta(2^{n_l})\). However, it means that the classical description of the circuit grows
+as \(\Theta(2^{n_l})\), so this is not a uniform family of circuits of polynomial size.
 
 There is also a caveat about the readout. HHL natively produces the quantum *state*
-`|x⟩`. The full `solution` vector here is read from the statevector of the simulator.
-On real hardware, only expectation values `⟨x|M|x⟩` are available, and reading all `N`
-components would take `O(N)` measurements. On hardware, HHL is therefore used to pass
-`|x⟩` to a later quantum routine, or to estimate a single observable.
+\(|x\rangle\). The full `solution` vector here is read from the statevector of the
+simulator. On real hardware, only expectation values \(\langle x|M|x\rangle\) are
+available, and reading all \(N\) components would take \(O(N)\) measurements. On hardware,
+HHL is therefore used to pass \(|x\rangle\) to a later quantum routine, or to estimate a
+single observable.
 
 ## Next
 

@@ -374,7 +374,7 @@ are checked before anything is submitted, so a wider circuit fails with a
   `zero_state_probability()` names one state, so it has no limit.
 - DM1 returns a density matrix of at most `8` qubits
   ([DM1 results](https://docs.aws.amazon.com/braket/latest/developerguide/braket-submit-tasks-simulators.html#braket-simulator-dm1)),
-  and both exact methods need the density matrix over every qubit, which is `4**8`,
+  and both exact methods need the density matrix over every qubit, which is \(4^8\),
   or `65,536`, entries at the limit.
 
 Above the limit of `Probability`, use `sample()` for the histogram, which has no

@@ -1,27 +1,28 @@
-"""Gradients of photonic circuits: the photonic parameter-shift rule, and finite
+r"""Gradients of photonic circuits: the photonic parameter-shift rule, and finite
 differences as a simple reference method.
 
-The qubit rule shifts the angle by `±π/2`. It holds for a Pauli rotation because a
-Pauli generator has the eigenvalues `±½`, which give a single frequency. The
-generator of a linear-optical component instead has *equally spaced* eigenvalues.
-For a phase shifter (and for the `phi` of a beam splitter), the generator is the
-number operator `n̂`, whose eigenvalues are integers. The expectation value of any
-observable that is diagonal in the Fock basis is then a trigonometric polynomial
-in the angle, of degree at most `N`, where `N` is the total number of photons. Its
-derivative is given *exactly* by the general shift rule for equally spaced
-frequencies (Wierichs et al., 2022), which uses `2N` terms. At `N = 1`, this rule
-is the usual `±π/2` rule.
+The qubit rule shifts the angle by \(\pm\pi/2\). It holds for a Pauli rotation
+because a Pauli generator has the eigenvalues \(\pm 1/2\), which give a single
+frequency. The generator of a linear-optical component instead has *equally spaced*
+eigenvalues. For a phase shifter (and for the `phi` of a beam splitter), the
+generator is the number operator \(\hat{n}\), whose eigenvalues are integers. The
+expectation value of any observable that is diagonal in the Fock basis is then a
+trigonometric polynomial in the angle, of degree at most \(N\), where \(N\) is the
+total number of photons. Its derivative is given *exactly* by the general shift rule
+for equally spaced frequencies (Wierichs et al., 2022), which uses \(2N\) terms. At
+\(N = 1\), this rule is the usual \(\pm\pi/2\) rule.
 
 The `theta` of a beam splitter needs more care. Its generator is a generator of
-the special unitary group SU(2), on the two modes that the beam splitter acts on.
-The eigenvalues of this generator are integers or half-integers, depending on whether
-the number of photons `n_ij` in those two modes is even or odd:
-`U(theta + 2π) = (-1)^n_ij`. This is a sign that depends on the photon-number
-sector, not a global phase. In a circuit with two modes, `n_ij = N` always, so the
-frequencies are integers at most `N`, and the rule above applies. With more
-modes, the components around the beam splitter create coherent combinations of sectors
-with even and odd photon numbers, and half-integer frequencies appear. The rule is
-then applied in the angle `theta / 2`, with order `2N` (`4N` evaluations).
+the special unitary group \(\mathrm{SU}(2)\), on the two modes that the beam splitter
+acts on. The eigenvalues of this generator are integers or half-integers, depending
+on whether the number of photons \(n_{ij}\) in those two modes is even or odd:
+\(U(\mathrm{theta} + 2\pi) = (-1)^{n_{ij}}\). This is a sign that depends on the
+photon-number sector, not a global phase. In a circuit with two modes,
+\(n_{ij} = N\) always, so the frequencies are integers at most \(N\), and the rule
+above applies. With more modes, the components around the beam splitter create
+coherent combinations of sectors with even and odd photon numbers, and half-integer
+frequencies appear. The rule is then applied in the angle `theta / 2`, with order
+\(2N\) (\(4N\) evaluations).
 
 This module is the linear-optics counterpart of
 `core.provider.parameter_shift_jacobian`. It reuses the `chain_factor` and
@@ -158,8 +159,8 @@ def photonic_parameter_shift_jacobian(
     need_weight_grad=True,
     need_input_grad=True,
 ):
-    """Compute the exact `d<O>/d(weights)` and `d<O>/d(inputs)` with the photonic
-    parameter-shift rule.
+    r"""Compute the exact \(d\langle O \rangle / d(\mathrm{weights})\) and
+    \(d\langle O \rangle / d(\mathrm{inputs})\) with the photonic parameter-shift rule.
 
     Args:
         executor (Executor): The executor that evaluates each shifted circuit, for
@@ -174,7 +175,7 @@ def photonic_parameter_shift_jacobian(
             safe upper bound: the rule is exact whenever the true degree is at most
             `order`. In a circuit with more than two modes, the `theta` of a beam
             splitter is reconstructed in `theta / 2` with order `2 * order` (see
-            the module docstring). `order=1` gives the simple `±π/2` estimate,
+            the module docstring). `order=1` gives the simple \(\pm\pi/2\) estimate,
             which is in general *wrong* with more than one photon. The tests use it
             to show that the rule with more terms is necessary.
         need_weight_grad (bool): If True, compute the gradient with respect to the

@@ -1,20 +1,21 @@
-"""Train the weights of a quantum kernel with kernel alignment.
+r"""Train the weights of a quantum kernel with kernel alignment.
 
 [`align_kernel()`][eigenkit.qml.align_kernel] optimises the trainable weights of
 a [`QuantumKernel`][eigenkit.qml.QuantumKernel] to minimise a loss computed from
 its training Gram matrix. There are two built-in losses:
 
 - `"svc"` is the optimal value of the dual problem of the support vector machine
-  (SVM) on `K_theta`:
-  `F(theta) = sum_i alpha_i - 1/2 sum_ij alpha_i alpha_j y_i y_j K_theta(x_i, x_j)`,
-  where `alpha` is the dual solution. It is an upper bound on the generalisation
+  (SVM) on \(K_\theta\):
+  \(F(\theta) = \sum_i \alpha_i
+  - \frac{1}{2} \sum_{ij} \alpha_i \alpha_j y_i y_j K_\theta(x_i, x_j)\),
+  where \(\alpha\) is the dual solution. It is an upper bound on the generalisation
   error, and quantum kernel alignment (QKA) minimises it (Glick et al.,
   arXiv:2105.03406). It has the same value as `SVCLoss` in
   qiskit-machine-learning.
 - `"kta"` is minus the kernel-target alignment
-  `<K, Y>_F / (||K||_F ||Y||_F)`, where `Y_ij = +1` for a pair of the same class
-  and `-1` otherwise (Cristianini et al. 2001). It needs no SVM fit at each
-  evaluation.
+  \(\langle K, Y \rangle_F / (\lVert K \rVert_F \lVert Y \rVert_F)\), where
+  \(Y_{ij} = +1\) for a pair of the same class and \(-1\) otherwise (Cristianini
+  et al. 2001). It needs no SVM fit at each evaluation.
 
 Each evaluation of the loss computes a whole kernel matrix, so the default
 optimiser is Simultaneous Perturbation Stochastic Approximation (SPSA). It
@@ -33,7 +34,7 @@ from ._kernels import QuantumKernel
 
 
 def svc_dual_loss(K: np.ndarray, y: np.ndarray, C: float = 1.0) -> float:
-    """Return the optimal dual objective of a support vector machine (SVM).
+    r"""Return the optimal dual objective of a support vector machine (SVM).
 
     The SVM is fitted on a precomputed kernel. This is the `"svc"` loss.
 
@@ -43,8 +44,10 @@ def svc_dual_loss(K: np.ndarray, y: np.ndarray, C: float = 1.0) -> float:
         C: The regularisation parameter of the SVM.
 
     Returns:
-        The value `sum |alpha_i y_i| - 1/2 (alpha y)^T K_sv (alpha y)`, summed
-            over the support vectors. Lower is better.
+        The value
+            \(\sum_i \lvert \alpha_i y_i \rvert
+            - \frac{1}{2} (\alpha y)^\top K_\mathrm{sv} (\alpha y)\), summed over the
+            support vectors. Lower is better.
 
     Raises:
         ValueError: If `y` does not have exactly two classes. Use `loss="kta"`
@@ -62,17 +65,18 @@ def svc_dual_loss(K: np.ndarray, y: np.ndarray, C: float = 1.0) -> float:
 
 
 def kernel_target_alignment(K: np.ndarray, y: np.ndarray) -> float:
-    """Return the kernel-target alignment `<K, Y>_F / (||K||_F ||Y||_F)`.
+    r"""Return the kernel-target alignment
+    \(\langle K, Y \rangle_F / (\lVert K \rVert_F \lVert Y \rVert_F)\).
 
-    `Y_ij = +1` when `y_i == y_j` and `-1` otherwise. For binary labels in
-    `{-1, +1}`, this is `y y^T`.
+    \(Y_{ij} = +1\) when `y_i == y_j` and \(-1\) otherwise. For binary labels in
+    \(\{-1, +1\}\), this is \(y y^\top\).
 
     Args:
         K: The Gram matrix, of shape `(n, n)`.
         y: The labels, of shape `(n,)`.
 
     Returns:
-        A value in `[-1, 1]`. A higher value means that the kernel already
+        A value in \([-1, 1]\). A higher value means that the kernel already
             separates the classes.
     """
     y = np.asarray(y)
@@ -128,7 +132,7 @@ def align_kernel(
     random_state: int | None = 0,
     callback: Callable[[int, np.ndarray, float], None] | None = None,
 ) -> KernelAlignmentResult:
-    """Train the weights of a kernel so that it fits the labels.
+    r"""Train the weights of a kernel so that it fits the labels.
 
     Args:
         kernel: A `QuantumKernel` whose feature map has trainable weights.
@@ -148,7 +152,7 @@ def align_kernel(
         initial_weights: The starting point. By default, it is the kernel's own
             weights, or zeros if the kernel has none.
         learning_rate: The initial step size of SPSA. `None` calibrates it so that
-            the first step moves the weights by about `2π / 10`. The `"svc"` loss
+            the first step moves the weights by about \(2\pi / 10\). The `"svc"` loss
             grows with the number of samples, so a fixed step that suits one
             dataset size can be far too large for another.
         perturbation: The initial perturbation size of SPSA. The default, `0.2`,

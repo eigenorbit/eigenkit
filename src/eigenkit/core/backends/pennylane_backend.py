@@ -402,7 +402,8 @@ class PennyLaneCompiled(CompiledCircuit):
         weights: np.ndarray,
         inputs: np.ndarray,
     ) -> float:
-        """Return the probability of measuring `|0…0⟩` after the circuit has run.
+        r"""Return the probability of measuring \(|0 \cdots 0\rangle\) after the circuit
+        has run.
 
         On first use, it builds a separate qnode that returns `qml.probs(...)`,
         and the method returns entry `0` of that distribution. The qnode uses the
@@ -413,7 +414,7 @@ class PennyLaneCompiled(CompiledCircuit):
             inputs (np.ndarray): The input features of one sample (1-D).
 
         Returns:
-            The probability, a float in `[0, 1]`.
+            The probability, a float in \([0, 1]\).
         """
         if self._zsp_qnode is None:
             ir = self._circuit
@@ -476,8 +477,8 @@ class PennyLaneCompiled(CompiledCircuit):
 
         Qubit `0` is the most significant bit. `initial_state` is added at the
         start of the circuit as a `qml.StatePrep`, so the evolution starts from
-        that state instead of `|0…0⟩`. A 2-D `inputs` batch returns an array of
-        shape `(B, 2**n_qubits)`. The batch is evaluated in a loop, because
+        that state instead of \(|0 \cdots 0\rangle\). A 2-D `inputs` batch returns an
+        array of shape `(B, 2**n_qubits)`. The batch is evaluated in a loop, because
         reading the state does not use the fast path of parameter broadcasting.
         This method needs exact mode, because `qml.state` is not defined with a
         finite number of shots.
@@ -487,7 +488,7 @@ class PennyLaneCompiled(CompiledCircuit):
             inputs (np.ndarray): The input features: 1-D for one sample, or 2-D
                 with a leading batch axis.
             initial_state (np.ndarray | None): The state to start from, instead
-                of `|0…0⟩`. Default: `None`.
+                of \(|0 \cdots 0\rangle\). Default: `None`.
 
         Returns:
             The statevector, of shape `(2**n_qubits,)`, or `(B, 2**n_qubits)` for

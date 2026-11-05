@@ -87,7 +87,7 @@ analytic          : -1.2360679774997898
 ```
 
 `exact_ground_state_energy()` diagonalises the Hamiltonian directly. At four
-qubits, this is a `16 × 16` matrix.
+qubits, this is a \(16 \times 16\) matrix.
 
 ## Running VQE
 

@@ -97,7 +97,7 @@ X, y = generate_ad_hoc(n_samples=200, n_qubits=2, gap=0.3, random_state=0)
 
 `generate_ad_hoc` builds the "ad hoc" dataset of
 [Havlíček et al.](https://arxiv.org/abs/1804.11326), which is designed so that a
-quantum kernel separates it. Each point in `[0, 2π)^n` is encoded with the ZZ
+quantum kernel separates it. Each point in \([0, 2\pi)^n\) is encoded with the ZZ
 feature map, and its label is the sign of a `Z` parity measured after a fixed
 random unitary. The points closer than `gap` to the decision boundary are dropped,
 and the two classes have the same size. A kernel built from the same ZZ feature map

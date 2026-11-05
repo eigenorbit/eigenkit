@@ -23,9 +23,9 @@ reuploading = Reuploading(
 1. **Standard reuploading** (the default; Pérez-Salinas et al. 2020). The same input
    is encoded `depth` times, with new variational weights between the encodings.
 2. **Trainable feature scaling** (`trainable_scale=True`; Schuld et al. 2021). Each
-   encoding rotation takes the angle `λ * x`, where `λ` is a trainable weight for
-   each pair of layer and feature. At the same depth, this is strictly more
-   expressive than pattern 1.
+   encoding rotation takes the angle \(\lambda \cdot x\), where \(\lambda\) is a
+   trainable weight for each pair of layer and feature. At the same depth, this is
+   strictly more expressive than pattern 1.
 
 ## Parameters
 

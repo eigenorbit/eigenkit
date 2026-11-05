@@ -446,14 +446,15 @@ class CudaQuantumCompiled(CompiledCircuit):
         weights: np.ndarray,
         inputs: np.ndarray,
     ) -> float:
-        """Return the probability of `|0…0⟩`, read from the statevector of `cudaq`.
+        r"""Return the probability of \(|0 \cdots 0\rangle\), read from the statevector
+        of `cudaq`.
 
         Args:
             weights (np.ndarray): The parameter vector (1-D).
             inputs (np.ndarray): The input features of one sample (1-D).
 
         Returns:
-            The probability, a float in `[0, 1]`.
+            The probability, a float in \([0, 1]\).
         """
         import cudaq
 

@@ -89,7 +89,7 @@ You choose the quantum layer with `layer_type`:
 |---|---|---|
 | `"Basic"` (default) | One encoding block and one variational block. | It needs `n_qubits == in_quantum`. |
 | `"Reupload"` | Standard data reuploading. | It needs `n_qubits == in_quantum`. |
-| `"Ensemble"` | `N` independent circuits. | It needs `n_qubits` to divide `in_quantum`. |
+| `"Ensemble"` | \(N\) independent circuits. | It needs `n_qubits` to divide `in_quantum`. |
 
 Note: if `n_qubits` and `in_quantum` differ for `Basic` or `Reupload`, a linear
 adapter `Linear(in_features, n_qubits)` is added in front automatically, and a
@@ -527,7 +527,7 @@ best = grid.best_estimator_
 
 `BaseQuantumClassifier` inherits from `ClassifierMixin`, so its `score()` returns
 the accuracy. `BaseQuantumRegressor` inherits from `RegressorMixin`, so its
-`score()` returns `R²`.
+`score()` returns \(R^2\).
 
 Import the base classes when you build your own estimators:
 

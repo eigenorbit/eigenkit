@@ -61,8 +61,8 @@ no state, so all timesteps can run in parallel.
 
 | Policy | Constructor | What it does | Memory | Execution |
 |---|---|---|---|---|
-| `Stateless` | `Stateless(window=1)` | Starts each step from `|0…0⟩` and encodes the last `window` inputs as rotation angles. | classical (the window) | **parallel**: all timesteps in one batched run |
-| `Carry` | `Carry()` | Applies the circuit to the previous state, `ψ_t = U(x_t) ψ_{t-1}`. | quantum state | sequential |
+| `Stateless` | `Stateless(window=1)` | Starts each step from \(\lvert 0 \cdots 0 \rangle\) and encodes the last `window` inputs as rotation angles. | classical (the window) | **parallel**: all timesteps in one batched run |
+| `Carry` | `Carry()` | Applies the circuit to the previous state, \(\psi_t = U(x_t)\, \psi_{t-1}\). | quantum state | sequential |
 | `LeakyCarry` | `LeakyCarry(alpha, reset=None)` | Mixes the carried state with a reset state and renormalises the result. | quantum, fading | sequential |
 
 With the carry policies, the circuit takes `n_inputs = F` inputs per step,
@@ -86,7 +86,7 @@ returns real-valued features for each timestep.
 
 | Extractor | Features per step | Notes |
 |---|---|---|
-| `pauli_z_features(states)` | `n_qubits` | The expectation value of `Z` on each qubit. This is the usual default in QRC; it is inexpensive and can be measured on hardware. |
+| `pauli_z_features(states)` | `n_qubits` | The expectation value of \(Z\) on each qubit. This is the usual default in QRC; it is inexpensive and can be measured on hardware. |
 | `probability_features(states)` | `2**n_qubits` | The measurement distribution over all basis states. It carries more information, and it is quadratic in the amplitudes. |
 | `amplitude_features(states)` | `2 * 2**n_qubits` | The real and imaginary parts of the state. Only a simulator can provide them; they cannot be measured on hardware. |
 | `expectation_features(states, observables)` | one per observable | The expectation values of any Pauli observables. Pass the same `Observable` or `PauliExpr` objects, or Hamiltonian strings, that the rest of the library uses. A single Hamiltonian string is one observable. |

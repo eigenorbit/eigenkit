@@ -1,16 +1,17 @@
-"""Variational optimisation: minimise `<H>(θ)` over the parameters of a circuit.
+r"""Variational optimisation: minimise \(\langle H \rangle(\theta)\) over the parameters
+of a circuit.
 
 This is the training engine, independent of any framework, that the Variational
 Quantum Eigensolver (VQE) in `chemistry`, the quantum approximate optimisation
 algorithm (QAOA) in `optimization`, and any workflow of the form "prepare a
-parametrised state, measure `<H>`, optimise `θ`" share. It uses only NumPy and
-SciPy. It runs the NumPy forward pass of the core `Circuit` (`compiled.run`) and
-its analytic NumPy gradients (`_gradient_jacobians`: the backend's own gradient
-when it has one, such as the adjoint method of the NumPy simulator, and the
-parameter-shift rule otherwise). So it runs on **any** backend (NumPy,
-PennyLane, Qiskit, Braket, CUDA Quantum) without PyTorch. Even on PennyLane it
-uses the NumPy path, not the PyTorch QNode. SciPy is imported only at the first
-call.
+parametrised state, measure \(\langle H \rangle\), optimise \(\theta\)" share. It
+uses only NumPy and SciPy. It runs the NumPy forward pass of the core `Circuit`
+(`compiled.run`) and its analytic NumPy gradients (`_gradient_jacobians`: the
+backend's own gradient when it has one, such as the adjoint method of the NumPy
+simulator, and the parameter-shift rule otherwise). So it runs on **any** backend
+(NumPy, PennyLane, Qiskit, Braket, CUDA Quantum) without PyTorch. Even on
+PennyLane it uses the NumPy path, not the PyTorch QNode. SciPy is imported only
+at the first call.
 
 Backends that cannot differentiate (`gradient_method="none"`, for example a
 quantum processing unit (QPU) whose configuration leaves `enable_gradients` off)
@@ -114,13 +115,14 @@ def minimize_expectation(
     random_state: int | None = 42,
     callback: Callable[[np.ndarray], None] | None = None,
 ) -> VariationalResult:
-    """Minimise `<H>(θ)` for a circuit whose parameters are all variational.
+    r"""Minimise \(\langle H \rangle(\theta)\) for a circuit whose parameters are all
+    variational.
 
     Args:
         circuit: A core NumPy `Circuit` whose single observable is the Hamiltonian
-            `H` and whose `spec.n_inputs == 0` (every parameter is a variational
+            \(H\) and whose `spec.n_inputs == 0` (every parameter is a variational
             weight). It works with any provider.
-        initial_parameters: The starting `θ`, of shape `(n_weights,)`. When it is
+        initial_parameters: The starting \(\theta\), of shape `(n_weights,)`. When it is
             not given, it is drawn at random with the seed `random_state`.
         optimizer: The name of a `scipy.optimize.minimize` method (the default is
             `"L-BFGS-B"`), `"spsa"` for

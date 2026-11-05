@@ -1,7 +1,7 @@
-"""The Quantum Approximate Optimization Algorithm (QAOA) with the core of the library.
+r"""The Quantum Approximate Optimization Algorithm (QAOA) with the core of the library.
 
 It builds the standard QAOA ansatz from the qubit Hamiltonian of a problem,
-optimises the angles `(γ, β)` with `minimize_expectation`, and then reads the
+optimises the angles \((\gamma, \beta)\) with `minimize_expectation`, and then reads the
 distribution of bitstrings of the optimised state (`probabilities`) to find a
 solution. It uses only NumPy and SciPy, needs no PyTorch, and works with any
 backend that can return the probabilities of the basis states.
@@ -22,12 +22,12 @@ from ..core.variational import Optimizer, minimize_expectation
 
 
 def qaoa_ansatz(hamiltonian: Observable, num_qubits: int, layers: int) -> CircuitSpec:
-    """Build the standard QAOA circuit.
+    r"""Build the standard QAOA circuit.
 
     QAOA is the Quantum Approximate Optimization Algorithm. The circuit starts in
-    `|+⟩^n`, then applies `layers` repetitions of the cost unitary
-    `exp(-i γ_l H_C)` and the mixer `exp(-i β_l Σ_i X_i)`. It has `2 * layers`
-    weights, in the order `[γ_0, β_0, γ_1, β_1, ...]`.
+    \(|+\rangle^{\otimes n}\), then applies `layers` repetitions of the cost unitary
+    \(\exp(-i \gamma_l H_C)\) and the mixer \(\exp(-i \beta_l \sum_i X_i)\). It has
+    `2 * layers` weights, in the order \([\gamma_0, \beta_0, \gamma_1, \beta_1, \dots]\).
 
     Args:
         hamiltonian (Observable): The cost Hamiltonian.
@@ -56,7 +56,7 @@ def qaoa_ansatz(hamiltonian: Observable, num_qubits: int, layers: int) -> Circui
 
 @dataclass(frozen=True, eq=False)
 class OptimizationResult(ValueEquality):
-    """The result of a run of the Quantum Approximate Optimization Algorithm (QAOA).
+    r"""The result of a run of the Quantum Approximate Optimization Algorithm (QAOA).
 
     The result is read-only. Assigning to a field raises `FrozenInstanceError`, and
     writing into an array field raises `ValueError`. This prevents a mistyped `=`
@@ -75,7 +75,8 @@ class OptimizationResult(ValueEquality):
             report: QAOA samples, so the best sample is better than the average.
         expectation: The mean energy of the final state. Compare it with
             `best_energy` to see how concentrated the distribution is.
-        optimal_parameters: The angles `γ` and `β` that the optimiser settled on.
+        optimal_parameters: The angles \(\gamma\) and \(\beta\) that the optimiser
+            settled on.
         probabilities: The probability of every basis state, of length `2**n`.
         n_iterations: The number of iterations of the optimiser.
         success: Whether the optimiser reported convergence.
@@ -103,12 +104,12 @@ class OptimizationResult(ValueEquality):
 
 
 class QAOA(BaseQuantumSolver):
-    """The Quantum Approximate Optimization Algorithm (QAOA) solver.
+    r"""The Quantum Approximate Optimization Algorithm (QAOA) solver.
 
     It solves an `Ising` or `QUBO` problem.
 
     Args:
-        layers: The depth `p` of QAOA. Default: `1`.
+        layers: The depth \(p\) of QAOA. Default: `1`.
         provider: The backend. Default: `"numpy"`, the reference NumPy simulator.
         optimizer: A SciPy method name, `"spsa"`, or a custom callable (see
             `minimize_expectation`). Default: `"L-BFGS-B"`.
@@ -137,13 +138,13 @@ class QAOA(BaseQuantumSolver):
         top_k: int | None = None,
         **minimize_kwargs,
     ) -> OptimizationResult:
-        """Optimise the QAOA angles and read the answer from the final state.
+        r"""Optimise the QAOA angles and read the answer from the final state.
 
         Args:
             problem (QUBO | Ising): The problem to minimise.
-            initial_parameters (np.ndarray | None): The initial angles `γ` and `β`, of
-                shape `(2 * layers,)`. They are random when they are not given. Default:
-                `None`.
+            initial_parameters (np.ndarray | None): The initial angles \(\gamma\) and
+                \(\beta\), of shape `(2 * layers,)`. They are random when they are not
+                given. Default: `None`.
             top_k (int | None): How many of the most probable bitstrings to score with
                 the energy of the problem. The best of them is returned as
                 `best_bitstring`, and the others are not returned. Default: `None`, which

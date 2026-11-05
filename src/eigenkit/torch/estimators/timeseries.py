@@ -303,9 +303,9 @@ class QuantumTimeSeriesRegressor(BaseQuantumRegressor):
         *,
         return_dict: bool = False,
     ) -> float | dict[str, float]:
-        """Score the estimator on the window targets, aligned as in `predict`.
+        r"""Score the estimator on the window targets, aligned as in `predict`.
 
-        By default, it returns `R²`, for compatibility with scikit-learn
+        By default, it returns \(R^2\), for compatibility with scikit-learn
         (`cross_val_score`, `GridSearchCV`). Pass `return_dict=True` to get a
         dict with `r2`, `mse`, `mae`, `rmse` and `mape`.
 
@@ -317,7 +317,7 @@ class QuantumTimeSeriesRegressor(BaseQuantumRegressor):
                 instead of the single main score. Default: `False`.
 
         Returns:
-            The `R²` score, or a dict of metrics when `return_dict` is set.
+            The \(R^2\) score, or a dict of metrics when `return_dict` is set.
         """
         X_pairs, y_pairs = self._make_supervised_windows(np.asarray(X), np.asarray(y))
         preds = np.asarray(

@@ -70,13 +70,13 @@ qc.rx(0.5, qubit=1)
 | `z(qubit)` | The Pauli `Z` gate. | None. |
 | `mcx(*qubits)` | A multi-controlled `X` gate. Every qubit except the last is a control. | None. |
 | `mcz(*qubits)` | A multi-controlled `Z` gate. Every qubit except the last is a control. | None. |
-| `phase_shift(angle, qubit)` | A phase shift, which applies `e^(iφ)` to `\|1⟩` and leaves `\|0⟩` unchanged. | One `Parameter`. |
+| `phase_shift(angle, qubit)` | A phase shift, which applies \(e^{i\varphi}\) to \(\lvert 1\rangle\) and leaves \(\lvert 0\rangle\) unchanged. | One `Parameter`. |
 | `swap(qubit0, qubit1)` | The SWAP gate. | None. |
 | `cry(angle, control, target)` | A controlled `RY` gate. | One `Parameter`. |
 | `s(qubit)` | The `S` gate, a quarter turn about `Z`. | None. |
-| `sdg(qubit)` | The `S†` gate, the inverse of `s()`. | None. |
+| `sdg(qubit)` | The \(S^\dagger\) gate, the inverse of `s()`. | None. |
 | `cphase(angle, control, target)` | A controlled phase shift, which is symmetric in its two qubits. | One `Parameter`. |
-| `pauli_exponential(paulis, angle, coefficient=1.0)` | `exp(-i · coefficient · angle · P)` for a Pauli product `P`, given as `(operator, qubit)` pairs on different qubits. | One `Parameter`. |
+| `pauli_exponential(paulis, angle, coefficient=1.0)` | \(\exp(-i \cdot \mathrm{coefficient} \cdot \mathrm{angle} \cdot P)\) for a Pauli product \(P\), given as `(operator, qubit)` pairs on different qubits. | One `Parameter`. |
 
 `pauli_exponential` is the Trotter building block that the cost and mixer layers of
 the Quantum Approximate Optimization Algorithm (QAOA) and the excitation operators of
@@ -165,9 +165,11 @@ moment.
 
 ## Building an inversion circuit
 
-A common pattern is to build `U(x_1)` followed by the adjoint of `U(x_2)`, to read
-out the fidelity `|<0...0| U^dag(x_2) U(x_1) |0...0>|^2`. This is what `QuantumKernel`
-uses, and it serves any fidelity measure in the style of a swap test.
+A common pattern is to build \(U(x_1)\) followed by the adjoint of \(U(x_2)\), to
+read out the fidelity
+\(\lvert \langle 0 \cdots 0 | U^\dagger(x_2)\, U(x_1) | 0 \cdots 0 \rangle \rvert^2\).
+This is what `QuantumKernel` uses, and it serves any fidelity measure in the style of
+a swap test.
 
 ```python
 from eigenkit import Circuit, CircuitBuilder

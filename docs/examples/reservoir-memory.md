@@ -2,9 +2,9 @@
 
 The **short-term memory capacity** task is the standard test of a reservoir. You
 feed it a random scalar signal, and you ask the readout to rebuild the signal
-delayed by `τ` steps. A reservoir with memory rebuilds recent values well, and it
-gets slowly worse as `τ` grows. A model without memory can only reproduce the
-present (`τ = 0`).
+delayed by \(\tau\) steps. A reservoir with memory rebuilds recent values well, and it
+gets slowly worse as \(\tau\) grows. A model without memory can only reproduce the
+present (\(\tau = 0\)).
 
 This example compares the three state policies, `"stateless"`, `"carry"` (the
 default) and `"leaky"`, on that task. It shows *why* a memory that fades over time,
@@ -14,9 +14,9 @@ programming interface (API).
 
 ## The task
 
-A scalar signal `s_t ~ Uniform(-1, 1)` drives every qubit of the reservoir (we
-repeat it across the input slots). The target is the same signal delayed by `τ`
-steps: `y_t = s_{t-τ}`.
+A scalar signal \(s_t \sim \mathrm{Uniform}(-1, 1)\) drives every qubit of the reservoir
+(we repeat it across the input slots). The target is the same signal delayed by
+\(\tau\) steps: \(y_t = s_{t-\tau}\).
 
 ```python
 import numpy as np
@@ -86,30 +86,32 @@ carry (unitary)        0.00  0.00  0.00  0.00  0.00  0.00   0.00
 leaky (alpha=0.5)      0.96  0.91  0.74  0.53  0.31  0.18   3.63
 ```
 
-The last column is the **memory capacity** (MC): the sum of `R²` (the coefficient
+The last column is the **memory capacity** (MC): the sum of \(R^2\) (the coefficient
 of determination) over the lags. This single number sums up how much of the history
 of the input the reservoir keeps.
 
 ## What the numbers say
 
-- **Memoryless** rebuilds the present perfectly (`R² = 1.00` at `τ = 0`), and
+- **Memoryless** rebuilds the present perfectly (\(R^2 = 1.00\) at \(\tau = 0\)), and
   nothing else. With only the current input, it has no information about the past,
-  as expected. `MC = 1.0`.
-- **Pure unitary carry** scores about `0` *everywhere*, even at `τ = 0`. The carry
-  is correct (the state really is `ψ_t = U(x_t)ψ_{t-1}`), but without dissipation,
-  the recurrence mixes the whole history into the state in a way that a *linear*
-  readout cannot separate. There is no clean fading memory to read. `MC ≈ 0`.
+  as expected. \(\mathrm{MC} = 1.0\).
+- **Pure unitary carry** scores about `0` *everywhere*, even at \(\tau = 0\). The carry
+  is correct (the state really is \(\psi_t = U(x_t)\,\psi_{t-1}\)), but without
+  dissipation, the recurrence mixes the whole history into the state in a way that a
+  *linear* readout cannot separate. There is no clean fading memory to read.
+  \(\mathrm{MC} \approx 0\).
 - **Leaky carry** shows the standard curve of short-term memory: it recalls the
   recent steps almost perfectly, and the recall fades smoothly with the lag
-  (`0.96 → 0.91 → 0.74 → …`). The leak of weight `(1 - α)` toward the reset state
-  lets old inputs decay, so the recent ones can still be recovered linearly.
-  `MC = 3.63`, which is more than three times the baseline without memory.
+  (\(0.96 \to 0.91 \to 0.74 \to \dots\)). The leak of weight \((1 - \alpha)\) toward
+  the reset state lets old inputs decay, so the recent ones can still be recovered
+  linearly.
+  \(\mathrm{MC} = 3.63\), which is more than three times the baseline without memory.
 
 ## Forecasting the next step
 
 Memory is only useful if it helps to *predict*. Here, a fast quasiperiodic signal
 drives the reservoir, and the readout forecasts the **next** value,
-`y_t = s_{t+1}`. A fast oscillation moves a lot between steps, so the current sample
+\(y_t = s_{t+1}\). A fast oscillation moves a lot between steps, so the current sample
 alone cannot tell where the signal goes next. The forecast needs the context of the
 previous steps.
 
@@ -168,7 +170,7 @@ leaky carry (5q)          R^2 = 0.91
 
 With no window (`window=1`), the readout sees only the current value, and it
 cannot forecast a fast oscillation at all. A short window recovers the local
-dynamics: three past values already reach `R² = 0.87`, and five reach `0.98`. The
+dynamics: three past values already reach \(R^2 = 0.87\), and five reach `0.98`. The
 leaky reservoir gets close too (`0.91`), by carrying a fading state instead of an
 explicit window.
 

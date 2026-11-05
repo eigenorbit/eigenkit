@@ -126,7 +126,7 @@ perceval = [
 ]
 # EigenOrbit Router client: real QPUs with one EigenOrbit API key.
 router = [
-    "eigenorbit-router-client>=0.1,<1",
+    "eigenorbit-router-client>=0.2,<1",
 ]
 # Synthetic + real datasets and the sklearn baselines used by them.
 datasets = [

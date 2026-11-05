@@ -1175,7 +1175,7 @@ requires-dist = [
     { name = "eigenkit", extras = ["qiskit"], marker = "extra == 'iqm'" },
     { name = "eigenkit", extras = ["qml"], marker = "extra == 'torch'" },
     { name = "eigenkit", extras = ["torch", "pennylane", "qiskit", "braket", "iqm", "tensorcircuit", "cudaquantum", "qulacs", "qsim", "router", "benchmark", "datasets", "chemistry", "qml", "viz"], marker = "extra == 'all'" },
-    { name = "eigenorbit-router-client", marker = "extra == 'router'", specifier = ">=0.1,<1" },
+    { name = "eigenorbit-router-client", marker = "extra == 'router'", specifier = ">=0.2,<1" },
     { name = "iqm-client", extras = ["qiskit"], marker = "python_full_version < '3.14' and extra == 'iqm'", specifier = ">=35,<36" },
     { name = "jax", marker = "extra == 'tensorcircuit'", specifier = ">=0.4" },
     { name = "matplotlib", marker = "extra == 'benchmark'", specifier = ">=3.7" },
@@ -1227,16 +1227,16 @@ dev = [
 
 [[package]]
 name = "eigenorbit-router-client"
-version = "0.1.0"
+version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "eigenkit" },
     { name = "httpx" },
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/16/00/0ec3bd0d4cfedb1456fc8a7ff1b0178af45ceddac2ed28a040a6dca03d51/eigenorbit_router_client-0.1.0.tar.gz", hash = "sha256:24c08a51dac4aaeceb6ac4f761e50c073de3548909e8b24be2cf21ee6f8bb94d", size = 227544, upload-time = "2026-10-19T08:28:13.404Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8b/dd/4e2223fdcc89f5e869e170780e42e58ce28cc87519fd55257ed8bb254935/eigenorbit_router_client-0.2.0.tar.gz", hash = "sha256:cbb58b094d1e3412260a0acf3b8900139ae2c4387d8c21c3387a7be3eddb3780", size = 238320, upload-time = "2026-11-05T15:08:59.989Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8f/25/9589071692b9b852851e2337e5b7dbd3eee29c82d32c4a1acdae6217b79d/eigenorbit_router_client-0.1.0-py3-none-any.whl", hash = "sha256:32e4cef3c55536be91670a5d6f65f4c2b4caaba04a5f10939592b54d6ff8ea1f", size = 28742, upload-time = "2026-10-19T08:28:12.116Z" },
+    { url = "https://files.pythonhosted.org/packages/e0/0e/d38c576d36a68a2313a1b7ab8718cdb110607890e580668f7259ff180fac/eigenorbit_router_client-0.2.0-py3-none-any.whl", hash = "sha256:f0a3325194265a5bbc7225909f72bbf36e7b345d4702c7c93171b72bc3d345ca", size = 31363, upload-time = "2026-11-05T15:08:58.834Z" },
 ]
 
 [[package]]

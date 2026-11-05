@@ -60,7 +60,7 @@ wheels = [
 
 [[package]]
 name = "amazon-braket-sdk"
-version = "1.127.3.post0"
+version = "1.127.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "amazon-braket-default-simulator" },
@@ -77,9 +77,9 @@ dependencies = [
     { name = "oqpy" },
     { name = "sympy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9e/99/4bb04edd13d7c13f521c7d5fa344e17e27f5150fa4cc806264748cdbdc02/amazon_braket_sdk-1.127.3.post0.tar.gz", hash = "sha256:450e9a708d09e24d1ac7a824ae5d5e1cd21fdd581a83d37b4ecc423b517827c1", size = 281116, upload-time = "2026-09-30T16:18:46.104Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/98/e0/88284d3756c0628b0cd9e55cc6182c605dfefe6f4d0c1e59d4ad6a98a0fa/amazon_braket_sdk-1.127.7.tar.gz", hash = "sha256:afc3f2478ec814f30ae4c2c2e7d5c2aa003001fbcfd3d53c06adc838f8dc4b4f", size = 285623, upload-time = "2026-10-28T16:27:10.445Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/96/fd/598f3cf9dc1a5b3b6b09ec939bba45fb89732b9c9b001a01da0b5ad25d78/amazon_braket_sdk-1.127.3.post0-py3-none-any.whl", hash = "sha256:02a18fa3000e28206ec74cb2268560feb7cb57be7be7e7107ea117a96cd41f95", size = 403673, upload-time = "2026-09-30T16:18:44.435Z" },
+    { url = "https://files.pythonhosted.org/packages/08/88/0d9628fdeffd9a5f44cbabafbe5bc12cd7e4390f299460f82c706014b04d/amazon_braket_sdk-1.127.7-py3-none-any.whl", hash = "sha256:4afc1e4a28c2c5eacb08da7dec69240b99b937e7c5257dad49aa2290f570ffea", size = 404543, upload-time = "2026-10-28T16:27:08.678Z" },
 ]
 
 [[package]]
@@ -1793,7 +1793,7 @@ wheels = [
 
 [[package]]
 name = "jax"
-version = "0.11.2"
+version = "0.12.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jaxlib" },
@@ -1802,9 +1802,9 @@ dependencies = [
     { name = "opt-einsum" },
     { name = "scipy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/96/c3/cbb70e5e0846891b45c9b02b0755235618043cd2a8edd1f5bfe24b077cf4/jax-0.11.2.tar.gz", hash = "sha256:540dc0bed96bd5a0d8acca15cf16198fea98ef2fc151d40bdf1ace49eb76efd9", size = 2904036, upload-time = "2026-09-17T23:43:35.896Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2e/5b/5b7f007852809973310ed99eede7db6e9e1cd60914f8fe90b091ae264db4/jax-0.12.0.1.tar.gz", hash = "sha256:f543fb1151c351d328b7dd9e40865c01bf9ae10cdf7e21637196172891d51914", size = 3024361, upload-time = "2026-10-21T21:07:07.969Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ca/87/0c0ca8433e1135f6d1acd355cff21f31c3d433d937d6547aa545c8b060b8/jax-0.11.2-py3-none-any.whl", hash = "sha256:59e7ed9bd9ace049f4856752fe580c890e0164e1c023f40fadac386408daad66", size = 3345045, upload-time = "2026-09-17T23:41:14.517Z" },
+    { url = "https://files.pythonhosted.org/packages/f9/5d/be6a4b67161462d1a0a97c7405459c2f76a4c23c66b39ad496527f68a17d/jax-0.12.0.1-py3-none-any.whl", hash = "sha256:e9dfd256ba090259b10f97f0755d4fc92535b8cb38c0a40df6488a8c8a7dd8ae", size = 3466959, upload-time = "2026-10-21T21:04:05.013Z" },
 ]
 
 [[package]]
@@ -3826,7 +3826,7 @@ wheels = [
 
 [[package]]
 name = "pytest"
-version = "9.1.1"
+version = "9.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama", marker = "sys_platform == 'win32'" },
@@ -3836,9 +3836,9 @@ dependencies = [
     { name = "pluggy" },
     { name = "pygments" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e4/47/b9efed96c114afcfa3c9d3fe98a76a1d14c74a9e266d397cf6eb64be5e01/pytest-9.1.1.tar.gz", hash = "sha256:1088fbde8f2b49d95a549a195707afa7a76a3ce9bcadc26b6d71f0ffda5fe313", size = 1636369, upload-time = "2026-06-19T10:58:32.857Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/79/42/bb4641652e58dedeac2ec51abc1f8cae4fee4ec63899a0999016229a0f2a/pytest-9.2.0.tar.gz", hash = "sha256:97c4f3b1f3c7414aa36465e09b8220f1d03627993bd51b1282e193753c80557b", size = 1797555, upload-time = "2026-10-27T21:30:20.728Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/24/25/1de2678b631f5a49215c6c96fff41ba892b0a34df68d6d80292b1b48aa7f/pytest-9.1.1-py3-none-any.whl", hash = "sha256:37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c", size = 386536, upload-time = "2026-06-19T10:58:31.347Z" },
+    { url = "https://files.pythonhosted.org/packages/51/39/1f5d8c8877a0fa327db959c19341d4be61660de1ab6b7391f9eb805bcd67/pytest-9.2.0-py3-none-any.whl", hash = "sha256:07acdcf88ec174f907dc01af70bf52d49b014bbab03faeeade31c96b18c2e588", size = 411776, upload-time = "2026-10-27T21:30:19.131Z" },
 ]
 
 [[package]]

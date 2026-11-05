@@ -199,7 +199,8 @@ class PercevalCompiled:
         need_weight_grad=True,
         need_input_grad=True,
     ):
-        """Return `(d<O>/d weights, d<O>/d inputs)` for an observable.
+        r"""Return \((d\langle O \rangle / d(\mathrm{weights}),
+        d\langle O \rangle / d(\mathrm{inputs}))\) for an observable.
 
         The observable is diagonal in the Fock basis. Only one sample is accepted
         (1-D weights and inputs).

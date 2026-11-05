@@ -170,7 +170,7 @@ class TorchCircuit(nn.Module):
         return self._inner.dry_run_info()
 
     def zero_state_probability(self, x: torch.Tensor | None = None) -> float:
-        """Return the probability of measuring the all-zeros state.
+        r"""Return the probability of measuring the all-zeros state.
 
         It uses the current weights and the given input. It is useful for fidelity
         kernels and swap tests.
@@ -188,7 +188,7 @@ class TorchCircuit(nn.Module):
                 it raises a `ValueError` for any other circuit. Default: `None`.
 
         Returns:
-            The all-zeros probability, a float in `[0, 1]`.
+            The all-zeros probability, a float in \([0, 1]\).
 
         Raises:
             ValueError: If `x` is 2-D.

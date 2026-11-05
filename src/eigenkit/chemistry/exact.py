@@ -23,7 +23,8 @@ _PAULI = {
 def dense_hamiltonian(
     observable: Observable, n_qubits: int, offset: float = 0.0
 ) -> np.ndarray:
-    """The `2**n_qubits × 2**n_qubits` matrix of `observable + offset * I`.
+    r"""The \(2^{n_\mathrm{qubits}} \times 2^{n_\mathrm{qubits}}\) matrix of
+    `observable + offset * I`.
 
     Qubit 0 is the most significant factor of the tensor product, which matches the
     ordering of basis states in the simulators.

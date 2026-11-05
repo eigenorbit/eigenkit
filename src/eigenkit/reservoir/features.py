@@ -68,7 +68,8 @@ def _apply_1q(tensor: np.ndarray, matrix: np.ndarray, axis: int) -> np.ndarray:
 
 
 def expectation_features(states: np.ndarray, observables: ObservableLike) -> np.ndarray:
-    """Expectation values `⟨ψ|H_k|ψ⟩` of each observable, over the whole trajectory.
+    r"""Expectation values \(\langle\psi|H_k|\psi\rangle\) of each observable, over the
+    whole trajectory.
 
     `states` is a complex array of shape `(B, T, 2**n)`, and the result is a real
     array of shape `(B, T, n_obs)`. `observables` can be an `Observable`, a
@@ -108,7 +109,7 @@ def expectation_features(states: np.ndarray, observables: ObservableLike) -> np.
 
 
 def probability_features(states: np.ndarray) -> np.ndarray:
-    """The measurement distribution over all `2**n` basis states, `|ψ|²`.
+    r"""The measurement distribution over all `2**n` basis states, \(\lvert\psi\rvert^2\).
 
     `states` is a complex array of shape `(B, T, 2**n)`, and the result is a real
     array of the same shape.
@@ -125,7 +126,8 @@ def probability_features(states: np.ndarray) -> np.ndarray:
 
 
 def pauli_z_features(states: np.ndarray) -> np.ndarray:
-    """The expectation value `⟨Z_q⟩` on each qubit, the usual default readout in QRC.
+    r"""The expectation value \(\langle Z_q \rangle\) on each qubit, the usual default
+    readout in QRC.
 
     `states` has shape `(B, T, 2**n)`, and the result has shape `(B, T, n)`. The
     values are computed with

@@ -35,7 +35,8 @@ class PortfolioRiskResult(ValueEquality):
             of 12 %.
         cvar: The Conditional Value at Risk (CVaR), also called Expected
             Shortfall, at the same confidence level.
-        tail_probability: The IQAE point estimate of `P(loss ≥ VaR)`.
+        tail_probability: The IQAE point estimate of
+            \(P(\mathrm{loss} \ge \mathrm{VaR})\).
         confidence_interval: The `(lower, upper)` Clopper-Pearson interval for the
             tail probability, at level `1 - alpha`.
         iqae_result: The full [`IQAEResult`][eigenkit.algorithms.IQAEResult] when
@@ -51,7 +52,7 @@ class PortfolioRiskResult(ValueEquality):
 
 @register_estimator
 class PortfolioRiskEstimator(BaseQuantumEstimator):
-    """Quantum estimator of portfolio risk.
+    r"""Quantum estimator of portfolio risk.
 
     It estimates the Value at Risk (VaR) and the Conditional Value at Risk (CVaR) of
     a portfolio. The estimator can use [`IQAE`][eigenkit.algorithms.IQAE] to estimate the tail
@@ -71,12 +72,12 @@ class PortfolioRiskEstimator(BaseQuantumEstimator):
 
     Args:
         n_qubits: The total number of qubits, including the ancilla. The loss
-            distribution is discretised into `2^(n_qubits - 1)` bins. The minimum
+            distribution is discretised into `2 ** (n_qubits - 1)` bins. The minimum
             is 2: one data qubit and the ancilla.
         epsilon: The additive precision of the IQAE estimate of the tail
             probability.
         alpha: The failure probability of IQAE. The confidence level is
-            `1 − alpha`.
+            `1 - alpha`.
         horizon_days: The investment horizon, in trading days, used to scale daily
             log-returns to the target horizon. The default is `1`, which gives daily
             risk measures.
@@ -107,10 +108,10 @@ class PortfolioRiskEstimator(BaseQuantumEstimator):
             VaR and CVaR are needed and `n_bisection_steps=0`.
         distribution: The model of the loss distribution that `fit()` uses.
 
-            * `"gaussian"` (the default) fits the mean `μ` and the standard
-              deviation `σ` of the scaled log-returns, and integrates the Gaussian
+            * `"gaussian"` (the default) fits the mean \(\mu\) and the standard
+              deviation \(\sigma\) of the scaled log-returns, and integrates the Gaussian
               cumulative distribution function (CDF) over each bin. The
-              distribution is truncated at `±6σ`. A VaR beyond that point is
+              distribution is truncated at \(\pm 6\sigma\). A VaR beyond that point is
               capped at the limit, and a `RuntimeWarning` is issued.
             * `"empirical"` places each historical return in the nearest bin of
               equal width, without assuming a parametric form.
@@ -299,12 +300,12 @@ class PortfolioRiskEstimator(BaseQuantumEstimator):
         The VaR and CVaR come from the discretised loss distribution. When
         `n_bisection_steps > 0`, the VaR is refined by a bisection that uses IQAE.
         Otherwise, the classical quantiles of the bins are used. Unless
-        `measure_tail_probability=False`, a final IQAE run estimates `P(loss ≥ VaR)`,
-        for checking and diagnostics.
+        `measure_tail_probability=False`, a final IQAE run estimates
+        \(P(\mathrm{loss} \ge \mathrm{VaR})\), for checking and diagnostics.
 
         Args:
             confidence_level: The probability level of the risk measures, for example
-                `0.95` for the 95 % VaR. It must be in `(0, 1)`.
+                `0.95` for the 95 % VaR. It must be in \((0, 1)\).
             _seed_seq: A private override of the random seed, used by `var_at()` so
                 that the shot noise of the IQAE runs for different confidence levels is
                 independent. The default is `None`, which derives the seed from
@@ -404,13 +405,13 @@ class PortfolioRiskEstimator(BaseQuantumEstimator):
         )
 
     def var_at(self, confidence_levels: np.ndarray) -> np.ndarray:
-        """Return the VaR at each confidence level.
+        r"""Return the VaR at each confidence level.
 
         This is the array version of `estimate()`. It runs IQAE once for each level and
         returns only the `var` of each result.
 
         Args:
-            confidence_levels: A 1-D array of confidence levels in `(0, 1)`, for
+            confidence_levels: A 1-D array of confidence levels in \((0, 1)\), for
                 example `[0.95, 0.99]`. A scalar or an `(n, 1)` column is also
                 accepted, and it is read as `n` levels.
 

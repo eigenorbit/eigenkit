@@ -314,7 +314,7 @@ class QsimCompiled(CompiledCircuit):
     def statevector(
         self, weights: np.ndarray, inputs: np.ndarray, initial_state=None
     ) -> np.ndarray:
-        """Return the full complex statevector after the circuit has run.
+        r"""Return the full complex statevector after the circuit has run.
 
         The result is a flat array of `2**n_qubits` amplitudes, with qubit `0` as
         the most significant bit.
@@ -324,7 +324,7 @@ class QsimCompiled(CompiledCircuit):
             inputs (np.ndarray): The input features: 1-D for one sample, or 2-D
                 with a leading batch axis.
             initial_state (np.ndarray | None): Must be `None`. This backend can
-                only start from `|0…0⟩`. Default: `None`.
+                only start from \(|0 \cdots 0\rangle\). Default: `None`.
 
         Returns:
             The statevector, of shape `(2**n_qubits,)`, or `(B, 2**n_qubits)` for
@@ -353,7 +353,7 @@ class QsimCompiled(CompiledCircuit):
         return np.asarray(result.final_state_vector, dtype=np.complex128)
 
     def zero_state_probability(self, weights: np.ndarray, inputs: np.ndarray) -> float:
-        """Return the probability of measuring the state `|0…0⟩`.
+        r"""Return the probability of measuring the state \(|0 \cdots 0\rangle\).
 
         Fidelity kernels and swap tests are built on it. It does not go through
         `Observable`, because it is not the expectation value of a Pauli operator.
@@ -363,7 +363,7 @@ class QsimCompiled(CompiledCircuit):
             inputs (np.ndarray): The input features of one sample (1-D).
 
         Returns:
-            The probability, a float in `[0, 1]`.
+            The probability, a float in \([0, 1]\).
         """
         sv = self._statevector_one(
             np.asarray(weights, dtype=np.float64), np.asarray(inputs, dtype=np.float64)

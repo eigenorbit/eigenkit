@@ -50,7 +50,7 @@ The rest of this page goes through the four steps one at a time.
 A `FermionOperator` is a dictionary of fermionic terms and their coefficients.
 Each term is a tuple of `(mode, kind)` pairs, where `kind` is `1` for a creation
 operator and `0` for an annihilation operator. For example, `((0, 1), (2, 0))`
-is `c†₀c₂`:
+is \(c_0^\dagger c_2\):
 
 ```python
 from eigenkit.chemistry import FermionOperator, fermi_hubbard_dimer
@@ -76,7 +76,7 @@ between the two sites, and `u` is the on-site repulsion. Because it needs
 nothing else, it is the right model to develop against.
 
 For real molecules, `molecular_hamiltonian(geometry, basis=...)` runs PySCF and
-OpenFermion, and `hydrogen_molecule(bond_length)` is a shortcut for `H₂`. Both
+OpenFermion, and `hydrogen_molecule(bond_length)` is a shortcut for \(\mathrm{H}_2\). Both
 return a `Molecule`. A `Molecule` holds the fermionic operator, the number of
 electrons and the nuclear repulsion energy, which are the values needed to turn
 a converged VQE energy into a physical one:
@@ -153,7 +153,7 @@ excitations (UCCSD).
 | Why you would choose it | A device can run it | The chemistry of the problem suggests it |
 | Weights on `4` qubits with `2` electrons | `20` with `layers=2` | `10` with `reps=2` |
 | Depth | Shallow | Much deeper for the same number of parameters |
-| Reference state | None: it starts from `|0…0⟩` | It adds `hartree_fock_state` at the start itself |
+| Reference state | None: it starts from \(\lvert 0 \cdots 0 \rangle\) | It adds `hartree_fock_state` at the start itself |
 
 By default, `VQE` builds a hardware-efficient ansatz: a layer of `RY`
 rotations, then `layers` repetitions of a chain of `CNOT` gates and a pair of
@@ -204,7 +204,7 @@ reaches the exact energy.
 For finer control, `apply_hartree_fock(circuit, n_electrons)` prepares the
 reference state on a `CircuitBuilder` that you are already building, and
 `uccsd_excitation_generators(n_qubits, n_electrons)` returns the generators
-`T - T†` themselves (`5` of them for this system) if you want to build the
+\(T - T^\dagger\) themselves (`5` of them for this system) if you want to build the
 ansatz in a different way.
 
 ## Checking the answer

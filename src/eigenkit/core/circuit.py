@@ -533,12 +533,12 @@ class Circuit:
     # ---- public gradients (numpy interface, no torch) ----
 
     def jacobian(self, weights, inputs=None, *, input_grad=False):
-        """Return the gradient of the expectation values with respect to the weights.
+        r"""Return the gradient of the expectation values with respect to the weights.
 
-        It returns `d<O>/d(weights)`, of shape `(n_weights,)` for a single
-        observable or `(n_observables, n_weights)` for a list of observables, like
-        the output of `__call__()`. Pass a single 1-D `inputs` sample. For a batch,
-        call it once for each row.
+        It returns \(d\langle O \rangle / d(\mathrm{weights})\), of shape
+        `(n_weights,)` for a single observable or `(n_observables, n_weights)` for a
+        list of observables, like the output of `__call__()`. Pass a single 1-D
+        `inputs` sample. For a batch, call it once for each row.
 
         The NumPy interface can compute every gradient without PyTorch. This method
         uses the same sequence of gradient methods as the variational optimisation
@@ -548,7 +548,8 @@ class Circuit:
         parameter-shift rule, which works on any backend.
 
         With `input_grad=True`, it returns `(weight_jacobian, input_jacobian)`,
-        where `input_jacobian` is `d<O>/d(inputs)`, with the same leading shape.
+        where `input_jacobian` is \(d\langle O \rangle / d(\mathrm{inputs})\), with the
+        same leading shape.
 
         Args:
             weights (np.ndarray): The weight vector, of shape `(n_weights,)`.
@@ -638,7 +639,7 @@ class Circuit:
         return method
 
     def zero_state_probability(self, weights, inputs=None) -> float:
-        """Return the probability of measuring the all-zeros state after the circuit.
+        r"""Return the probability of measuring the all-zeros state after the circuit.
 
         It is useful for quantities based on fidelity: quantum kernels built from
         inversion circuits, swap tests and the Bures distance. Each backend
@@ -656,7 +657,7 @@ class Circuit:
                 other circuit. Default: `None`.
 
         Returns:
-            The probability, a float in `[0, 1]`.
+            The probability, a float in \([0, 1]\).
 
         Raises:
             NotImplementedError: If the active backend does not provide
@@ -787,7 +788,8 @@ class Circuit:
         It is a flat array of length `2**n_qubits`, ordered with qubit `0` as the
         most significant bit. A 2-D `inputs` batch returns an array of shape
         `(B, 2**n_qubits)`. With `initial_state`, a normalised flat statevector in
-        the same order, the evolution starts from that state instead of `|0…0⟩`.
+        the same order, the evolution starts from that state instead of
+        \(|0 \cdots 0\rangle\).
         Reading a state out and passing it back in this way is the basic operation
         behind the state carried over in quantum reservoirs and behind amplitude
         encoding.
@@ -798,8 +800,8 @@ class Circuit:
                 only for a circuit that takes no inputs, and it raises a
                 `ValueError` for any other circuit. Default: `None`.
             initial_state (np.ndarray | None): The state to start the evolution
-                from, instead of `|0…0⟩`. It is a normalised flat statevector in the
-                same order. Default: `None`.
+                from, instead of \(|0 \cdots 0\rangle\). It is a normalised flat
+                statevector in the same order. Default: `None`.
 
         Returns:
             The statevector, of shape `(2**n_qubits,)`, or `(B, 2**n_qubits)` for

@@ -8,7 +8,7 @@ It declares `gradient_method = "adjoint"`. Qulacs provides an analytic
 reverse-mode gradient (`ParametricQuantumCircuit.backprop`), so, as with the
 NumPy reference simulator, the compiled circuit has a `jacobian` method, and the
 gradient code of the core package prefers it to the parameter-shift rule, whose
-cost is `O(n_params)`.
+cost is \(O(n_\mathrm{params})\).
 
 ## Compile and run
 
@@ -20,11 +20,13 @@ slots from one `backprop` pass for each observable.
 
 ## Conventions matched with the NumPy and PennyLane reference
 
-- **Rotation sign.** Qulacs rotations are `e^{+iθP/2}`, while the library and
-  PennyLane use `e^{-iθP/2}`. Every rotation angle is negated when it is passed
-  to Qulacs: the Qulacs parameter of a slot is `φ = -(coeff · angle)`. As a
-  result, `backprop` returns `d⟨O⟩/dφ`, and the chain rule through `φ` gives
-  `d⟨O⟩/d(weights)` with the sign handled automatically (see `jacobian`).
+- **Rotation sign.** Qulacs rotations are \(e^{+i\theta P/2}\), while the library
+  and PennyLane use \(e^{-i\theta P/2}\). Every rotation angle is negated when it
+  is passed to Qulacs: the Qulacs parameter of a slot is
+  \(\phi = -(\mathrm{coeff} \cdot \mathrm{angle})\). As a result, `backprop`
+  returns \(d\langle O \rangle / d\phi\), and the chain rule through \(\phi\) gives
+  \(d\langle O \rangle / d(\mathrm{weights})\) with the sign handled automatically
+  (see `jacobian`).
 - **Bit order.** Qulacs stores the amplitudes with qubit `0` as the least
   significant bit (as Qiskit does), while the library uses qubit `0` as the most
   significant bit. The statevector input and output, and the matrices of
@@ -38,13 +40,15 @@ slots from one `backprop` pass for each observable.
 have no parametric primitive in Qulacs are decomposed into these rotations, so
 that they stay differentiable:
 
-- `PhaseShift(θ)` becomes a parametric `RZ`. The two are equal up to a global
-  phase that cannot be observed.
-- `CRY(θ)` becomes `RY(θ/2) CX RY(-θ/2) CX`, where `CX` is a controlled-NOT
-  gate. This decomposition is exact.
-- `CPHASE(θ)` becomes `P(θ/2)_c CX P(-θ/2)_t CX P(θ/2)_t`, with each `P` as an
-  `RZ` slot. This decomposition is exact up to a global phase that cannot be
-  observed.
+- \(\mathrm{PhaseShift}(\theta)\) becomes a parametric `RZ`. The two are equal up
+  to a global phase that cannot be observed.
+- \(\mathrm{CRY}(\theta)\) becomes
+  \(\mathrm{RY}(\theta/2)\, \mathrm{CX}\, \mathrm{RY}(-\theta/2)\, \mathrm{CX}\), where
+  `CX` is a controlled-NOT gate. This decomposition is exact.
+- \(\mathrm{CPHASE}(\theta)\) becomes
+  \(P(\theta/2)_c\, \mathrm{CX}\, P(-\theta/2)_t\, \mathrm{CX}\, P(\theta/2)_t\), with
+  each \(P\) as an `RZ` slot. This decomposition is exact up to a global phase
+  that cannot be observed.
 
 `PhaseShift`, `CPHASE` and `CRY` with a constant angle, and the non-parametric
 gates (`H`, `X`, `Z`, `S`, `Sdg`, `CNOT`, `SWAP`, `MCX`, `MCZ`, `QubitUnitary`,
@@ -187,8 +191,8 @@ class QulacsCompiled(CompiledCircuit):
     """A compiled circuit: one `ParametricQuantumCircuit`, reused across calls.
 
     `_slots[k] = (expr, coeff)` records that the parametric Qulacs gate `k`
-    implements the library angle `coeff · expr`. Its Qulacs parameter is set to
-    `-(coeff · resolve(expr))`, because Qulacs uses the opposite rotation sign.
+    implements the library angle `coeff * expr`. Its Qulacs parameter is set to
+    `-(coeff * resolve(expr))`, because Qulacs uses the opposite rotation sign.
     """
 
     # Enable the batch-capable jacobian entry point: `jacobian` accepts a 2-D
@@ -460,11 +464,12 @@ class QulacsCompiled(CompiledCircuit):
         The gradient code of the core package looks for a `jacobian` method. When
         a backend has one, it is used in preference to the parameter-shift rule,
         which works on any backend and is the fallback. Here the gradient comes
-        from `backprop`: one pass for each observable gives `d⟨O⟩/dφ` for every
-        parametric slot. These gradients are mapped onto the weights (and the
-        inputs) with the same symbolic chain-rule factors as the parameter-shift
-        code, so angles built with `Scale`, `Multiply`, `Sum` or `Negate` (for
-        example in `Reuploading(trainable_scale=True)`) are also handled.
+        from `backprop`: one pass for each observable gives
+        \(d\langle O \rangle / d\phi\) for every parametric slot. These gradients are
+        mapped onto the weights (and the inputs) with the same symbolic chain-rule
+        factors as the parameter-shift code, so angles built with `Scale`,
+        `Multiply`, `Sum` or `Negate` (for example in
+        `Reuploading(trainable_scale=True)`) are also handled.
 
         For a single sample, the two jacobians have shapes `(n_obs, n_weights)`
         and `(n_obs, n_inputs)`. For a 2-D `inputs` batch, they have a leading
@@ -528,18 +533,19 @@ class QulacsCompiled(CompiledCircuit):
     # ---- state-vector I/O ----
 
     def zero_state_probability(self, weights: np.ndarray, inputs: np.ndarray) -> float:
-        r"""Return `|⟨0…0|ψ⟩|²`, the squared amplitude of `|0…0⟩`.
+        r"""Return \(\lvert\langle 0 \cdots 0|\psi\rangle\rvert^2\), the squared
+        amplitude of \(|0 \cdots 0\rangle\).
 
-        The basis state `0` is `|0…0⟩` whether qubit `0` is the least or the most
-        significant bit, so no reindexing is needed. The fidelity quantum kernel
-        is built on this method.
+        The basis state `0` is \(|0 \cdots 0\rangle\) whether qubit `0` is the least
+        or the most significant bit, so no reindexing is needed. The fidelity
+        quantum kernel is built on this method.
 
         Args:
             weights (np.ndarray): The parameter vector (1-D).
             inputs (np.ndarray): The input features of one sample (1-D).
 
         Returns:
-            The probability, a float in `[0, 1]`.
+            The probability, a float in \([0, 1]\).
         """
         state = self._run_state(
             np.asarray(weights, dtype=np.float64),
@@ -554,8 +560,9 @@ class QulacsCompiled(CompiledCircuit):
         r"""Return the full complex statevector after the circuit has run.
 
         Qubit `0` is the most significant bit. `initial_state`, in the same
-        order, is the starting state instead of `|0…0⟩`. A 2-D `inputs` batch is
-        evaluated in a loop and returns an array of shape `(B, 2**n)`.
+        order, is the starting state instead of \(|0 \cdots 0\rangle\). A 2-D
+        `inputs` batch is evaluated in a loop and returns an array of shape
+        `(B, 2**n)`.
         `initial_state` can then be one state of shape `(2**n,)`, shared by all
         samples, or a stack of shape `(B, 2**n)` with one state for each sample.
 
@@ -564,7 +571,7 @@ class QulacsCompiled(CompiledCircuit):
             inputs (np.ndarray): The input features: 1-D for one sample, or 2-D
                 with a leading batch axis.
             initial_state (np.ndarray | None): The state to start from, instead
-                of `|0…0⟩`. Default: `None`.
+                of \(|0 \cdots 0\rangle\). Default: `None`.
 
         Returns:
             The statevector, of shape `(2**n_qubits,)`, or `(B, 2**n_qubits)` for
@@ -618,14 +625,14 @@ class QulacsCompiled(CompiledCircuit):
 
 
 class QulacsBackend:
-    """The provider for the Qulacs statevector simulator.
+    r"""The provider for the Qulacs statevector simulator.
 
     It is optional: it is registered as `"qulacs"` when the package is installed,
     and the package is imported only on first use. It declares
     `gradient_method = "adjoint"`, so the gradient code of the core package uses
     [`QulacsCompiled.jacobian()`][eigenkit.core.backends.qulacs_backend.QulacsCompiled.jacobian]
     (analytic, in reverse mode, through Qulacs `backprop`) instead of the
-    parameter-shift rule, whose cost is `O(n_params)`.
+    parameter-shift rule, whose cost is \(O(n_\mathrm{params})\).
     """
 
     gradient_method = "adjoint"

@@ -381,7 +381,11 @@ Loaded model R²: 0.489
 
 Any callable `(output, target) -> scalar_tensor` can be used directly as the loss. Note that a model trained with a callable loss cannot be saved: `save()` raises a `SerializationError`. Use a loss given by its name (`"mse"`, `"mae"` or `"huber"`) when you need to save the model.
 
-The log-cosh loss is a smooth approximation of the MAE, and it is less sensitive to outliers than the MSE. The direct formula `torch.log(torch.cosh(x))` overflows for `|x| > 88` in float32, so we use the identity `log(cosh(x)) = |x| + log(1 + exp(-2|x|)) - log(2)`, which stays finite for any input.
+The log-cosh loss is a smooth approximation of the MAE, and it is less sensitive to
+outliers than the MSE. The direct formula `torch.log(torch.cosh(x))` overflows for
+\(\lvert x \rvert > 88\) in float32, so we use the identity
+\(\log(\cosh x) = \lvert x \rvert + \log(1 + e^{-2\lvert x \rvert}) - \log 2\), which
+stays finite for any input.
 
 ```python
 def log_cosh_loss(output, target):

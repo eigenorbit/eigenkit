@@ -61,16 +61,18 @@ At each timestep, the input is encoded as angles of the gates of the frozen circ
 and the state advances. The **policy** defines what "advances" means, and it is the
 one choice that decides whether the reservoir remembers anything:
 
-- **`Carry`** is a purely unitary carry-over, `ψ_t = U(x_t) ψ_{t-1}`. The norm is
-  preserved, and nothing is forgotten.
+- **`Carry`** is a purely unitary carry-over, \(\psi_t = U(x_t)\, \psi_{t-1}\). The
+  norm is preserved, and nothing is forgotten.
 - **`LeakyCarry`** mixes the carried state with a reset state, and then divides by
-  the norm: `ψ̃_t = α U(x_t) ψ_{t-1} + (1 - α) ψ_reset` and `ψ_t = ψ̃_t / ‖ψ̃_t‖`.
-  At `α = 1`, it is exactly `Carry`. It stands in for a dissipative reservoir with
+  the norm:
+  \(\tilde\psi_t = \alpha\, U(x_t)\, \psi_{t-1} + (1 - \alpha)\, \psi_\mathrm{reset}\)
+  and \(\psi_t = \tilde\psi_t / \lVert \tilde\psi_t \rVert\).
+  At \(\alpha = 1\), it is exactly `Carry`. It stands in for a dissipative reservoir with
   pure states, and it is not a true quantum channel. A true channel would need
   density matrices, which the pure-state backends do not provide.
-- **`Stateless`** starts every step from `|0…0⟩`, and encodes a sliding window of the
-  last `window` inputs. The memory is entirely classical. Because no state crosses
-  from one timestep to the next, the driver evaluates all the timesteps in one
+- **`Stateless`** starts every step from \(|0 \cdots 0\rangle\), and encodes a sliding
+  window of the last `window` inputs. The memory is entirely classical. Because no state
+  crosses from one timestep to the next, the driver evaluates all the timesteps in one
   batched run.
 
 ### Step 2: read out features
@@ -80,13 +82,13 @@ per timestep and one column per number that the extractor produces.
 
 | `features` | What it takes from the state |
 |---|---|
-| `"z"` | It takes `⟨Z_q⟩` on each qubit, which gives `n` values. |
-| `"probabilities"` | It takes `|ψ|²` over all the basis states, which gives `2ⁿ` values. |
-| `"amplitudes"` | It takes the real and imaginary parts of `ψ`, which gives `2 · 2ⁿ` values. |
-| a Hamiltonian string | It takes `⟨ψ|H_k|ψ⟩`, which gives one value per term. |
+| `"z"` | It takes \(\langle Z_q \rangle\) on each qubit, which gives \(n\) values. |
+| `"probabilities"` | It takes \(\lvert \psi \rvert^2\) over all the basis states, which gives \(2^n\) values. |
+| `"amplitudes"` | It takes the real and imaginary parts of \(\psi\), which gives \(2 \cdot 2^n\) values. |
+| a Hamiltonian string | It takes \(\langle \psi \rvert H_k \lvert \psi \rangle\), which gives one value per term. |
 
 More numbers give the linear readout more to fit on, and this is usually what makes
-a reservoir work. However, the middle two grow as `2ⁿ`, so a wide reservoir becomes
+a reservoir work. However, the middle two grow as \(2^n\), so a wide reservoir becomes
 expensive on the classical side rather than on the quantum side.
 
 ### Step 3: fit the readout
@@ -94,11 +96,11 @@ expensive on the classical side rather than on the quantum side.
 This is the part that learns. The readout is a ridge regression with a bias term. It
 is fitted on the matrix of features in one step, by solving
 
-```text
-W = (XᵀX + λI)⁻¹ XᵀY
-```
+\[
+W = (X^\top X + \lambda I)^{-1} X^\top Y
+\]
 
-where the bias column is not penalised, and `λ` is the `ridge` argument. It is a
+where the bias column is not penalised, and \(\lambda\) is the `ridge` argument. It is a
 linear solve rather than an iterative loop, so there is no optimiser and no number
 of epochs to set. However, the weights are fitted to the data exactly as in any other
 supervised model.
@@ -124,7 +126,7 @@ nothing at all on a delay task, even though it is the default. Use
 and treat the default as the first thing to change. The
 [memory-capacity example](../examples/reservoir-memory.md) measures all three.
 
-The other limits are the usual ones. The wider sets of features grow as `2ⁿ`, so the
+The other limits are the usual ones. The wider sets of features grow as \(2^n\), so the
 cost falls on the classical side. The readout is linear, so whatever it cannot
 express has to come from the dynamics of the reservoir itself. The frozen weights
 are one random draw, so a poor result may come from the particular `random_state`

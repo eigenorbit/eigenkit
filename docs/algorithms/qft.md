@@ -4,11 +4,11 @@
 
 Several algorithms need to read a number that is not stored as bits, but as a
 *phase*: an angle spread across a register. Quantum phase estimation (QPE) is the
-standard case. A unitary has left the answer as `e^{2πiφ}` on the clock qubits, and
-`φ` must come out as an ordinary binary fraction.
+standard case. A unitary has left the answer as \(e^{2\pi i\varphi}\) on the clock qubits,
+and \(\varphi\) must come out as an ordinary binary fraction.
 
 The quantum Fourier transform (QFT) is the change of basis that does this. It is the
-discrete Fourier transform applied to the `2ⁿ` amplitudes of a register, and it maps
+discrete Fourier transform applied to the \(2^n\) amplitudes of a register, and it maps
 a periodic pattern of phases onto the basis state that names its frequency. The
 circuit below is the one by [Coppersmith](https://arxiv.org/abs/quant-ph/0201067), and
 it is the core of [Shor's factoring algorithm](https://arxiv.org/abs/quant-ph/9508027),
@@ -29,37 +29,37 @@ spec = assemble([QFTBlock(n_qubits=3)])
 print(spec.n_weights, spec.n_inputs)  # 0 0
 ```
 
-`inverse=True` builds the adjoint, `QFT†`. This is the direction that phase
-estimation actually uses: the forward transform writes a frequency into a phase, and
+`inverse=True` builds the adjoint, \(\mathrm{QFT}^\dagger\). This is the direction that
+phase estimation actually uses: the forward transform writes a frequency into a phase, and
 the inverse transform reads it back.
 
 ## How it works
 
 On the computational basis, the transform is
 
-```text
-|k⟩  ↦  (1/√(2ⁿ)) Σ_{j=0}^{2ⁿ-1} e^{2πi jk/2ⁿ} |j⟩
-```
+\[
+|k\rangle \mapsto \frac{1}{\sqrt{2^n}} \sum_{j=0}^{2^n-1} e^{2\pi i jk/2^n} |j\rangle
+\]
 
-As a circuit, it needs no unusual gates. For each qubit `k` in turn:
+As a circuit, it needs no unusual gates. For each qubit \(k\) in turn:
 
-1. It applies `H` to qubit `k`, which turns its bit into a phase.
-2. For every later qubit `j > k`, it applies a controlled phase rotation `CPHASE` of
-   angle `2π/2^{j-k+1}`, so that each bit of lower order shifts the phase by its own
-   weight.
+1. It applies `H` to qubit \(k\), which turns its bit into a phase.
+2. For every later qubit \(j > k\), it applies a controlled phase rotation `CPHASE`
+   of angle \(2\pi/2^{j-k+1}\), so that each bit of lower order shifts the phase by its
+   own weight.
 3. When every qubit has been through step 1, it reverses the register with `SWAP`
    gates, because the construction produces the output bits in the opposite order.
 
-This gives `n` Hadamard gates, `n(n-1)/2` controlled phases and `⌊n/2⌋` swaps. A
-transform on three qubits has seven gates, and `assemble([QFTBlock(n_qubits=3)])`
-builds exactly `H, CPHASE, CPHASE, H, CPHASE, H, SWAP`. The inverse runs the same
-construction backwards, with the phase angles negated.
+This gives \(n\) Hadamard gates, \(n(n-1)/2\) controlled phases and
+\(\lfloor n/2 \rfloor\) swaps. A transform on three qubits has seven gates, and
+`assemble([QFTBlock(n_qubits=3)])` builds exactly `H, CPHASE, CPHASE, H, CPHASE, H, SWAP`.
+The inverse runs the same construction backwards, with the phase angles negated.
 
-The cost is what makes the transform useful: `O(n²)` gates, against the
-`O(2ⁿ log 2ⁿ)` operations that a classical fast Fourier transform (FFT) needs on the
-same `2ⁿ` amplitudes. This speedup can only be used when the answer can be read from
-a few measurements rather than from the whole transformed vector, which is exactly
-the case of phase estimation. This construction comes from
+The cost is what makes the transform useful: \(O(n^2)\) gates, against the
+\(O(2^n \log 2^n)\) operations that a classical fast Fourier transform (FFT) needs on
+the same \(2^n\) amplitudes. This speedup can only be used when the answer can be read
+from a few measurements rather than from the whole transformed vector, which is
+exactly the case of phase estimation. This construction comes from
 [Kitaev 1995](https://arxiv.org/abs/quant-ph/9511026) and
 [Cleve, Ekert, Macchiavello and Mosca 1998](https://arxiv.org/abs/quant-ph/9708016).
 

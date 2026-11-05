@@ -14,7 +14,7 @@ These papers cover iterative quantum amplitude estimation (IQAE).
 - **The background.** G. Brassard, P. Høyer, M. Mosca, A. Tapp, *Quantum Amplitude
   Amplification and Estimation* (2000),
   [arXiv:quant-ph/0005055](https://arxiv.org/abs/quant-ph/0005055). This paper gives the
-  Grover operator and the formulation `a = sin²θ`.
+  Grover operator and the formulation \(a = \sin^2\theta\).
 - **The limitations.** Y. Suzuki et al., *Amplitude estimation without phase estimation*
   (2019), [arXiv:1904.10246](https://arxiv.org/abs/1904.10246); K. Miyamoto, *On the bias
   in iterative quantum amplitude estimation* (2023),
@@ -39,7 +39,7 @@ equations.
   (2017), [arXiv:1511.02306](https://arxiv.org/abs/1511.02306);
   M. E. S. Morales et al., *Quantum Linear System Solvers: A Survey of Algorithms and
   Applications* (2024), [arXiv:2411.02522](https://arxiv.org/abs/2411.02522).
-- **Hamiltonian simulation.** These papers concern the evolution `e^{iAt}` that the
+- **Hamiltonian simulation.** These papers concern the evolution \(e^{iAt}\) that the
   `"honest"` mode builds. S. Lloyd, *Universal Quantum Simulators*, Science (1996),
   [DOI:10.1126/science.273.5278.1073](https://doi.org/10.1126/science.273.5278.1073);
   A. M. Childs, Y. Su, M. C. Tran, N. Wiebe, S. Zhu, *Theory of Trotter Error with
@@ -51,18 +51,19 @@ equations.
   library writes that bound for Pauli terms, where every commutator norm is `0` or `2`.
   The theorem is stated only up to an order of magnitude, so the explicit constants that
   this library uses do not come from it. Instead, tests fix them by comparing the bound
-  with `‖A_eff - A‖`, computed exactly.
-- **The cost of the Pauli decomposition.** There are `4ⁿ` Pauli strings on `n` qubits, so
-  a generic matrix has `Θ(4ⁿ)` terms. For the decomposition itself, L. Hantzko,
-  L. Binkowski, S. Gupta, *Tensorized Pauli decomposition algorithm*, Phys. Scr. 99,
-  085128 (2024), [arXiv:2310.13421](https://arxiv.org/abs/2310.13421), works by slicing
-  and adding matrices instead of multiplying them. For tridiagonal matrices, the exact
-  count is `(n+1)2ⁿ` in general (Proposition 1) and `(n+2)2ⁿ⁻¹` when the matrix is real
-  and symmetric (Corollary 2). Both counts are in B. Arseniev, D. Guskov, R. Sengupta,
-  J. Biamonte, I. Zacharov, *Tridiagonal matrix decomposition for Hamiltonian simulation
-  on a quantum computer*, Phys. Rev. A 109, 052629 (2024),
+  with \(\lVert A_\mathrm{eff} - A \rVert\), computed exactly.
+- **The cost of the Pauli decomposition.** There are \(4^n\) Pauli strings on \(n\)
+  qubits, so a generic matrix has \(\Theta(4^n)\) terms. For the decomposition itself,
+  L. Hantzko, L. Binkowski, S. Gupta, *Tensorized Pauli decomposition algorithm*,
+  Phys. Scr. 99, 085128 (2024), [arXiv:2310.13421](https://arxiv.org/abs/2310.13421),
+  works by slicing and adding matrices instead of multiplying them. For tridiagonal
+  matrices, the exact count is \((n+1)2^n\) in general (Proposition 1) and
+  \((n+2)2^{n-1}\) when the matrix is real and symmetric (Corollary 2). Both counts are
+  in B. Arseniev, D. Guskov, R. Sengupta, J. Biamonte, I. Zacharov, *Tridiagonal matrix
+  decomposition for Hamiltonian simulation on a quantum computer*, Phys. Rev. A 109,
+  052629 (2024),
   [arXiv:2310.00121](https://arxiv.org/abs/2310.00121). The second count gives the 576
-  terms that the [scaling table](hhl.md#guarantees-and-limits) reports at `n = 7`. The
+  terms that the [scaling table](hhl.md#guarantees-and-limits) reports at \(n = 7\). The
   following paper explains why the Pauli input model, which is a linear combination of
   unitaries (LCU), and the sparse-access input model are *distinct*: A. Gilyén, Y. Su,
   G. H. Low, N. Wiebe, *Quantum singular value transformation and beyond: exponential
@@ -79,14 +80,14 @@ equations.
   controlled rotations*, Quantum Inf. Comput. 5, 467 (2005),
   [quant-ph/0407010](https://arxiv.org/abs/quant-ph/0407010). This paper gives the
   uniformly controlled rotation and its transform of the angles. The inversion stage of
-  the `"honest"` mode is built from them, with `2^(n_l)` `RY` gates and `2^(n_l)`
+  the `"honest"` mode is built from them, with \(2^{n_l}\) `RY` gates and \(2^{n_l}\)
   controlled-NOT (`CNOT`) gates. It needs no ancillas, and the assembled circuit contains
   no multi-controlled primitive anywhere.
 - **The fine print.** S. Aaronson, *Read the fine print*, Nature Physics (2015),
   [DOI:10.1038/nphys3272](https://doi.org/10.1038/nphys3272). The preprint has the title
   *Quantum Machine Learning Algorithms: Read the Fine Print*. It names four caveats:
-  preparing `|b⟩`, applying `e^{-iAt}`, the condition number, and the fact that the
-  output is a state and not a vector.
+  preparing \(|b\rangle\), applying \(e^{-iAt}\), the condition number, and the fact that
+  the output is a state and not a vector.
 - **Dense matrices.** L. Wossnig, Z. Zhao, A. Prakash, *A quantum linear system algorithm
   for dense matrices*, Phys. Rev. Lett. 120, 050502 (2018),
   [arXiv:1704.06174](https://arxiv.org/abs/1704.06174). For a dense matrix with a bounded

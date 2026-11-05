@@ -3,7 +3,7 @@
 ## Start with the kernel trick
 
 A support vector machine (SVM) trains from a table of similarities between pairs of
-samples, `K(x_i, x_j)`, which is also called a kernel or Gram matrix. The quantum
+samples, \(K(x_i, x_j)\), which is also called a kernel or Gram matrix. The quantum
 support vector classifier (QSVC) and the quantum support vector regressor (QSVR)
 change one thing: a quantum circuit computes this similarity. The fit step is still
 the training of an SVM by scikit-learn. This is the idea of a quantum feature space
@@ -23,26 +23,26 @@ fidelity.
 
 ## How it works
 
-The circuit computes a **fidelity kernel**. A feature map `U(x)` encodes a sample as
-the state `|φ(x)⟩ = U(x)|0⟩`. The kernel is the squared overlap of two encoded
-states:
+The circuit computes a **fidelity kernel**. A feature map \(U(x)\) encodes a sample as
+the state \(|\phi(x)\rangle = U(x)|0\rangle\). The kernel is the squared overlap of two
+encoded states:
 
-```text
-K(x_i, x_j) = |⟨φ(x_j)|φ(x_i)⟩|²
-```
+\[
+K(x_i, x_j) = \lvert \langle \phi(x_j) | \phi(x_i) \rangle \rvert^2
+\]
 
 On hardware and on the other backends that use shots, this value is read from an
 inversion circuit:
 
-1. It applies `U(x_i)`.
-2. It applies `U(x_j)†`.
-3. It reads the probability of returning to `|0…0⟩`, which is the value of the
-   kernel.
+1. It applies \(U(x_i)\).
+2. It applies \(U(x_j)^\dagger\).
+3. It reads the probability of returning to \(|0 \cdots 0\rangle\), which is the value of
+   the kernel.
 4. It fills the Gram matrix, and passes it to `SVC` or `SVR` with
    `kernel="precomputed"`.
 
 Simulators that give access to the statevector do not use the inversion circuit.
-They prepare each `|φ(x)⟩` once, and take every overlap in one matrix product.
+They prepare each \(|\phi(x)\rangle\) once, and take every overlap in one matrix product.
 
 The two built-in feature maps are simple on purpose. `"Angle"` is an angle embedding
 (`RX` rotations, with `RZ` rotations on the extra repetitions) with **no
@@ -56,7 +56,8 @@ kernel alignment ([Glick et al.](https://arxiv.org/abs/2105.03406)). See the
 ## Guarantees and limits
 
 On the simulator, each entry of the kernel is the exact fidelity without noise,
-`|⟨φ(x_j)|φ(x_i)⟩|²`. The matrix `K(X, X)` is symmetric, and its diagonal entries
+\(\lvert \langle \phi(x_j) | \phi(x_i) \rangle \rvert^2\). The matrix \(K(X, X)\) is
+symmetric, and its diagonal entries
 equal `1.0` within floating-point precision. After that, the guarantee is the one
 from scikit-learn: `SVC` and `SVR` solve their usual convex problem on the
 precomputed matrix. This matches the view of kernel methods in
@@ -68,11 +69,11 @@ leaves out. The original paper uses a `ZZ` feature map. The built-in `"Angle"` m
 is a plain angle embedding, and a ZZ map takes a few lines with
 `QuantumKernel(feature_map=...)`. Very expressive maps can also suffer from the
 concentration of kernel values ([Thanasilp et al.](https://arxiv.org/abs/2208.11060)).
-On a statevector simulator, a Gram matrix costs `O(n_samples)` state evolutions and
-one matrix product, and the state grows exponentially with the number of qubits. On
-hardware, it costs `n_samples(n_samples - 1)/2` inversion circuits. Qiskit Runtime
-and IQM send all of them in one job, and the other backends send them in smaller
-calls.
+On a statevector simulator, a Gram matrix costs \(O(n_\mathrm{samples})\) state evolutions
+and one matrix product, and the state grows exponentially with the number of qubits. On
+hardware, it costs \(n_\mathrm{samples}(n_\mathrm{samples} - 1)/2\) inversion circuits.
+Qiskit Runtime and IQM send all of them in one job, and the other backends send them in
+smaller calls.
 
 ## Next
 

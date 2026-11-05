@@ -28,7 +28,7 @@ gates (`CNOT(0, 1), CNOT(1, 2), ...`). The total number of trainable weights is
 ![One repetition of the Variational block (light theme)](images/basic_light.svg){ .theme-image-light }
 ![One repetition of the Variational block (dark theme)](images/basic_dark.svg){ .theme-image-dark }
 
-The block is the middle box: one `RY(θ)` on every qubit, then
+The block is the middle box: one \(\mathrm{RY}(\theta)\) on every qubit, then
 `CNOT(0, 1), CNOT(1, 2), ...`, and the bracket shows how many times this repeats. The
 encoding on the left and the measurement of each qubit on the right are not part of
 the block. A layer such as [`Basic`](layers.md#basic) adds them around it.

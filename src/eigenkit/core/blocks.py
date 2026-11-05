@@ -140,7 +140,7 @@ def _check_rotation(argument: str, value: object) -> None:
 
 @dataclass
 class AngleEncoding:
-    """Encode `in_features` data values as single-qubit rotations.
+    r"""Encode `in_features` data values as single-qubit rotations.
 
     Feature `i` sets the angle of one rotation on qubit `i`, so the block uses the
     qubits `0` to `in_features - 1`. This matters only when the block is combined
@@ -155,8 +155,8 @@ class AngleEncoding:
             positive, and a `ValueError` is raised otherwise.
         rotation: The rotation gate: `"RX"`, `"RY"` or `"RZ"`. Default: `"RY"`.
         scale: A constant factor applied to every input angle. It is useful when
-            the data is normalised to `[0, 1]` and the circuit needs angles in
-            `[0, 2π]`. It must be finite. Default: `1.0`.
+            the data is normalised to \([0, 1]\) and the circuit needs angles in
+            \([0, 2\pi]\). It must be finite. Default: `1.0`.
     """
 
     in_features: int
@@ -416,7 +416,7 @@ class StrongVariational:
 
 @dataclass
 class Reuploading:
-    """Data reuploading: the input is encoded several times, between trainable layers.
+    r"""Data reuploading: the input is encoded several times, between trainable layers.
 
     The block repeats an encoding of the input followed by a variational layer,
     `depth` times. Each encoding can have a trainable scale for each feature and
@@ -428,8 +428,9 @@ class Reuploading:
        input is encoded `depth` times, with new variational weights between the
        encodings.
     2. Trainable feature scaling (`trainable_scale=True`; Schuld et al. 2021).
-       Each encoding rotation takes the angle `λ_{d,i} * x_i`, where each pair of
-       repetition `d` and feature `i` has its own trainable `λ_{d,i}`.
+       Each encoding rotation takes the angle \(\lambda_{d,i} x_i\), where each pair
+       of repetition \(d\) and feature \(i\) has its own trainable
+       \(\lambda_{d,i}\).
 
     Args:
         in_features: The total number of input features. It must be positive.
@@ -788,12 +789,13 @@ class AmplitudeEncoding:
 
 @dataclass
 class S0:
-    """Reflection about the all-zero state `|0…0⟩`, built as `X^⊗n → MCZ → X^⊗n`.
+    r"""Reflection about the all-zero state \(|0 \cdots 0\rangle\), built as
+    \(X^{\otimes n} \to \mathrm{MCZ} \to X^{\otimes n}\).
 
     The block applies `X` to every qubit, then a multi-controlled `Z` gate (`MCZ`)
     on all of them, then `X` to every qubit again. It acts on the qubits `0` to
     `n_qubits - 1`, which are all the qubits of the circuit unless another block in
-    the list needs more. This reflection is the `S₀` part of the Grover operator
+    the list needs more. This reflection is the \(S_0\) part of the Grover operator
     used by iterative quantum amplitude estimation (IQAE). The
     [`Grover`][eigenkit.core.blocks.Grover] block adds the same gates itself.
 
@@ -873,13 +875,13 @@ class S0:
 
 @dataclass
 class QubitUnitary:
-    """Apply any unitary matrix to the given qubits.
+    r"""Apply any unitary matrix to the given qubits.
 
     The matrix is stored in the `data` field of the gate as a nested tuple, so that
     the `Gate` stays hashable.
 
     Args:
-        unitary: A `2^n × 2^n` matrix, as an array-like, where `n` is
+        unitary: A \(2^n \times 2^n\) matrix, as an array-like, where \(n\) is
             `len(wires)`. It is checked to be unitary when the block is created.
         wires: The target qubits, in the order that the matrix expects.
 
@@ -979,19 +981,21 @@ class QubitUnitary:
 
 @dataclass
 class Grover:
-    r"""The Grover operator `Q = A · S₀ · A† · S_ψ₁` used for amplitude estimation.
+    r"""The Grover operator \(Q = A \cdot S_0 \cdot A^\dagger \cdot S_{\psi_1}\) used for
+    amplitude estimation.
 
     This is the operator that iterative quantum amplitude estimation (IQAE) uses.
-    The block builds it from a state-preparation oracle `A`, given as a
+    The block builds it from a state-preparation oracle \(A\), given as a
     `CircuitSpec`, and from these standard parts:
 
-    - **`S_ψ₁`** flips the phase of the ancilla qubit, which is the last qubit. It
-      is the gate `Z(n-1)`.
-    - **`A†`** is the adjoint of the oracle. It uses the same weights and inputs
-      as `A`.
-    - **`S₀`** is the reflection about the all-zero state:
-      `X^⊗n → MCZ → X^⊗n`, where `MCZ` is a multi-controlled `Z` gate.
-    - **`A`** is the oracle.
+    - **\(S_{\psi_1}\)** flips the phase of the ancilla qubit, which is the last
+      qubit. It is the gate `Z(n-1)`.
+    - **\(A^\dagger\)** is the adjoint of the oracle. It uses the same weights and
+      inputs as \(A\).
+    - **\(S_0\)** is the reflection about the all-zero state:
+      \(X^{\otimes n} \to \mathrm{MCZ} \to X^{\otimes n}\), where `MCZ` is a
+      multi-controlled `Z` gate.
+    - **\(A\)** is the oracle.
 
     The gates are applied to the state in this order, from left to right:
 
@@ -999,11 +1003,11 @@ class Grover:
     Z(ancilla) → A† → S₀ → A
     ```
 
-    `A` and `A†` share their weights and inputs, so
+    \(A\) and \(A^\dagger\) share their weights and inputs, so
     `fragment.n_weights == a_circuit.n_weights`: the count is not doubled.
 
     Args:
-        a_circuit: The state-preparation oracle `A`, as a `CircuitSpec` with at
+        a_circuit: The state-preparation oracle \(A\), as a `CircuitSpec` with at
             least one qubit. Its last qubit is used as the ancilla.
 
     Example:
@@ -1039,10 +1043,10 @@ class Grover:
         return self.a_circuit.n_qubits
 
     def build(self, n_qubits: int) -> "IRFragment":
-        """Build the gates of this block for a circuit with `n_qubits` qubits.
+        r"""Build the gates of this block for a circuit with `n_qubits` qubits.
 
-        The oracle `A` and its adjoint `A†` share their weights and inputs, so these
-        are not counted twice.
+        The oracle \(A\) and its adjoint \(A^\dagger\) share their weights and inputs,
+        so these are not counted twice.
 
         Args:
             n_qubits (int): The number of qubits of the circuit being assembled, which
@@ -1180,11 +1184,11 @@ def _validate_unitary(unitary: object, n_wires: int, context: str):
 
 @dataclass
 class ControlledUnitaryBlock:
-    """Apply a unitary matrix `U` to `target_wires`, controlled by `control_wires`.
+    r"""Apply a unitary matrix \(U\) to `target_wires`, controlled by `control_wires`.
 
     Args:
-        unitary: A `2^n_target × 2^n_target` matrix, as an array-like, where
-            `n_target` is the number of target qubits.
+        unitary: A \(2^{n_\mathrm{target}} \times 2^{n_\mathrm{target}}\) matrix, as an
+            array-like, where \(n_\mathrm{target}\) is the number of target qubits.
         control_wires: The qubits that control the gate.
         target_wires: The qubits that the matrix acts on.
         control_values: The bit value that activates each control, one for each
@@ -1415,12 +1419,21 @@ class QFTBlock:
 
 @dataclass
 class QPEBlock:
-    """Quantum phase estimation (QPE) of a unitary oracle.
+    r"""Quantum phase estimation (QPE) of a unitary oracle.
 
     The block applies `H` to every clock qubit, then the controlled powers
-    `U^{2^k}` of the oracle, then the inverse quantum Fourier transform (`QFT†`):
-    `H^⊗n_clock → controlled-U^{2^k} → QFT†`. Set `inverse=True` for the adjoint:
-    `QFT → controlled-U†^{2^k} → H^⊗n_clock`.
+    \(U^{2^k}\) of the oracle, then the inverse quantum Fourier transform
+    (\(\mathrm{QFT}^\dagger\)):
+
+    \[
+    H^{\otimes n_\mathrm{clock}} \to \text{controlled-}U^{2^k} \to \mathrm{QFT}^\dagger.
+    \]
+
+    Set `inverse=True` for the adjoint:
+
+    \[
+    \mathrm{QFT} \to \text{controlled-}(U^\dagger)^{2^k} \to H^{\otimes n_\mathrm{clock}}.
+    \]
 
     The oracle must be a `CircuitSpec` whose unitary can be read as a dense matrix.
     In practice, this means a circuit made of a single
@@ -1443,7 +1456,7 @@ class QPEBlock:
 
     Args:
         oracle_circuit: A `CircuitSpec` whose single `QubitUnitary` gate defines
-            the unitary `U` that acts on the state qubits. The single-gate
+            the unitary \(U\) that acts on the state qubits. The single-gate
             requirement is checked when the block is built, and the type when the
             block is created.
         n_clock: The number of clock qubits, which sets the resolution of QPE. It
@@ -1615,21 +1628,22 @@ class QPEBlock:
 
 @dataclass
 class TrotterBlock:
-    """First-order or second-order Trotter approximation of `e^{iAt}`.
+    r"""First-order or second-order Trotter approximation of \(e^{iAt}\).
 
     The block builds the time evolution under a Hermitian matrix
-    `A = Σ_k c_k P_k`, given as `(coeff, pauli_string)` terms (for example from
+    \(A = \sum_k c_k P_k\), given as `(coeff, pauli_string)` terms (for example from
     `pauli_decompose()`). It uses elementary gates only (`H`, `RX`, controlled-NOT
     (CNOT) and `RZ`), and no dense `QubitUnitary`. It replaces applying
     `scipy.linalg.expm(1j*A*t)` as a single opaque unitary, and it builds the
     evolution as hardware would run it.
 
-    Each term `e^{i·c·P·τ}` is built as follows. Every factor of `P` that is not
-    `Z` is rotated into the eigenbasis of `Z` (with `H` for `X`, and `RX(+π/2)` for
-    `Y`). A ladder of CNOT gates collects the parity of the active qubits on the
-    last one, a single `RZ(-2cτ)` is applied there, and then the ladder and the
-    change of basis are undone. With the convention `RZ(θ) = e^{-iθZ/2}` of the
-    library, this gives `e^{+iAt}` up to a global phase, which matches the sign of
+    Each term \(e^{i \cdot c \cdot P \cdot \tau}\) is built as follows. Every factor
+    of \(P\) that is not `Z` is rotated into the eigenbasis of `Z` (with `H` for `X`,
+    and \(RX(+\pi/2)\) for `Y`). A ladder of CNOT gates collects the parity of the
+    active qubits on the last one, a single \(RZ(-2c\tau)\) is applied there, and
+    then the ladder and the change of basis are undone. With the convention
+    \(RZ(\theta) = e^{-i\theta Z/2}\) of the library, this gives \(e^{+iAt}\) up to a
+    global phase, which matches the sign of
     the reference Harrow-Hassidim-Lloyd (HHL) solver. The identity term is only a
     global phase, so it is skipped: it has no observable effect here, and it
     becomes a phase on the clock qubit in the controlled version used for quantum
@@ -1637,9 +1651,9 @@ class TrotterBlock:
 
     Args:
         pauli_terms: A sequence of `(coeff, pauli_string)` pairs. All the strings
-            have the same length `n`, which is the number of qubits. Each `coeff`
-            must be real up to numerical tolerance, because `A` is Hermitian.
-        time: The evolution time `t`.
+            have the same length \(n\), which is the number of qubits. Each `coeff`
+            must be real up to numerical tolerance, because \(A\) is Hermitian.
+        time: The evolution time \(t\).
         steps: The number of Trotter steps. The approximation error decreases as
             `steps` increases. Default: `1`.
         order: `1` (Lie-Trotter) or `2` (symmetric Strang splitting, which has a
@@ -1878,26 +1892,28 @@ def _append_controlled_trotter(
 
 @dataclass
 class HamiltonianQPEBlock:
-    """Quantum phase estimation (QPE) of `e^{iAt}`, built with Trotter products.
+    r"""Quantum phase estimation (QPE) of \(e^{iAt}\), built with Trotter products.
 
     This block replaces [`QPEBlock`][eigenkit.core.blocks.QPEBlock] in the clock
     register of the Harrow-Hassidim-Lloyd (HHL) solver with `mode="honest"`, where
     the circuit is built as hardware would run it. It turns the Hermitian matrix
-    `A = Σ_k c_k P_k` into elementary gates with Trotter products. It does not
+    \(A = \sum_k c_k P_k\) into elementary gates with Trotter products. It does not
     exponentiate a dense oracle and raise it to powers with `matrix_power`: both of
-    these cost `O(N³)` for an `N × N` matrix, and neither gives a circuit of
-    elementary gates. The controlled evolution `controlled-e^{iA·2^m·t}` that a
-    clock qubit needs is a Trotter product with a total time of `2^m·t`, and never
-    a matrix power. The step size `t/steps` is fixed, so the power `2^m` uses
-    `steps·2^m` steps.
+    these cost \(O(N^3)\) for an \(N \times N\) matrix, and neither gives a circuit
+    of elementary gates. The controlled evolution
+    \(\text{controlled-}e^{iA \cdot 2^m \cdot t}\) that a clock qubit needs is a
+    Trotter product with a total time of \(2^m \cdot t\), and never a matrix power.
+    The step size `t/steps` is fixed, so the power \(2^m\) uses `steps * 2**m`
+    steps.
 
     Only the single `RZ` of each Trotter term is controlled. The controlled `RZ` is
-    built from `RZ` and controlled-NOT (CNOT) gates, as `CRZ = RZ·CNOT·RZ·CNOT`.
-    The change of basis and the ladder gates cancel out when the control is `|0⟩`.
-    The identity term of `A` becomes a `PhaseShift` on the clock qubit, which is a
-    controlled global phase. As a result, the estimated phase reflects the full
-    eigenvalue and not only its traceless part, which matches what
-    [`QPEBlock`][eigenkit.core.blocks.QPEBlock] gives from `expm(1j·A·t)`.
+    built from `RZ` and controlled-NOT (CNOT) gates, as
+    \(\mathrm{CRZ} = \mathrm{RZ}\, \mathrm{CNOT}\, \mathrm{RZ}\, \mathrm{CNOT}\).
+    The change of basis and the ladder gates cancel out when the control is
+    \(|0\rangle\). The identity term of \(A\) becomes a `PhaseShift` on the clock
+    qubit, which is a controlled global phase. As a result, the estimated phase
+    reflects the full eigenvalue and not only its traceless part, which matches what
+    [`QPEBlock`][eigenkit.core.blocks.QPEBlock] gives from `expm(1j * A * t)`.
 
     The qubits are laid out as follows, with indices local to the block:
 
@@ -1905,17 +1921,17 @@ class HamiltonianQPEBlock:
     [clock(0 … n_clock-1) | state(n_clock … n_clock+n_state-1)]
     ```
 
-    Clock qubit `k` controls `e^{iA·2^(n_clock-1-k)·t}`. This is the big-endian
-    convention of QPE, the same as in [`QPEBlock`][eigenkit.core.blocks.QPEBlock].
-    The caller maps these local indices to the qubits of the full circuit, for
-    example to skip the HHL ancilla qubit.
+    Clock qubit \(k\) controls \(e^{iA \cdot 2^{n_\mathrm{clock}-1-k} \cdot t}\). This
+    is the big-endian convention of QPE, the same as in
+    [`QPEBlock`][eigenkit.core.blocks.QPEBlock]. The caller maps these local indices
+    to the qubits of the full circuit, for example to skip the HHL ancilla qubit.
 
     Args:
-        pauli_terms: The `(coeff, pauli_string)` terms of the Hermitian matrix `A`,
+        pauli_terms: The `(coeff, pauli_string)` terms of the Hermitian matrix \(A\),
             for example from `pauli_decompose`. Every string has length `n_state`.
         n_clock: The number of clock qubits, which sets the resolution of QPE.
-        time: The base evolution time `t`.
-        steps: The number of Trotter steps for the base time `t`. Default: `1`.
+        time: The base evolution time \(t\).
+        steps: The number of Trotter steps for the base time \(t\). Default: `1`.
         order: The Trotter order, `1` or `2`. Default: `1`.
         inverse: If `True`, the block builds the inverse QPE, which undoes the
             phase estimation. Default: `False`.

@@ -80,9 +80,9 @@ constant -3.5
 
 The numbers show how the mapping works. There is no local field, so `h` is all
 zeros: MaxCut does not prefer either side for a node on its own. Each edge adds `0.5`
-to the upper triangle of `J`, and the constant is `-|E|/2 = -3.5`, where `|E|` is the
-number of edges. Together, they make the Ising energy equal to minus the size of the
-cut, so *minimising* the energy *maximises* the cut.
+to the upper triangle of `J`, and the constant is \(-\lvert E \rvert/2 = -3.5\), where
+\(\lvert E \rvert\) is the number of edges. Together, they make the Ising energy equal to
+minus the size of the cut, so *minimising* the energy *maximises* the cut.
 
 `QAOA` also accepts a `QUBO` (quadratic unconstrained binary optimisation problem)
 if the problem is stated with binary variables instead of spin variables. See the
@@ -117,8 +117,8 @@ optimal_parameters [ 0.708303 -0.392699]
 - **`best_energy`** is its Ising energy, `-7.0`, so it is a cut of `7`.
 - **`expectation`** is the mean energy of the final state, `-5.05`. It is the
   quantity that QAOA minimises.
-- **`optimal_parameters`** holds one `γ` and one `β` for `layers=1`. With more
-  layers, the array grows to `2 * layers` entries.
+- **`optimal_parameters`** holds one \(\gamma\) and one \(\beta\) for `layers=1`. With
+  more layers, the array grows to `2 * layers` entries.
 - **`n_iterations`** and **`success`** come from the classical optimiser that tuned
   the angles.
 

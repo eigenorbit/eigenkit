@@ -362,8 +362,8 @@ class QiskitCompiled(CompiledCircuit):
         reordered from the Qiskit convention, where qubit 0 is the least significant
         bit, so that they match the NumPy and PennyLane backends. `initial_state`,
         in the same order as the result, is evolved through the bound circuit, so
-        the evolution starts from it instead of `|0…0⟩`. When `inputs` is 2-D, the
-        method loops over its rows and returns an array of shape
+        the evolution starts from it instead of \(|0 \cdots 0\rangle\). When `inputs`
+        is 2-D, the method loops over its rows and returns an array of shape
         `(B, 2**n_qubits)`.
 
         Args:
@@ -371,7 +371,7 @@ class QiskitCompiled(CompiledCircuit):
             inputs (np.ndarray): The input features: a 1-D array for one sample, or
                 a 2-D array with a leading batch axis.
             initial_state (np.ndarray | None): The state to evolve from instead of
-                `|0…0⟩`. Default: `None`.
+                \(|0 \cdots 0\rangle\). Default: `None`.
 
         Returns:
             The statevector, of shape `(2**n_qubits,)`, or `(B, 2**n_qubits)` for
@@ -439,7 +439,7 @@ class QiskitCompiled(CompiledCircuit):
         weights: np.ndarray,
         inputs: np.ndarray,
     ) -> float:
-        """Return the probability of the all-zeros state for one sample.
+        r"""Return the probability of the all-zeros state for one sample.
 
         It is the squared magnitude of the all-zeros amplitude of the simulated
         statevector.
@@ -450,7 +450,7 @@ class QiskitCompiled(CompiledCircuit):
                 1-D.
 
         Returns:
-            The probability, a float in `[0, 1]`.
+            The probability, a float in \([0, 1]\).
         """
         statevector = self._bound_statevector(weights, inputs)
         return float(np.abs(statevector.data[0]) ** 2)

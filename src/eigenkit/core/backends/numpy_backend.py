@@ -1,4 +1,4 @@
-"""The reference NumPy statevector simulator, which is the default backend.
+r"""The reference NumPy statevector simulator, which is the default backend.
 
 This backend uses only NumPy. It needs neither PyTorch nor an external quantum
 software development kit. It exists for two reasons:
@@ -15,22 +15,22 @@ the optional backends. It does use two simple NumPy optimisations. A batch of
 inputs evolves in one vectorised pass, with a leading batch axis on the state
 tensor, instead of a Python loop over the samples. A controlled-NOT (CNOT) gate is
 applied by swapping amplitudes (`np.flip` on the subspace where the control is
-`1`) instead of by contracting a `4x4` matrix.
+`1`) instead of by contracting a \(4 \times 4\) matrix.
 
 ## State representation
 
 The state is a `complex128` tensor of shape `(2,) * n_qubits`, and qubit `q` is
 on axis `q`. In C order, this makes qubit `0` the most significant bit, as in
 PennyLane, where wire `0` is the most significant bit. As a result,
-`state.reshape(-1)[0]` is the amplitude of `|0…0⟩`, and the computed values agree
-with PennyLane to machine precision.
+`state.reshape(-1)[0]` is the amplitude of \(|0 \cdots 0\rangle\), and the computed
+values agree with PennyLane to machine precision.
 
 ## Gradients
 
 The backend declares `gradient_method = "adjoint"` and implements
 [`NumpyCompiled.jacobian()`][eigenkit.core.backends.numpy_backend.NumpyCompiled.jacobian].
 This method computes analytic gradients in reverse mode, with one forward pass
-and one backward pass, so the number of passes is `O(1)` in the number of
+and one backward pass, so the number of passes is \(O(1)\) in the number of
 parameters. The gradient code of the core package uses it in preference to the
 parameter-shift rule, which is the fallback, and it differentiates a 2-D `inputs`
 batch in one batched pass. The gradients agree with the parameter-shift rule and
@@ -680,7 +680,7 @@ class NumpyCompiled(CompiledCircuit):
         return batch_call(self._run_one, weights, inputs)
 
     def zero_state_probability(self, weights: np.ndarray, inputs: np.ndarray) -> float:
-        """Return the probability of measuring the state `|0…0⟩`.
+        r"""Return the probability of measuring the state \(|0 \cdots 0\rangle\).
 
         Fidelity kernels and swap tests are built on it. It does not go through
         `Observable`, because it is not the expectation value of a Pauli operator.
@@ -690,7 +690,7 @@ class NumpyCompiled(CompiledCircuit):
             inputs (np.ndarray): The input features of one sample (1-D).
 
         Returns:
-            The probability, a float in `[0, 1]`.
+            The probability, a float in \([0, 1]\).
         """
         state = self._evolve(
             np.asarray(weights, dtype=np.float64),
@@ -702,7 +702,8 @@ class NumpyCompiled(CompiledCircuit):
     def zero_state_probabilities(
         self, weights: np.ndarray, inputs: np.ndarray
     ) -> np.ndarray:
-        """Return the probability of `|0…0⟩` for every input of a batch, vectorised.
+        r"""Return the probability of \(|0 \cdots 0\rangle\) for every input of a batch,
+        vectorised.
 
         `inputs` has shape `(B, n_inputs)`, and the result has shape `(B,)`. The
         whole batch evolves in one pass. The quantum kernel uses this method to
@@ -730,19 +731,19 @@ class NumpyCompiled(CompiledCircuit):
         The result is a flat array of `2**n_qubits` amplitudes, with qubit `0` as
         the most significant bit (the same order as `probabilities()`).
         `initial_state`, a normalised flat vector in the same order, makes the
-        evolution start from that state instead of `|0…0⟩`. Reading a state out
-        and passing it back in this way is what quantum reservoir carry-over and
-        amplitude encoding are built on. A 2-D `inputs` batch evolves in one pass
-        and returns an array of shape `(B, 2**n_qubits)`. `initial_state` can then
-        be one state of shape `(2**n,)`, shared by all samples, or a stack of
-        shape `(B, 2**n)` with one state for each sample.
+        evolution start from that state instead of \(|0 \cdots 0\rangle\). Reading a
+        state out and passing it back in this way is what quantum reservoir
+        carry-over and amplitude encoding are built on. A 2-D `inputs` batch evolves
+        in one pass and returns an array of shape `(B, 2**n_qubits)`.
+        `initial_state` can then be one state of shape `(2**n,)`, shared by all
+        samples, or a stack of shape `(B, 2**n)` with one state for each sample.
 
         Args:
             weights (np.ndarray): The parameter vector (1-D).
             inputs (np.ndarray): The input features: 1-D for one sample, or 2-D
                 with a leading batch axis.
             initial_state (np.ndarray | None): The state to start from, instead
-                of `|0…0⟩`. Default: `None`.
+                of \(|0 \cdots 0\rangle\). Default: `None`.
 
         Returns:
             The statevector, of shape `(2**n_qubits,)`, or `(B, 2**n_qubits)` for
@@ -928,13 +929,13 @@ class NumpyCompiled(CompiledCircuit):
         *,
         need_input_grad: bool = False,
     ) -> tuple[np.ndarray, np.ndarray | None]:
-        """Compute the gradient with this backend's own method, the analytic adjoint.
+        r"""Compute the gradient with this backend's own method, the analytic adjoint.
 
         The gradient code of the core package looks for a `jacobian` method. When
         a backend has one, it is used in preference to the parameter-shift rule,
         which works on any backend and is the fallback. Here it is the adjoint
         method in reverse mode: one forward pass and one backward pass, so the
-        number of passes is `O(1)` in the number of parameters.
+        number of passes is \(O(1)\) in the number of parameters.
 
         For a single sample (1-D `inputs`), the two jacobians have shapes
         `(n_obs, n_weights)` and `(n_obs, n_inputs)`. For a 2-D `inputs` batch,
@@ -993,7 +994,7 @@ class NumpyCompiled(CompiledCircuit):
 
 
 class NumpySimulator:
-    """The provider for the reference NumPy statevector simulator.
+    r"""The provider for the reference NumPy statevector simulator.
 
     It is registered automatically as `"numpy"`. It uses only NumPy and no
     optional dependency, so it is always available.
@@ -1003,7 +1004,7 @@ class NumpySimulator:
     [`NumpyCompiled.jacobian()`][eigenkit.core.backends.numpy_backend.NumpyCompiled.jacobian]
     (analytic, in reverse mode, with one forward pass and one backward pass
     whatever the number of parameters) instead of the parameter-shift rule, whose
-    cost is `O(n_params)`.
+    cost is \(O(n_\mathrm{params})\).
     """
 
     gradient_method = "adjoint"

@@ -70,7 +70,7 @@ times as many weights at the same `depth`, and it is what brings the loss down o
     and that is what the example is for, but it stops far short of a useful model.
     After `150` epochs, the loss has not reached the variance of the target. The
     target ranges from `25` to `346`, and this whole range comes from the linear
-    head alone, on top of a quantum layer whose outputs are in `[-1, 1]`. Scale the
+    head alone, on top of a quantum layer whose outputs are in \([-1, 1]\). Scale the
     target before you draw any conclusion from the score.
 
 Inspect the training curve. The plot is drawn twice, once for each theme, so that
@@ -184,10 +184,10 @@ mape   0.293061
 `variational_type` and `basis` are set here for the same reason as for `HQNR`
 above. The arguments of the ansatz default to those of the layer, and this problem
 needs the `"strong"` block. Without these two arguments, the same run ends at an
-`R²` of `0.9087` and an `rmse` of `0.209`, instead of the `0.9937` and `0.055` above.
+\(R^2\) of `0.9087` and an `rmse` of `0.209`, instead of the `0.9937` and `0.055` above.
 That forecast overshoots `1.0` and lags on every descent.
 
-By default, `score()` returns only the `R²`, which is what `cross_val_score` and
+By default, `score()` returns only the \(R^2\), which is what `cross_val_score` and
 `GridSearchCV` expect. `return_dict=True` gives the five figures above. Read `mape`
 (the mean absolute percentage error) with care on this target. A sine crosses zero,
 so a percentage error is large wherever the true value is near zero. So `0.29` says

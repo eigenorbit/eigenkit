@@ -245,7 +245,7 @@ results.
 
 | Method | Description |
 |---|---|
-| `table(show_significance=False)` | A text table with `mean ± std` for each model and metric. It needs no optional dependency. With `show_significance=True`, the best model is marked with `*` or `**` when a test against another model gives `p < 0.05` or `p < 0.01`. |
+| `table(show_significance=False)` | A text table with `mean ± std` for each model and metric. It needs no optional dependency. With `show_significance=True`, the best model is marked with `*` or `**` when a test against another model gives \(p < 0.05\) or \(p < 0.01\). |
 | `plot(save_path=None, theme="light")` | A grouped bar chart with error bars. `theme` is `"light"` or `"dark"`. It needs `matplotlib`. |
 | `plot_history(save_path=None, theme="light", seed="last")` | The training and validation loss curves of the models that record them. `seed` chooses the run to draw: `"last"` or an integer index. It needs `matplotlib`. |
 | `to_dataframe()` | A DataFrame with one row per seed and metric. It needs `pandas`. |

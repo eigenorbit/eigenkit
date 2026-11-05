@@ -1,13 +1,13 @@
-"""The intermediate representation (IR) of quantum circuits.
+r"""The intermediate representation (IR) of quantum circuits.
 
 The IR is plain data and does not depend on any third-party package. Every object
 is a frozen dataclass, so circuits can be hashed and pickled, and they can be
 shared safely between threads or processes.
 
 The parameter expressions (`Scale`, `Negate`, `Sum` and `Multiply`) let encoding
-blocks write angles such as `RY(2π * x)` or `RY(λ * x)`, so the user does not have
-to scale the inputs beforehand. They also let transforms such as `adjoint` work on
-symbolic references instead of fixed numbers.
+blocks write angles such as \(RY(2\pi \cdot x)\) or \(RY(\lambda \cdot x)\), so the
+user does not have to scale the inputs beforehand. They also let transforms such as
+`adjoint` work on symbolic references instead of fixed numbers.
 
 Example:
     ```python
@@ -286,13 +286,13 @@ class Sum(_ParamOps):
 
 @dataclass(frozen=True)
 class Multiply(_ParamOps):
-    """The product of two parameter expressions.
+    r"""The product of two parameter expressions.
 
     It is used when a gate angle is the product of two symbolic terms. The most
     common case is a trainable scaling of a feature (Schuld et al. 2021):
-    `RY(λ * x)`, where `λ` is a `WeightRef` and `x` is an `InputRef`. When one of
-    the two factors is a constant number, use `Scale` instead, so that backends can
-    see the number directly.
+    \(RY(\lambda \cdot x)\), where \(\lambda\) is a `WeightRef` and \(x\) is an
+    `InputRef`. When one of the two factors is a constant number, use `Scale`
+    instead, so that backends can see the number directly.
 
     Backends that do not support the product of two symbolic terms raise
     `NotImplementedError` when this node appears. Currently, this is the case of
@@ -452,7 +452,7 @@ _PAULI_LETTERS: frozenset[str] = frozenset({"X", "Y", "Z"})
 
 @dataclass(frozen=True)
 class PauliTerm:
-    """A coefficient times a product of Pauli operators on distinct qubits.
+    r"""A coefficient times a product of Pauli operators on distinct qubits.
 
     `PauliTerm(0.5, (("Z", 0), ("X", 1)))` is the term `0.5 Z0 X1`.
 
@@ -462,7 +462,7 @@ class PauliTerm:
         paulis: Pairs of a Pauli letter (`"X"`, `"Y"` or `"Z"`) and a qubit index.
             It must not be empty, because a term without Pauli operators is a
             constant, which an `Observable` does not hold. Each qubit can appear
-            at most once, so reduce products such as `Z * Z = I` before building
+            at most once, so reduce products such as \(Z \cdot Z = I\) before building
             the term.
 
     Raises:
@@ -975,13 +975,13 @@ def shift_gate_angle(
     gate_index: int,
     shift_value: float,
 ) -> "CircuitSpec":
-    """Return a copy of the circuit in which the angle of one gate is shifted.
+    r"""Return a copy of the circuit in which the angle of one gate is shifted.
 
     In the new `CircuitSpec`, the first parameter of the gate at `gate_index` is
     replaced by `Sum((original, Constant(shift_value)))`. The parameter-shift
     Jacobian that applies the chain rule uses it to shift the angle of one gate,
-    without changing the weights or the other gates. The shifts are `±π/2`, and
-    also `±3π/2` for the gates in `MULTI_FREQUENCY_GATES`.
+    without changing the weights or the other gates. The shifts are \(\pm\pi/2\),
+    and also \(\pm 3\pi/2\) for the gates in `MULTI_FREQUENCY_GATES`.
 
     Args:
         circuit (CircuitSpec): The circuit to shift.
@@ -1037,7 +1037,7 @@ def _conj_transpose_nested(mat: tuple) -> tuple:
 
 
 def adjoint(circuit: CircuitSpec) -> CircuitSpec:
-    """Reverse the order of the gates and invert each gate.
+    r"""Reverse the order of the gates and invert each gate.
 
     The transform does not depend on the provider. It returns another `CircuitSpec`
     that any backend can compile, so the transform does not have to be written
@@ -1052,7 +1052,7 @@ def adjoint(circuit: CircuitSpec) -> CircuitSpec:
       `S` and `Sdg` are not their own inverse, so each one is replaced by the
       other.
     * **`QubitUnitary(U)`**: the stored matrix is replaced by its conjugate
-      transpose `U†`. It is computed without NumPy, so that the intermediate
+      transpose \(U^\dagger\). It is computed without NumPy, so that the intermediate
       representation stays pure Python.
     * **`ControlledQubitUnitary(U)`**: the target unitary (`data[0]`) is replaced
       by its conjugate transpose, and the control values (`data[1]`) are kept

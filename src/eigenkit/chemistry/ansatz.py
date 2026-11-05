@@ -13,14 +13,14 @@ from .mappings import jordan_wigner
 
 
 def apply_hartree_fock(circuit: CircuitBuilder, n_electrons: int) -> CircuitBuilder:
-    """Prepare the Hartree-Fock reference state on an existing builder.
+    r"""Prepare the Hartree-Fock reference state on an existing builder.
 
     It applies an `X` gate to each of the lowest `n_electrons` spin-orbitals, which
-    marks them as occupied (`|1⟩`).
+    marks them as occupied (\(|1\rangle\)).
 
     The convention is the one of the Jordan-Wigner mapping: mode `j` is qubit `j`,
     and the spin-orbitals are ordered so that the lowest `n_electrons` of them are
-    occupied in the reference state, for example `|1…1 0…0⟩`.
+    occupied in the reference state, for example \(|1 \cdots 1\, 0 \cdots 0\rangle\).
 
     Args:
         circuit (CircuitBuilder): The builder to add the gates to.
@@ -36,10 +36,10 @@ def apply_hartree_fock(circuit: CircuitBuilder, n_electrons: int) -> CircuitBuil
 
 
 def hartree_fock_state(n_qubits: int, n_electrons: int) -> CircuitSpec:
-    """A circuit that prepares the Hartree-Fock reference state.
+    r"""A circuit that prepares the Hartree-Fock reference state.
 
-    The state is `|1…1 0…0⟩` on `n_qubits` qubits, with `n_electrons` occupied
-    spin-orbitals.
+    The state is \(|1 \cdots 1\, 0 \cdots 0\rangle\) on `n_qubits` qubits, with
+    `n_electrons` occupied spin-orbitals.
 
     Args:
         n_qubits (int): The number of qubits.
@@ -81,7 +81,7 @@ def _double_excitation_generator(
 
 
 def uccsd_excitation_generators(n_qubits: int, n_electrons: int) -> list[FermionOperator]:
-    """The excitation generators `T - T†` of the UCCSD ansatz.
+    r"""The excitation generators \(T - T^\dagger\) of the UCCSD ansatz.
 
     UCCSD is the unitary coupled-cluster ansatz with single and double excitations.
     The excitations go from the occupied spin-orbitals (the lowest `n_electrons`)
@@ -115,20 +115,26 @@ def uccsd_ansatz(
     n_electrons: int,
     reps: int = 1,
 ) -> CircuitSpec:
-    """The UCCSD ansatz on the Hartree-Fock reference, with a Trotter approximation.
+    r"""The UCCSD ansatz on the Hartree-Fock reference, with a Trotter approximation.
 
     UCCSD is the unitary coupled-cluster ansatz with single and double excitations.
-    The circuit prepares `(∏_k exp(θ_k (T_k − T_k†)))^reps |HF⟩`, where `|HF⟩` is
-    the Hartree-Fock state.
+    The circuit prepares
 
-    Each generator `G = T − T†` is anti-Hermitian. The Jordan-Wigner mapping turns
-    `H = −iG` into a Hermitian qubit operator, and `exp(θG) = exp(iθH)` is then a
-    product of `pauli_exponential` gates. The Pauli terms of one generator commute,
-    so that product is exact. The product over different generators is a
-    first-order Trotter approximation. `reps` repeats the whole sequence with
-    independent weights, which reduces the Trotter error: more repetitions bring
-    the circuit closer to the exact UCCSD unitary. The ansatz has
-    `reps * n_excitations` weights in total.
+    \[
+    \Big(\prod_k \exp\big(\theta_k (T_k - T_k^\dagger)\big)\Big)^{\mathrm{reps}}
+    |\mathrm{HF}\rangle,
+    \]
+
+    where \(|\mathrm{HF}\rangle\) is the Hartree-Fock state.
+
+    Each generator \(G = T - T^\dagger\) is anti-Hermitian. The Jordan-Wigner mapping
+    turns \(H = -iG\) into a Hermitian qubit operator, and
+    \(\exp(\theta G) = \exp(i\theta H)\) is then a product of `pauli_exponential` gates.
+    The Pauli terms of one generator commute, so that product is exact. The product
+    over different generators is a first-order Trotter approximation. `reps` repeats
+    the whole sequence with independent weights, which reduces the Trotter error:
+    more repetitions bring the circuit closer to the exact UCCSD unitary. The ansatz
+    has `reps * n_excitations` weights in total.
 
     Args:
         n_qubits (int): The number of qubits, one per spin-orbital.

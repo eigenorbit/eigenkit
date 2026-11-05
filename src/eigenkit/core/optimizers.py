@@ -68,11 +68,11 @@ def spsa(
     random_state: int | None = 0,
     callback: Callable[[int, np.ndarray, float], None] | None = None,
 ) -> SPSAResult:
-    """Minimise `fun` with Simultaneous Perturbation Stochastic Approximation (SPSA).
+    r"""Minimise `fun` with Simultaneous Perturbation Stochastic Approximation (SPSA).
 
-    Each iteration draws a random direction `delta` with entries `±1`, evaluates
-    `fun` at `x ± c_k * delta`, and takes a step against the resulting estimate of
-    the gradient. The step size and the perturbation size decrease as
+    Each iteration draws a random direction `delta` with entries \(\pm 1\), evaluates
+    `fun` at \(x \pm c_k\, \delta\), and takes a step against the resulting
+    estimate of the gradient. The step size and the perturbation size decrease as
     `a / (k + 1) ** alpha` and `c / (k + 1) ** gamma`, with the standard exponents
     of Spall.
 
@@ -82,7 +82,7 @@ def spsa(
         maxiter: The number of iterations to run.
         learning_rate: The initial step size `a`. `None` calibrates it from a few
             gradient estimates at `x0`, so that the first step moves the
-            parameters by about `2π / 10`, as the SPSA of qiskit-algorithms does.
+            parameters by about \(2\pi / 10\), as the SPSA of qiskit-algorithms does.
             These evaluations are counted in `n_evaluations`.
         perturbation: The initial perturbation size `c`.
         alpha: The exponent with which the step size decreases.

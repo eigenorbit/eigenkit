@@ -1,4 +1,4 @@
-"""Quantum reservoir computing (QRC).
+r"""Quantum reservoir computing (QRC).
 
 A circuit with fixed weights, usually random, is driven over input sequences.
 The quantum state is carried from one timestep to the next, and classical
@@ -11,11 +11,11 @@ core of the library, so it needs neither PyTorch nor a backend package.
 
 Three policies cover the common variants of QRC:
 
-- [`Stateless`][eigenkit.reservoir.Stateless] starts every step from `|0…0⟩`
-  and encodes a sliding window of inputs. All timesteps run in parallel, in one
-  batched evaluation.
+- [`Stateless`][eigenkit.reservoir.Stateless] starts every step from
+  \(|0 \cdots 0\rangle\) and encodes a sliding window of inputs. All timesteps run
+  in parallel, in one batched evaluation.
 - [`Carry`][eigenkit.reservoir.Carry] carries the state from one step to the
-  next with the circuit's unitary: `ψ_t = U(x_t) ψ_{t-1}`.
+  next with the circuit's unitary: \(\psi_t = U(x_t)\, \psi_{t-1}\).
 - [`LeakyCarry`][eigenkit.reservoir.LeakyCarry] mixes the carried state with a
   reset state, and renormalises the result.
 

@@ -650,12 +650,12 @@ def parameter_shift_jacobian(
     inputs: np.ndarray,
     four_term_indices: frozenset[int] | None = None,
 ) -> np.ndarray:
-    """Return the jacobian with respect to the weights, by the parameter-shift rule.
+    r"""Return the jacobian with respect to the weights, by the parameter-shift rule.
 
-    Each entry is `d<O_k>/dθ_i`, computed with the parameter-shift rule. For a
-    weight whose gates have a single frequency, the rule takes two evaluations,
-    `(f(θ + π/2) - f(θ - π/2)) / 2`. For a weight listed in `four_term_indices`,
-    it uses the four-term rule.
+    Each entry is \(d\langle O_k \rangle / d\theta_i\), computed with the
+    parameter-shift rule. For a weight whose gates have a single frequency, the rule
+    takes two evaluations, \((f(\theta + \pi/2) - f(\theta - \pi/2)) / 2\). For a
+    weight listed in `four_term_indices`, it uses the four-term rule.
 
     Args:
         compiled (CompiledCircuit): The prepared circuit to differentiate.
@@ -700,14 +700,14 @@ def parameter_shift_input_jacobian(
     inputs: np.ndarray,
     four_term_indices: frozenset[int] | None = None,
 ) -> np.ndarray:
-    """Return the jacobian with respect to the inputs, by shifting each input.
+    r"""Return the jacobian with respect to the inputs, by shifting each input.
 
-    Each entry is `d<O_k>/dx_j`, computed by shifting `inputs[j]` directly by
-    `±π/2` (and also by `±3π/2` for an input listed in `four_term_indices`). The
-    result is correct only when the angle of every gate that depends on an input
-    is exactly `InputRef(j)`, not wrapped in `Scale`, `Multiply`, `Sum` or
-    `Negate`, and when each `InputRef(j)` feeds a single gate. When that is not
-    the case, use the chain-rule path instead.
+    Each entry is \(d\langle O_k \rangle / dx_j\), computed by shifting `inputs[j]`
+    directly by \(\pm\pi/2\) (and also by \(\pm 3\pi/2\) for an input listed in
+    `four_term_indices`). The result is correct only when the angle of every gate
+    that depends on an input is exactly `InputRef(j)`, not wrapped in `Scale`,
+    `Multiply`, `Sum` or `Negate`, and when each `InputRef(j)` feeds a single gate.
+    When that is not the case, use the chain-rule path instead.
 
     This simple path does not use `shift_gate_angle` (which wraps the angle in a
     `Sum`), so it works on backends that do not support symbolic `Sum`

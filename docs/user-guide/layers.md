@@ -24,7 +24,7 @@ layer.provider.name  # "pennylane"
 |---|---|
 | `Basic` | One encoding, one variational block, and a measurement of each qubit. |
 | `Reupload` | Standard data reuploading, optionally with a trainable scale. |
-| `Ensemble` | `N` independent circuits, one for each chunk of the input. |
+| `Ensemble` | \(N\) independent circuits, one for each chunk of the input. |
 | `OrthogonalQNN` | A unary loader, an orthogonal network of RBS gates, and the probability of each qubit. |
 | `MinMaxNorm` | Min/max normalisation of each feature, in the style of batch normalisation. |
 
@@ -46,11 +46,12 @@ out = layer(torch.randn(8, 4))  # shape (8, 4)
 ![The circuit a Basic layer builds (light theme)](images/basic_light.svg){ .theme-image-light }
 ![The circuit a Basic layer builds (dark theme)](images/basic_dark.svg){ .theme-image-dark }
 
-The circuit that this call builds. `RX(x_i)` encodes one feature per qubit. Then the
-`basic` variational block, which is one `RY(θ)` per qubit followed by the ladder of
-controlled-NOT (CNOT) gates, repeats `depth` times, and every qubit is measured in
-`Z`. These three axes are the defaults. With `variational_type="strong"`, each
-`RY(θ)` box becomes the three rotations `RZ`, `RY` and `RZ`.
+The circuit that this call builds. \(\mathrm{RX}(x_i)\) encodes one feature per qubit.
+Then the `basic` variational block, which is one \(\mathrm{RY}(\theta)\) per qubit
+followed by the ladder of controlled-NOT (CNOT) gates, repeats `depth` times, and every
+qubit is measured in `Z`. These three axes are the defaults. With
+`variational_type="strong"`, each \(\mathrm{RY}(\theta)\) box becomes the three
+rotations `RZ`, `RY` and `RZ`.
 {: .figure-caption }
 
 !!! warning "Some combinations of axes make the circuit inert"
@@ -70,14 +71,14 @@ controlled-NOT (CNOT) gates, repeats `depth` times, and every qubit is measured 
       every gradient is exactly `0`. Rotate away from the measurement axis, or use
       `variational_type="strong"`, whose three rotations `RZ`, `RY` and `RZ` always
       include one away from the axis.
-    - **`RZ` encoding.** The circuit starts in `|0...0⟩`, which every `RZ` leaves
-      unchanged up to a phase, so the input never enters. `Reupload` escapes this
-      once it encodes again, because the second encoding acts on a state that has
-      already moved. `Basic` and `Ensemble` encode only once, so they do not escape
-      it.
+    - **`RZ` encoding.** The circuit starts in \(|0 \cdots 0\rangle\), which every
+      `RZ` leaves unchanged up to a phase, so the input never enters. `Reupload`
+      escapes this once it encodes again, because the second encoding acts on a
+      state that has already moved. `Basic` and `Ensemble` encode only once, so they
+      do not escape it.
     - **A real circuit measured in `Y`.** `RY` and CNOT are real matrices, so an `RY`
-      encoding with `RY` rotations keeps the statevector real, and `⟨Y⟩` is always
-      `0` on a real state.
+      encoding with `RY` rotations keeps the statevector real, and
+      \(\langle Y \rangle\) is always `0` on a real state.
 
     Sharing an axis is not a problem in itself. `RY` rotations with `basis="Y"` train
     well on two qubits or more, because the CNOT ladder does not preserve strings of
@@ -107,19 +108,19 @@ What distinguishes this layer from `Basic` is where the outer bracket starts. It
 covers the encoding as well as the variational block, so the input is encoded again
 at each repetition, with new weights. The circuit is drawn with `enc_rotation="RX"`,
 as in the call above, and without the trainable scale. With `trainable_scale=True`,
-each `RX(x_i)` becomes `RX(λ·x_i)`, with one trainable `λ` for each pair of layer and
-feature.
+each \(\mathrm{RX}(x_i)\) becomes \(\mathrm{RX}(\lambda \cdot x_i)\), with one trainable
+\(\lambda\) for each pair of layer and feature.
 {: .figure-caption }
 
 Keep `enc_rotation` and `var_rotation` on different axes here too. When they share
-one, each `R(x)` and the `R(θ)` that follows it combine into a single `R(x + θ)`, and
-the variational weights of that layer become a plain offset of the data angle. The
-defaults of `Reupload` put both rotations on `RY`, so pass `enc_rotation`
-explicitly, as in the call above.
+one, each \(R(x)\) and the \(R(\theta)\) that follows it combine into a single
+\(R(x + \theta)\), and the variational weights of that layer become a plain offset of
+the data angle. The defaults of `Reupload` put both rotations on `RY`, so pass
+`enc_rotation` explicitly, as in the call above.
 
 ## `Ensemble`
 
-`Ensemble` runs `N` independent circuits, one for each chunk of the input, each with
+`Ensemble` runs \(N\) independent circuits, one for each chunk of the input, each with
 its own weights. The outputs are concatenated along the feature dimension.
 
 ```python

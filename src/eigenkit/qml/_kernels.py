@@ -1,13 +1,14 @@
-"""Quantum kernel matrices `K[i, j] = |<psi(x_i)|psi(x_j)>|**2`.
+r"""Quantum kernel matrices
+\(K_{ij} = \lvert \langle \psi(x_i) | \psi(x_j) \rangle \rvert^2\).
 
 On a backend that gives access to the statevector, the whole Gram matrix comes
-from one batched evolution of the forward feature map `U(x)` and a single matrix
-product. This takes `O(N)` state evolutions instead of the `O(N**2)` fidelities
+from one batched evolution of the forward feature map \(U(x)\) and a single matrix
+product. This takes \(O(N)\) state evolutions instead of the \(O(N^2)\) fidelities
 of inversion circuits, and gives the same values up to floating-point rounding.
 Backends without access to the statevector, such as backends with shots or a
 quantum processing unit (QPU), use the inversion circuit instead. It applies
-`U(x_i)`, then the adjoint of `U(x_j)`, and reads the probability of the
-all-zeros state, which is the fidelity `K[i, j]` of the two prepared states. On
+\(U(x_i)\), then the adjoint of \(U(x_j)\), and reads the probability of the
+all-zeros state, which is the fidelity \(K_{ij}\) of the two prepared states. On
 a hardware backend that batches natively (Qiskit Runtime, IQM), every pair goes
 into one batched call, so the whole matrix is submitted as a single job. A local
 simulator receives one row of pairs per call. For a symmetric Gram matrix, only
@@ -20,7 +21,7 @@ The feature map is one of the two built-in maps, or any circuit that you write:
 - `"AngleCNOT"`: the same as `"Angle"`, with a ladder of controlled-NOT (CNOT)
   gates before each repetition after the first.
 - A custom map: a `CircuitSpec`, a `CircuitBuilder`, a block, a list of blocks,
-  or a callable `emit(builder, x, w)` that writes `U(x; w)` onto a
+  or a callable `emit(builder, x, w)` that writes \(U(x; w)\) onto a
   `CircuitBuilder`. The inverse half is derived with `adjoint()`, and the two
   halves share the trainable weights, so a variational kernel needs no inversion
   written by hand.
@@ -305,13 +306,13 @@ class KernelJob:
 
 
 class QuantumKernel:
-    """Quantum kernel matrix `K[i, j] = fidelity(U(x_i), U(x_j))`.
+    r"""Quantum kernel matrix \(K_{ij} = \mathrm{fidelity}(U(x_i), U(x_j))\).
 
     Args:
         n_features: The number of features. For the built-in maps, it is also the
             number of qubits.
         feature_map: The feature map. It is `"Angle"`,
-            `"AngleCNOT"`, or a custom forward map `U(x; w)`. A custom map is a
+            `"AngleCNOT"`, or a custom forward map \(U(x; w)\). A custom map is a
             `CircuitSpec`, a `CircuitBuilder`, a block, a list of blocks, or a
             callable `emit(builder, x, w)` that writes the map onto a
             `CircuitBuilder`, given the input references `x` and the weight
@@ -571,12 +572,12 @@ class QuantumKernel:
 
     @property
     def feature_map_spec(self) -> CircuitSpec:
-        """The forward feature map `U(x; w)`, as a `CircuitSpec`."""
+        r"""The forward feature map \(U(x; w)\), as a `CircuitSpec`."""
         return self._spec
 
     @property
     def kernel_spec(self) -> CircuitSpec:
-        """The inversion circuit `U(x_1; w) U(x_2; w)^dagger`, as a `CircuitSpec`.
+        r"""The inversion circuit \(U(x_1; w)\, U(x_2; w)^\dagger\), as a `CircuitSpec`.
 
         It has `2 * n_features` inputs.
         """
@@ -597,7 +598,7 @@ class QuantumKernel:
 
     @property
     def feature_map_circuit(self) -> Circuit:
-        """The compiled forward feature map `U(x; w)`.
+        r"""The compiled forward feature map \(U(x; w)\).
 
         It is compiled when it is first accessed.
         """
@@ -608,10 +609,10 @@ class QuantumKernel:
         return self._forward
 
     def draw(self, *, inversion: bool = False, decimals: int = 3) -> str:
-        """Return a text drawing of the feature map, or of the inversion circuit.
+        r"""Return a text drawing of the feature map, or of the inversion circuit.
 
         Args:
-            inversion: If True, draw `U(x_1) U(x_2)^dagger` instead of `U(x)`.
+            inversion: If True, draw \(U(x_1)\, U(x_2)^\dagger\) instead of \(U(x)\).
             decimals: The number of significant digits of constant angles.
 
         Returns:
@@ -626,13 +627,13 @@ class QuantumKernel:
     def draw_mpl(
         self, *, inversion: bool = False, **kwargs: Any
     ) -> "tuple[Figure, Axes]":
-        """Draw the feature map, or the inversion circuit, with Matplotlib.
+        r"""Draw the feature map, or the inversion circuit, with Matplotlib.
 
         The inversion circuit is drawn with a measurement on every qubit, and the
         forward map without one. This method needs the `viz` extra.
 
         Args:
-            inversion: If True, draw `U(x_1) U(x_2)^dagger` instead of `U(x)`.
+            inversion: If True, draw \(U(x_1)\, U(x_2)^\dagger\) instead of \(U(x)\).
             **kwargs (Any): Arguments passed to
                 [`draw_mpl()`][eigenkit.core.draw_mpl.draw_mpl], for example
                 `style="eigen"`.

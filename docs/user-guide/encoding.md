@@ -15,7 +15,7 @@ encoding = Encoding(in_features=4, rotation="RX")
 |---|---|---|---|
 | `in_features` | `int` | Required | The number of features to encode, one per qubit. It must be positive. |
 | `rotation` | `"RX"` \| `"RY"` \| `"RZ"` | `"RY"` | The rotation gate applied for each feature. |
-| `scale` | `float` | `1.0` | A factor that multiplies every input angle. It is useful when the data is normalised to `[0, 1]` and you want angles in `[0, 2π]`. It must be finite. |
+| `scale` | `float` | `1.0` | A factor that multiplies every input angle. It is useful when the data is normalised to \([0, 1]\) and you want angles in \([0, 2\pi]\). It must be finite. |
 
 !!! note "The arguments are checked when the block is created"
 
@@ -61,7 +61,7 @@ encoding = Encoding(in_features=6, rotation="RZ")
 - `"RY"` applies `RY(feature_value)` to each qubit.
 - `"RZ"` applies `RZ(feature_value)` to each qubit.
 
-For data in a bounded range that does not cover `[0, 2π]`, use the `scale` argument,
+For data in a bounded range that does not cover \([0, 2\pi]\), use the `scale` argument,
 or normalise the data first with `MinMaxNorm`:
 
 ```python

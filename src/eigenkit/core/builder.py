@@ -271,12 +271,13 @@ class CircuitBuilder:
         return self
 
     def phase_shift(self, angle: ParameterLike, qubit: int) -> "CircuitBuilder":
-        """Add a phase shift gate `R(φ)`.
+        r"""Add a phase shift gate \(R(\phi)\).
 
-        The gate multiplies `|1⟩` by `e^(iφ)` and leaves `|0⟩` unchanged.
+        The gate multiplies \(|1\rangle\) by \(e^{i\phi}\) and leaves \(|0\rangle\)
+        unchanged.
 
         Args:
-            angle: The phase `φ`. It can be a number or a symbolic reference.
+            angle: The phase \(\phi\). It can be a number or a symbolic reference.
             qubit: The target qubit.
 
         Returns:
@@ -343,7 +344,7 @@ class CircuitBuilder:
     ) -> "CircuitBuilder":
         r"""Add the exponential of a product of Pauli operators.
 
-        The gate is `exp(-i * coefficient * angle * P)`, where `P` is the product of
+        The gate is `exp(-i * coefficient * angle * P)`, where \(P\) is the product of
         `paulis`. Each element of `paulis` is a pair `(op, qubit)`, where `op` is
         `"X"`, `"Y"` or `"Z"`, and the qubits are distinct.
 
@@ -351,10 +352,10 @@ class CircuitBuilder:
         optimisation algorithm (QAOA) needs for its cost and mixer layers, and that
         the unitary coupled-cluster singles and doubles (UCCSD) ansatz needs for
         its excitation operators. It is built from the core gates only. First,
-        `H` gates (for `X`) and `RX(π/2)` gates (for `Y`) change each factor to the
-        `Z` basis. Then a ladder of controlled-NOT (CNOT) gates accumulates the
+        `H` gates (for `X`) and \(RX(\pi/2)\) gates (for `Y`) change each factor to
+        the `Z` basis. Then a ladder of controlled-NOT (CNOT) gates accumulates the
         parity on the last qubit, and a central `RZ(2 * coefficient * angle)` is
-        applied (because `RZ(φ) = exp(-i φ Z / 2)`). Finally, the inverse of the
+        applied (because \(RZ(\phi) = \exp(-i \phi Z / 2)\)). Finally, the inverse of the
         first steps is applied.
 
         Args:

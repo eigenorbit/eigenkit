@@ -5,7 +5,7 @@ import torch.nn as nn
 
 
 class MinMaxNorm(nn.Module):
-    """Min-max normalisation of each feature, with running statistics.
+    r"""Min-max normalisation of each feature, with running statistics.
 
     It rescales each feature to `[min_val, max_val]`. In training mode, it uses
     the minimum and maximum of each batch, and it updates an exponential moving
@@ -17,13 +17,13 @@ class MinMaxNorm(nn.Module):
     rescaled to a fixed interval instead of standardised.
 
     It is useful to prepare the inputs of quantum encoding rotations, which
-    expect angles in a bounded range such as `[0, π]`.
+    expect angles in a bounded range such as \([0, \pi]\).
 
     Args:
         feature_dim: The number of features in the last dimension of the input.
             The inputs have shape `(batch_size, feature_dim)`.
         min_val: The lower bound of the target interval. Default: `0.0`.
-        max_val: The upper bound of the target interval. Default: `π`.
+        max_val: The upper bound of the target interval. Default: \(\pi\).
         momentum: The momentum factor of the exponential moving average of the
             running statistics. Default: `0.1`.
 

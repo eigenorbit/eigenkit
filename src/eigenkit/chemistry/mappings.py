@@ -15,7 +15,7 @@ occupied orbital being qubit \(|1\rangle\). The parity string
 
 `jordan_wigner` returns ``(Observable, offset)``: the constant (identity)
 term is returned separately as ``offset`` because the Pauli backends reject
-identity-only terms, and a variational solver adds it back to ``<H>``.
+identity-only terms, and a variational solver adds it back to \(\langle H \rangle\).
 """
 
 from __future__ import annotations

@@ -1437,7 +1437,7 @@ class BraketCompiled(CompiledCircuit):
         weights: np.ndarray,
         inputs: np.ndarray,
     ) -> float:
-        """Return the probability of measuring all zeros at the end of the circuit.
+        r"""Return the probability of measuring all zeros at the end of the circuit.
 
         It uses the `Probability` result type of Braket, which every Braket
         simulator and quantum processing unit (QPU) supports with `shots > 0`, and
@@ -1458,7 +1458,7 @@ class BraketCompiled(CompiledCircuit):
             inputs (np.ndarray): A 1-D vector of input features.
 
         Returns:
-            The probability, a float in `[0, 1]`.
+            The probability, a float in \([0, 1]\).
 
         Raises:
             ValueError: If the device publishes none of those result types for

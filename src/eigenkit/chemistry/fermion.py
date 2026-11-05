@@ -4,7 +4,7 @@ annihilation operators on spin-orbital modes.
 Conventions (OpenFermion-compatible):
 - A *mode* is a spin-orbital, indexed ``0 .. M-1``.
 - A *ladder operator* is ``(mode, action)`` with ``action = 1`` for creation
-  \(a_{\text{mode}}^\dagger\) and ``action = 0`` for annihilation ``a_mode``.
+  \(a_{\text{mode}}^\dagger\) and ``action = 0`` for annihilation \(a_{\text{mode}}\).
 - A *term* is a tuple of ladder operators applied left-to-right, e.g.
   \(a_2^\dagger a_0\) is ``((2, 1), (0, 0))``.
 
@@ -65,7 +65,7 @@ class FermionOperator:
 
     @classmethod
     def creation(cls, mode: int) -> "FermionOperator":
-        """The creation operator `a†_mode`.
+        r"""The creation operator \(a_{\text{mode}}^\dagger\).
 
         Args:
             mode: The index of the spin-orbital in which an electron is created.
@@ -77,7 +77,7 @@ class FermionOperator:
 
     @classmethod
     def annihilation(cls, mode: int) -> "FermionOperator":
-        """The annihilation operator `a_mode`.
+        r"""The annihilation operator \(a_{\text{mode}}\).
 
         Args:
             mode: The index of the spin-orbital from which an electron is removed.
@@ -89,7 +89,7 @@ class FermionOperator:
 
     @classmethod
     def number(cls, mode: int) -> "FermionOperator":
-        """The number operator `a†_mode a_mode`.
+        r"""The number operator \(a_{\text{mode}}^\dagger a_{\text{mode}}\).
 
         It counts the electrons in one spin-orbital.
 

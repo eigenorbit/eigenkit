@@ -19,6 +19,7 @@ import torch
 from eigenkit.torch.layers import (
     Basic,
     Ensemble,
+    OrthogonalQNN,
     Reupload,
 )
 
@@ -34,6 +35,7 @@ LAYERS = [
         2,
     ),
     ("Ensemble", lambda: Ensemble(in_features=4, n_qubits=2, depth=1), 4),
+    ("OrthogonalQNN", lambda: OrthogonalQNN(n_qubits=3, topology="pyramid"), 3),
 ]
 IDS = [name for name, _, _ in LAYERS]
 

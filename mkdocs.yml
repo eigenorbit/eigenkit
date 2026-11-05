@@ -37,7 +37,9 @@ theme:
     code: JetBrains Mono
   features:
     - navigation.tabs
-    - navigation.sections
+    # No navigation.sections: the groups inside a tab (the topics of the usage
+    # examples, the API reference) are collapsible lists, and only the group of
+    # the open page is expanded, so the sidebar stays short.
     - navigation.top
     - navigation.footer
     - search.highlight
@@ -119,6 +121,7 @@ nav:
     - QML: user-guide/qml.md
     - Reservoir Computing: user-guide/reservoir.md
     - Photonic Circuits (Perceval): user-guide/photonics.md
+    - Orthogonal Networks: user-guide/orthogonal.md
     - Algorithms: user-guide/algorithms.md
     - Quantum Chemistry: user-guide/chemistry.md
     - Optimization: user-guide/optimization.md
@@ -134,24 +137,30 @@ nav:
     - "QSVC / QSVR: Quantum Kernels": algorithms/qsvc-qsvr.md
     - "HQNN: Hybrid Neural Networks": algorithms/hqnn.md
     - "Quantum Reservoir Computing": algorithms/reservoir.md
+    - "Orthogonal Networks": algorithms/orthogonal-networks.md
     - References: algorithms/references.md
   - Usage Examples:
-    - Basic Circuit: examples/basic-circuit.md
-    - Layers: examples/layers.md
-    - Hybrid Model: examples/hybrid-model.md
-    - Generic Estimators: examples/generic-estimators.md
-    - Quantum Classification: examples/algorithms-classification.md
-    - Quantum Regression and Time Series: examples/algorithms-regression.md
-    - QSVC HPO on Iris: examples/hpo-qsvc-iris.md
-    - Quantum Reservoir Memory: examples/reservoir-memory.md
-    - MaxCut with QAOA: examples/qaoa-max-cut.md
-    - Ground-State Energy with VQE: examples/vqe-fermi-hubbard.md
-    - Linear Systems with HHL: examples/hhl-honest.md
-    - Benchmark on Iris: examples/benchmark-iris.md
-    - Circles HQNC: examples/circles-hqnc.md
-    - Breast Cancer HQNC: examples/breast-cancer-hqnc.md
-    - Concrete Strength HQNR: examples/cement-hqnr.md
-    - Pollution Time Series (HQNR vs RecurrentHQNR): examples/pollution-timeseries-hqnr.md
+    - First Steps:
+      - Basic Circuit: examples/basic-circuit.md
+      - Layers: examples/layers.md
+      - Hybrid Model: examples/hybrid-model.md
+      - Generic Estimators: examples/generic-estimators.md
+    - Classification and Regression:
+      - Quantum Classification: examples/algorithms-classification.md
+      - Quantum Regression and Time Series: examples/algorithms-regression.md
+      - Circles HQNC: examples/circles-hqnc.md
+      - Breast Cancer HQNC: examples/breast-cancer-hqnc.md
+      - Concrete Strength HQNR: examples/cement-hqnr.md
+      - Pollution Time Series (HQNR vs RecurrentHQNR): examples/pollution-timeseries-hqnr.md
+    - Tuning and Benchmarks:
+      - QSVC HPO on Iris: examples/hpo-qsvc-iris.md
+      - Benchmark on Iris: examples/benchmark-iris.md
+    - Reservoir Computing:
+      - Quantum Reservoir Memory: examples/reservoir-memory.md
+    - Quantum Algorithms:
+      - MaxCut with QAOA: examples/qaoa-max-cut.md
+      - Ground-State Energy with VQE: examples/vqe-fermi-hubbard.md
+      - Linear Systems with HHL: examples/hhl-honest.md
 
 markdown_extensions:
   - admonition

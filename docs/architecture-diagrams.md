@@ -58,6 +58,7 @@ flowchart TB
     QMLR["<b>qml/</b> &nbsp;(sklearn extra)<br/>QuantumKernel · QSVC / QSVR<br/>sklearn estimator base"]
     TORCHR["<b>torch/</b> &nbsp;(torch extra)<br/>TorchCircuit nn.Module · layers<br/>hybrid estimators"]
     PHOT["<b>photonics/</b> &nbsp;(perceval extra)<br/>PhotonicCircuitSpec · PercevalBackend<br/>photonic parameter-shift · Quandela Cloud"]
+    ORTH["<b>orthogonal/</b> &nbsp;(numpy)<br/>Topology · orthogonal_matrix<br/>RBSNetwork · UnaryLoader"]
 
     DATA --> CONS --> RUN
     PROV --> RUN
@@ -73,13 +74,14 @@ flowchart TB
     QMLR --> RUN
     TORCHR --> RUN
     PHOT -. "Parameter tree" .-> DATA
+    ORTH --> CONS
 
     classDef core stroke:#5c6bc0,stroke-width:2px;
     classDef ring stroke:#e65100,stroke-width:2px;
     classDef sim stroke:#00897b,stroke-width:2px;
     class DATA,CONS,PROV,RUN,IFACE core;
     class NPB sim;
-    class BACK,OPT,CHEM,ALGR,RESR,QMLR,TORCHR,PHOT ring;
+    class BACK,OPT,CHEM,ALGR,RESR,QMLR,TORCHR,PHOT,ORTH ring;
 ```
 
 Two additional packages provide utilities for working with quantum models
@@ -456,7 +458,7 @@ flowchart TB
     subgraph HIGH["High-level conveniences &nbsp;— wrappers on top"]
         direction LR
         EST["sklearn estimators<br/>HQNC · HQNR · QSVC · QSVR<br/>RecurrentHQNC · RecurrentHQNR · CustomQuantum*<br/>Generic* · QuantumTimeSeries* · QuantumReservoir*"]
-        LAY["torch layers<br/>Basic · Reupload<br/>Ensemble · MinMaxNorm"]
+        LAY["torch layers<br/>Basic · Reupload<br/>Ensemble · OrthogonalQNN · MinMaxNorm"]
         ALG["domain algorithms<br/>QAOA (optimization)<br/>VQE / UCCSD (chemistry)<br/>HHL · IQAE · portfolio risk (algorithms)"]
         KER["QuantumKernel<br/>QSVC / QSVR"]
     end

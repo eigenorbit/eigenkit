@@ -1,16 +1,16 @@
 # Layers
 
-Four `nn.Module` layers cover the usual patterns, and they can all be used inside
+Five `nn.Module` layers cover the usual patterns, and they can all be used inside
 `nn.Sequential`. Most of these layers expose `in_features` and `out_features`.
 `MinMaxNorm` uses `feature_dim`.
 
-The three layers that build a circuit, `Basic`, `Reupload` and
-`Ensemble`, take the same `provider=` argument as `Circuit`, and they pass it to the
+The four layers that build a circuit, `Basic`, `Reupload`, `Ensemble` and
+`OrthogonalQNN`, take the same `provider=` argument as `Circuit`, and they pass it to the
 circuit unchanged.
 `MinMaxNorm` is classical arithmetic and has no circuit to run, so it does not take
 the argument, and passing it raises a `TypeError`.
 
-The same three layers return the provider on `.provider`, as the resolved backend,
+The same four layers return the provider on `.provider`, as the resolved backend,
 whichever form was passed in. `.provider.name` is its registered name:
 
 ```python
@@ -25,6 +25,7 @@ layer.provider.name  # "pennylane"
 | `Basic` | One encoding, one variational block, and a measurement of each qubit. |
 | `Reupload` | Standard data reuploading, optionally with a trainable scale. |
 | `Ensemble` | `N` independent circuits, one for each chunk of the input. |
+| `OrthogonalQNN` | A unary loader, an orthogonal network of RBS gates, and the probability of each qubit. |
 | `MinMaxNorm` | Min/max normalisation of each feature, in the style of batch normalisation. |
 
 ## `Basic`
@@ -138,6 +139,39 @@ branches: no statevector and no parameters. Four branches are drawn, while the c
 above has five. Note also that on this layer, the variational block defaults to
 `variational_type="strong"`, not `"basic"`.
 {: .figure-caption }
+
+## `OrthogonalQNN`
+
+`OrthogonalQNN` is a quantum orthogonal layer. It loads each input vector \(x\)
+into the unary basis, where exactly one qubit is 1, applies an orthogonal network
+\(W(\theta)\) of RBS gates, and returns the probability of each qubit,
+\((Wx)_i^2 / \lVert x \rVert^2\). Each output row sums to 1. The weights are the
+angles of the network, one per gate, and its layout is a `topology` of
+[`eigenkit.orthogonal`](orthogonal.md): `"pyramid"` (the default), `"butterfly"`,
+`"x"`, `"diagonal"`, or a `Topology` of your own. `init="random"` (the default)
+draws standard normal angles, and `init="identity"` sets them to zero, so that
+\(W = I\).
+
+```python
+import torch
+from eigenkit import OrthogonalQNN
+
+layer = OrthogonalQNN(n_qubits=4, topology="pyramid")
+out = layer(torch.randn(8, 4))  # shape (8, 4), each row sums to 1
+```
+
+The values and the gradient with respect to the weights come from the circuit.
+The gradient with respect to the input is the exact derivative of
+\((Wx)_i^2 / \lVert x \rVert^2\), also where \(x\) has zeros, as after a ReLU or
+for a one-hot input, where the loader angles themselves are not differentiable.
+The `loader` argument picks the layout of the loader: `"diagonal"`, the default,
+works for every width and uses adjacent qubits only; `"semi_diagonal"` needs an
+even width and `"parallel"` a power of two. A row of zeros has no direction to
+load, so it gives the uniform distribution \(1/n\) on all \(n\) qubits, and no
+gradient flows back to it; the other rows of the batch are not affected. The
+circuit simulates \(2^n\) amplitudes, so the layer is practical up to about 20 qubits;
+`eigenkit.orthogonal.torch.Orthogonal` computes the same matrix classically at any
+width.
 
 ## `MinMaxNorm`
 

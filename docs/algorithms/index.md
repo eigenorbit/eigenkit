@@ -16,6 +16,7 @@ generated from the code.
 | [QSVC / QSVR](qsvc-qsvr.md) | A similarity (kernel) matrix for a support vector model. | scikit-learn predictions. |
 | [HQNN](hqnn.md) | A trained hybrid quantum-classical neural network. | Labels, probabilities or values. |
 | [Reservoir computing](reservoir.md) | Features from a circuit that nobody trains. | A linear readout over a trajectory of states. |
+| [Orthogonal networks](orthogonal-networks.md) | An orthogonal matrix from RBS (Givens) rotations, as a matrix, a circuit or a layer. | An orthogonal map, a fine-tuned layer, or a certified radius. |
 
 The names in the first column are acronyms, and each page defines its own: iterative
 quantum amplitude estimation (IQAE), the Harrow-Hassidim-Lloyd algorithm (HHL), the
@@ -69,6 +70,9 @@ These terms come up on several pages. Each is also defined where it first appear
   primitive for state preparation.
 - **Kernel, or Gram matrix**: a table of the similarities `K(x_i, x_j)` between pairs
   of samples. Classical support vector machines train directly on this table.
+- **Unary basis**: the `n` states of `n` qubits in which exactly one qubit is `1`. A
+  circuit of RBS gates never leaves it, and acts on it as an orthogonal matrix; see
+  [Orthogonal networks](orthogonal-networks.md).
 - **Barren plateau**: a failure where the training gradients of a circuit shrink
   exponentially as the circuit gets wider or deeper, so it stops learning. It is a risk
   for the [HQNN](hqnn.md) family.

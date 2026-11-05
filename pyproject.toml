@@ -297,12 +297,18 @@ source_modules = [
     "eigenkit.optimization",
     "eigenkit.chemistry",
     "eigenkit.reservoir",
+    "eigenkit.orthogonal",
 ]
 forbidden_modules = ["torch", "pennylane", "qiskit", "braket", "sklearn", "qulacs", "perceval"]
+# eigenkit.orthogonal.torch is the torch ring of the orthogonal package, loaded
+# lazily by its __getattr__; the framework-free modules of that package are pinned
+# by their own contract below, which ignores nothing.
+ignore_imports = ["eigenkit.orthogonal.torch.** -> torch"]
 
 # The qml tier (kernels, SVMs, the sklearn estimator base) may use scikit-learn,
 # but must not require torch or a specific backend SDK at import: the kernels run
-# on the numpy interface, so a torch-free install can still use them.
+# on the numpy interface, so a torch-free install can still use them. Nor does it
+# import the orthogonal ring: _serialization looks its block types up by name.
 [[tool.importlinter.contracts]]
 name = "QML tier does not require torch"
 type = "forbidden"
@@ -314,7 +320,7 @@ source_modules = [
     "eigenkit.qml.qsvr",
     "eigenkit.qml.qrc",
 ]
-forbidden_modules = ["torch", "pennylane", "qiskit", "braket", "qulacs"]
+forbidden_modules = ["torch", "pennylane", "qiskit", "braket", "qulacs", "eigenkit.orthogonal"]
 # Runtime-only edge, never hit at import: _serialization imports torch inside
 # functions only when a bundle carries torch state.
 ignore_imports = [
@@ -347,3 +353,18 @@ source_modules = [
     "eigenkit.photonics.gradients",
 ]
 forbidden_modules = ["perceval", "torch", "pennylane", "qiskit", "braket", "sklearn", "qulacs"]
+
+# The orthogonal-network maths (topologies, matrices, circuit blocks) is NumPy only,
+# so a torch-free install can build the matrices and circuits. Its PyTorch modules
+# live in eigenkit.orthogonal.torch, which the package loads lazily; the import
+# surface staying torch-free is pinned by tests/orthogonal/test_import_surface.py.
+[[tool.importlinter.contracts]]
+name = "Orthogonal compute layer is framework-free"
+type = "forbidden"
+source_modules = [
+    "eigenkit.orthogonal.topology",
+    "eigenkit.orthogonal.matrix",
+    "eigenkit.orthogonal.blocks",
+    "eigenkit.orthogonal.circuit",
+]
+forbidden_modules = ["torch", "pennylane", "qiskit", "braket", "sklearn", "qulacs", "perceval"]

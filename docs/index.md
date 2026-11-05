@@ -106,7 +106,7 @@ instance.
   them gate by gate with `CircuitBuilder`, or combine both approaches using
   `to_block()`. Add observables and execute circuits on any supported backend.
 - **High-level quantum layers.** Use ready-made layers such as `Basic`,
-  `Reupload`, `Ensemble`, and `MinMaxNorm`, which can be integrated directly into PyTorch's `nn.Sequential`.
+  `Reupload`, `Ensemble`, `OrthogonalQNN`, and `MinMaxNorm`, which can be integrated directly into PyTorch's `nn.Sequential`.
 - **Scikit-learn estimators.** Ready-to-use classifiers and regressors with a
   familiar scikit-learn interface, including `HQNC`, `HQNR`, `RecurrentHQNC`,
   `RecurrentHQNR`, `QSVC`, `QSVR`, `CustomQuantumClassifier`,
@@ -141,6 +141,11 @@ instance.
 - **Photonic computing.** Build and execute photonic circuits using Quandela's
   Perceval, either locally or through Quandela Cloud. Available in
   `eigenkit.photonics` with the optional `perceval` dependencies.
+- **Orthogonal networks.** Build orthogonal matrices from RBS (Givens) rotations in
+  the butterfly, pyramid and X layouts, as a NumPy matrix, a quantum circuit or a
+  PyTorch module; fine-tune pretrained layers without changing their singular
+  values, and certify robustness. Available in `eigenkit.orthogonal`; the PyTorch
+  part needs the `torch` extra.
 
 ---
 

@@ -54,7 +54,8 @@ means changing one argument.
 - **Fits the classical stack.** A circuit is a numpy function or a PyTorch
   `nn.Module`, and the ready-made models follow scikit-learn's `fit`/`predict`.
 - **Algorithms.** Machine learning: hybrid neural networks, quantum kernels with
-  QSVC/QSVR, reservoir computing. Optimization: QUBO/Ising, Max-Cut, QAOA.
+  QSVC/QSVR, reservoir computing, orthogonal networks of RBS gates (orthogonal
+  fine-tuning, certified robustness). Optimization: QUBO/Ising, Max-Cut, QAOA.
   Chemistry: fermionic operators with the Jordan-Wigner and Bravyi-Kitaev
   mappings, UCCSD, VQE, and molecular Hamiltonians through PySCF and
   OpenFermion. Also HHL, iterative amplitude estimation (IQAE) and portfolio

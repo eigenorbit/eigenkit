@@ -7,7 +7,7 @@ be readable back, not write-only. The circuit-building layers hand it to
 `Circuit.provider` answers.
 
 Which layers have the property follows the same line as which layers take the
-argument: the three that own a circuit. `MinMaxNorm` has no circuit, so it
+argument: the four that own a circuit. `MinMaxNorm` has no circuit, so it
 neither takes `provider=` nor answers for one.
 """
 
@@ -19,7 +19,7 @@ from eigenkit import Circuit, Encoding, Variational
 from eigenkit.configs import NumpyConfig, PennyLaneConfig
 from eigenkit.core.provider import Provider
 from eigenkit.torch.circuit import TorchCircuit
-from eigenkit.torch.layers import Basic, Ensemble, MinMaxNorm, Reupload
+from eigenkit.torch.layers import Basic, Ensemble, MinMaxNorm, OrthogonalQNN, Reupload
 
 
 LAYERS = [
@@ -29,6 +29,7 @@ LAYERS = [
         lambda p: Ensemble(in_features=4, n_qubits=2, depth=1, provider=p),
         id="Ensemble",
     ),
+    pytest.param(lambda p: OrthogonalQNN(n_qubits=2, provider=p), id="OrthogonalQNN"),
 ]
 
 

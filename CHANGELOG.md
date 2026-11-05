@@ -4,21 +4,26 @@
 
 ## v1.2.0 (2026-11-05)
 
+### Features
+
+- Add eigenkit.orthogonal (orthogonal networks, certified robustness, OrthogonalQNN)
+  ([#32](https://github.com/eigenorbit/eigenkit/pull/32),
+  [`a4bca92`](https://github.com/eigenorbit/eigenkit/commit/a4bca921bf9dd5a796dfe5488b632bfeabbd7781))
+
+- Pass primitive options to the Qiskit Runtime primitives
+  ([#31](https://github.com/eigenorbit/eigenkit/pull/31),
+  [`65164a3`](https://github.com/eigenorbit/eigenkit/commit/65164a3ea09e57e0519a6c93e0737ea09ee1cd4f))
+
 ### Bug Fixes
 
 - **orthogonal**: Exact certificate distances, single adapter names
   ([#34](https://github.com/eigenorbit/eigenkit/pull/34),
   [`8d617a2`](https://github.com/eigenorbit/eigenkit/commit/8d617a212b699c76caa5a93ae15cb89bb019b900))
 
-### Chores
+### Documentation
 
-- **deps**: Bump amazon-braket-sdk, pytest and jax
-  ([#36](https://github.com/eigenorbit/eigenkit/pull/36),
-  [`54a9e34`](https://github.com/eigenorbit/eigenkit/commit/54a9e3467883456ff171ad4992f0b206abcc6fe1))
-
-- **deps**: Bump vulnerable locked dependencies
-  ([#27](https://github.com/eigenorbit/eigenkit/pull/27),
-  [`8bf972b`](https://github.com/eigenorbit/eigenkit/commit/8bf972b978f2656ee0f64e75715ed0238d42b0bb))
+- Write formulas in MathJax ([#35](https://github.com/eigenorbit/eigenkit/pull/35),
+  [`f0275ea`](https://github.com/eigenorbit/eigenkit/commit/f0275ea2c30a221f7a05963b5c5f579322b3ecab))
 
 ### Continuous Integration
 
@@ -30,34 +35,29 @@
   ([#23](https://github.com/eigenorbit/eigenkit/pull/23),
   [`bf13039`](https://github.com/eigenorbit/eigenkit/commit/bf130392e056fdc3e98b51c36e6867e87088b162))
 
-### Documentation
+### Chores
 
-- Write formulas in MathJax ([#35](https://github.com/eigenorbit/eigenkit/pull/35),
-  [`f0275ea`](https://github.com/eigenorbit/eigenkit/commit/f0275ea2c30a221f7a05963b5c5f579322b3ecab))
+- **deps**: Bump amazon-braket-sdk, pytest and jax
+  ([#36](https://github.com/eigenorbit/eigenkit/pull/36),
+  [`54a9e34`](https://github.com/eigenorbit/eigenkit/commit/54a9e3467883456ff171ad4992f0b206abcc6fe1))
 
-### Features
-
-- Add eigenkit.orthogonal (orthogonal networks, certified robustness, OrthogonalQNN)
-  ([#32](https://github.com/eigenorbit/eigenkit/pull/32),
-  [`a4bca92`](https://github.com/eigenorbit/eigenkit/commit/a4bca921bf9dd5a796dfe5488b632bfeabbd7781))
-
-- Pass primitive options to the Qiskit Runtime primitives
-  ([#31](https://github.com/eigenorbit/eigenkit/pull/31),
-  [`65164a3`](https://github.com/eigenorbit/eigenkit/commit/65164a3ea09e57e0519a6c93e0737ea09ee1cd4f))
+- **deps**: Bump vulnerable locked dependencies
+  ([#27](https://github.com/eigenorbit/eigenkit/pull/27),
+  [`8bf972b`](https://github.com/eigenorbit/eigenkit/commit/8bf972b978f2656ee0f64e75715ed0238d42b0bb))
 
 
 ## v1.1.0 (2026-10-19)
-
-### Documentation
-
-- Add the Qiskit Ecosystem badge ([#19](https://github.com/eigenorbit/eigenkit/pull/19),
-  [`091edeb`](https://github.com/eigenorbit/eigenkit/commit/091edebc4ac3d0855eb1988ab8e1bcf7a62b96a8))
 
 ### Features
 
 - Add the router provider for eigenorbit-router-client
   ([#18](https://github.com/eigenorbit/eigenkit/pull/18),
   [`80a2b10`](https://github.com/eigenorbit/eigenkit/commit/80a2b105129498c1ca756a8e5c4931a33656a2e4))
+
+### Documentation
+
+- Add the Qiskit Ecosystem badge ([#19](https://github.com/eigenorbit/eigenkit/pull/19),
+  [`091edeb`](https://github.com/eigenorbit/eigenkit/commit/091edebc4ac3d0855eb1988ab8e1bcf7a62b96a8))
 
 
 ## v1.0.1 (2026-10-13)
@@ -72,12 +72,6 @@
   ([#14](https://github.com/eigenorbit/eigenkit/pull/14),
   [`6ff13ac`](https://github.com/eigenorbit/eigenkit/commit/6ff13ac150a7db59f31d4126f2517fc78575820a))
 
-### Continuous Integration
-
-- **deps**: Bump astral-sh/setup-uv from 10.2.0 to 10.3.0
-  ([#2](https://github.com/eigenorbit/eigenkit/pull/2),
-  [`498700e`](https://github.com/eigenorbit/eigenkit/commit/498700e5817cefc87ee2a660e41c0aa94c3de4cd))
-
 ### Documentation
 
 - Add link previews, structured data and robots.txt
@@ -90,6 +84,12 @@
 
 - Tidy the 1.0.0 changelog entry ([#13](https://github.com/eigenorbit/eigenkit/pull/13),
   [`007f2fd`](https://github.com/eigenorbit/eigenkit/commit/007f2fd24c0a0ab2e708c0759d48f7557e4d96b5))
+
+### Continuous Integration
+
+- **deps**: Bump astral-sh/setup-uv from 10.2.0 to 10.3.0
+  ([#2](https://github.com/eigenorbit/eigenkit/pull/2),
+  [`498700e`](https://github.com/eigenorbit/eigenkit/commit/498700e5817cefc87ee2a660e41c0aa94c3de4cd))
 
 
 ## v1.0.0 (2026-10-13)

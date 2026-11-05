@@ -190,7 +190,7 @@ else:
 def test_router_extra_pins_the_client_and_is_part_of_all():
     pyproject = tomllib.loads((_REPO_ROOT / "pyproject.toml").read_text())
     extras = pyproject["project"]["optional-dependencies"]
-    assert extras["router"] == ["eigenorbit-router-client>=0.1,<1"]
+    assert extras["router"] == ["eigenorbit-router-client>=0.2,<1"]
     assert any("router" in requirement for requirement in extras["all"]), extras["all"]
 
 

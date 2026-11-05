@@ -181,6 +181,11 @@ build_command = """
     uv build
 """
 
+[tool.semantic_release.changelog]
+# Same as the package's default templates, but the sections are ordered by
+# importance (features first) instead of alphabetically.
+template_dir = "tools/release-templates"
+
 [[tool.uv.index]]
 name = "pytorch-cu126"
 url = "https://download.pytorch.org/whl/cu126"

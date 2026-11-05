@@ -1,0 +1,23 @@
+{%  from 'macros.md.j2' import order_sections
+%}{#  EXAMPLE:
+
+## vX.X.X (YYYY-MMM-DD)
+
+_This release is published under the MIT License._            # Release Notes Only
+
+{{ change_sections }}
+
+#}{{
+"## %s (%s)\n" | format(
+  release.version.as_semver_tag(),
+  release.tagged_date.strftime("%Y-%m-%d")
+)
+}}{%  if license_name is defined and license_name
+%}{{    "\n_This release is published under the %s License._\n" | format(license_name)
+}}{%  endif
+%}{#
+#}{%  set sections_ns = namespace(elements=release["elements"], sections=[])
+%}{%  set _ = order_sections(sections_ns)
+%}{%  set commit_objects = sections_ns.sections
+%}{%  include "changes.md.j2"
+-%}

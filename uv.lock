@@ -1191,7 +1191,7 @@ requires-dist = [
     { name = "pydantic", marker = "python_full_version >= '3.14' and extra == 'braket'", specifier = ">=2.13" },
     { name = "pylatexenc", marker = "extra == 'viz'", specifier = ">=2.10" },
     { name = "pyscf", marker = "sys_platform != 'win32' and extra == 'chemistry'", specifier = ">=2.3" },
-    { name = "qiskit", marker = "python_full_version >= '3.14' and extra == 'qiskit'", specifier = ">=2" },
+    { name = "qiskit", marker = "python_full_version >= '3.14' and extra == 'qiskit'", specifier = ">=2,<3" },
     { name = "qiskit", marker = "extra == 'qiskit'", specifier = ">=1.4.1,<3" },
     { name = "qiskit-aer", marker = "(python_full_version < '3.14' and extra == 'qiskit') or (platform_machine != 'aarch64' and extra == 'qiskit') or (sys_platform != 'linux' and extra == 'qiskit')", specifier = ">=0.16,<0.18" },
     { name = "qiskit-ibm-runtime", marker = "extra == 'qiskit'", specifier = ">=0.43.1,!=0.44.*,<0.50" },

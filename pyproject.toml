@@ -66,7 +66,7 @@ pennylane = [
 qiskit = [
     "qiskit>=1.4.1,<3",
     # qiskit 1.x needs symengine<0.14, which has no Python 3.14 wheels.
-    "qiskit>=2; python_version >= '3.14'",
+    "qiskit>=2,<3; python_version >= '3.14'",
     # No Linux ARM wheels for Python 3.14 yet, and the source build needs CMake
     # and a BLAS; there the extra installs without Aer.
     "qiskit-aer>=0.16,<0.18; python_version < '3.14' or sys_platform != 'linux' or platform_machine != 'aarch64'",

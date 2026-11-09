@@ -1,4 +1,7 @@
 import os
+import sys
+
+import pytest
 
 
 # PyTorch and CUDA Quantum each bundle their own OpenMP runtime. On macOS this
@@ -77,7 +80,8 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(skip)
 
 
-def pytest_sessionfinish(session, exitstatus):
+@pytest.hookimpl(trylast=True)
+def pytest_unconfigure(config):
     """Bypass the libc atexit queue when running on Linux with cudaq loaded.
 
     libcudaq.so registers a C-level atexit handler that double-frees during
@@ -87,9 +91,14 @@ def pytest_sessionfinish(session, exitstatus):
     passed and coverage XML was written. `os._exit` skips the libc atexit
     queue entirely, sidestepping the bad handler. Drop this when upstream
     cudaq stops free()-ing already-freed memory.
-    """
-    import sys
 
-    if sys.platform != "linux":
+    This is the last hook pytest runs: the summary and the coverage report are
+    printed by then, and a pytest-xdist worker has sent its results and
+    coverage data to the controller. Exiting any earlier loses both.
+    """
+    session = config.pluginmanager.get_plugin("session")
+    if sys.platform != "linux" or "cudaq" not in sys.modules or session is None:
         return
-    os._exit(exitstatus)
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(session.exitstatus)

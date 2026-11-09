@@ -205,6 +205,7 @@ include = ["src", "tests", "conftest.py", "CHANGELOG.md"]
 dev = [
     "pytest>=8.4.1",
     "pytest-cov>=6.0",
+    "pytest-xdist>=3.6",
     "mkdocs>=1.6",
     "mkdocs-material>=9.5",
     "mkdocstrings[python]>=1.0",

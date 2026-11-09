@@ -86,12 +86,15 @@ jobs:
       - name: Run pytest
         # Only the 3.13 leg uploads coverage (next step), and the tracer more
         # than doubles the 3.12 run, so the other legs skip it.
+        # `-n logical` starts one pytest-xdist worker per logical CPU of the
+        # runner. `-n auto` would count physical cores, which can be fewer than
+        # the vCPUs of a VM.
         run: |
           if [ "${{ inputs.coverage }}" = "true" ] && [ "${{ matrix.python-version }}" = "3.13" ]; then
-            uv run pytest ${{ inputs.test-paths }} ${{ inputs.pytest-args }} \
+            uv run pytest -n logical ${{ inputs.test-paths }} ${{ inputs.pytest-args }} \
               --cov=src/eigenkit --cov-report=xml --cov-report=term
           else
-            uv run pytest ${{ inputs.test-paths }} ${{ inputs.pytest-args }}
+            uv run pytest -n logical ${{ inputs.test-paths }} ${{ inputs.pytest-args }}
           fi
 
       - name: Upload coverage data

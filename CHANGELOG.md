@@ -2,6 +2,25 @@
 
 <!-- version list -->
 
+## v1.2.2 (2026-11-09)
+
+### Bug Fixes
+
+- Cap qiskit below 3 on Python 3.14 ([#40](https://github.com/eigenorbit/eigenkit/pull/40),
+  [`80bfdee`](https://github.com/eigenorbit/eigenkit/commit/80bfdeef849cd41a58d21a88237d37c8035b0d91))
+
+### Documentation
+
+- Cite the eigenkit paper on arXiv ([#42](https://github.com/eigenorbit/eigenkit/pull/42),
+  [`c45b6bf`](https://github.com/eigenorbit/eigenkit/commit/c45b6bf9e845dcd8f355cd9efecc035be2b6dd01))
+
+### Continuous Integration
+
+- Run the test suite in parallel with pytest-xdist
+  ([#43](https://github.com/eigenorbit/eigenkit/pull/43),
+  [`059ac37`](https://github.com/eigenorbit/eigenkit/commit/059ac376513f3eb15fa827a4a983e4d559477e49))
+
+
 ## v1.2.1 (2026-11-05)
 
 ### Bug Fixes

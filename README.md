@@ -251,9 +251,20 @@ described in [SECURITY.md](https://github.com/eigenorbit/eigenkit/blob/main/SECU
 
 ## Citing eigenkit
 
-If eigenkit helps your research, please cite it. GitHub's **Cite this
-repository** button gives the reference from
+If eigenkit helps your research, please cite the
+[eigenkit paper](https://arxiv.org/abs/2611.02979). GitHub's **Cite this
+repository** button gives the same reference from
 [CITATION.cff](https://github.com/eigenorbit/eigenkit/blob/main/CITATION.cff).
+
+```bibtex
+@article{domingo2026eigenkit,
+  title   = {eigenkit: A Provider-Neutral Quantum Computing Library},
+  author  = {Domingo, Laia and Tarpanov, Daniil and Senokosov, Arsenii and Sagingalieva, Asel},
+  journal = {arXiv preprint arXiv:2611.02979},
+  year    = {2026},
+  doi     = {10.48550/arXiv.2611.02979}
+}
+```
 
 ## License
 

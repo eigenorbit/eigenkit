@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 title: eigenkit
 message: >-
-  If you use eigenkit in your research, please cite it using the metadata
-  below.
+  If you use eigenkit in your research, please cite the eigenkit paper given
+  as the preferred citation below.
 type: software
 authors:
   - name: EigenOrbit
@@ -26,3 +26,21 @@ keywords:
   - pytorch
   - scikit-learn
 license: Apache-2.0
+preferred-citation:
+  type: article
+  title: "eigenkit: A Provider-Neutral Quantum Computing Library"
+  authors:
+    - family-names: Domingo
+      given-names: Laia
+    - family-names: Tarpanov
+      given-names: Daniil
+    - family-names: Senokosov
+      given-names: Arsenii
+    - family-names: Sagingalieva
+      given-names: Asel
+  year: 2026
+  month: 11
+  status: preprint
+  journal: arXiv
+  doi: 10.48550/arXiv.2611.02979
+  url: "https://arxiv.org/abs/2611.02979"

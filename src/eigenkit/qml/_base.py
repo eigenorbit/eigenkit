@@ -19,6 +19,7 @@ from sklearn.base import BaseEstimator, ClassifierMixin, RegressorMixin
 from eigenkit.core.circuit import ProviderSpec
 
 from ._serialization import (
+    FORMAT_VERSION,
     SerializationError,
     check_format_version,
     deserialize_circuit_spec,
@@ -105,10 +106,10 @@ class BaseQuantumEstimator(BaseEstimator, ABC):
     def save(self, path: str | Path) -> None:
         """Save a fitted model to a `.eigenkit` bundle.
 
-        The bundles of models that hold scikit-learn objects (`QSVC`, `QSVR`, the
-        reservoir estimators and the time-series estimators) contain joblib
-        pickles, so loading one can run code. Share them only with people who
-        trust you.
+        A bundle holds JSON, NumPy arrays without pickle, PyTorch weights and,
+        for models built on scikit-learn objects (`QSVC`, `QSVR`, the reservoir
+        classifier), those objects serialized with skops. None of them is a
+        pickle, so loading a bundle does not run code from it.
 
         Args:
             path: The path of the bundle. The suffix `.eigenkit` is added when it
@@ -126,7 +127,7 @@ class BaseQuantumEstimator(BaseEstimator, ABC):
         metadata = {
             "class_name": type(self).__name__,
             "library_version": importlib.metadata.version("eigenkit"),
-            "format_version": 1,
+            "format_version": FORMAT_VERSION,
             "saved_at": datetime.now(timezone.utc).isoformat(),
             "provider": provider_str,
             **self._extra_metadata(),
@@ -149,15 +150,21 @@ class BaseQuantumEstimator(BaseEstimator, ABC):
         path: str | Path,
         *,
         provider: ProviderSpec | None = None,
+        trusted: bool = False,
     ) -> "BaseQuantumEstimator":
         """Load a fitted model from a `.eigenkit` bundle.
 
-        Load only bundles that you trust. A bundle can contain joblib pickles, and
-        unpickling runs code, as with `torch.load` or `joblib.load`.
+        Loading a bundle does not unpickle anything, unless you pass
+        `trusted=True` for a bundle saved before eigenkit 1.3.
 
         Args:
             path: The path of the bundle.
             provider: A provider that replaces the saved one.
+            trusted: Load a bundle saved before eigenkit 1.3 by `QSVC`, `QSVR` or
+                the reservoir classifier. Such a bundle holds joblib pickles, and
+                unpickling runs code, as with `torch.load` or `joblib.load`. Pass
+                it only for bundles whose source you trust, and save the model
+                again to store it without pickles.
 
         Returns:
             The loaded estimator.
@@ -165,10 +172,12 @@ class BaseQuantumEstimator(BaseEstimator, ABC):
         Raises:
             TypeError: If the method is called on a subclass and the bundle holds
                 a different class. `BaseQuantumEstimator.load()` accepts any class.
+            SerializationError: If the bundle holds joblib pickles and `trusted`
+                is False.
         """
         from ._registry import get_estimator_class
 
-        metadata, params, circuit_spec, state = load_bundle(path)
+        metadata, params, circuit_spec, state = load_bundle(path, trusted=trusted)
         check_format_version(metadata)
 
         if provider is not None:

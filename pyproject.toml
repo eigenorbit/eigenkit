@@ -161,6 +161,9 @@ chemistry = [
 # plus torch). Other backends, PennyLane included, are their own extras.
 qml = [
     "scikit-learn>=1.3,<2",
+    # Saves the scikit-learn objects of QSVC, QSVR and QRC without pickle.
+    # Older releases fail to import against recent scikit-learn.
+    "skops>=0.13,<1",
 ]
 all = [
     "eigenkit[torch,pennylane,qiskit,braket,iqm,tensorcircuit,cudaquantum,qulacs,qsim,router,benchmark,datasets,chemistry,qml,viz]",

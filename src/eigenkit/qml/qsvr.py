@@ -7,6 +7,7 @@ from eigenkit.core.circuit import ProviderSpec
 from ._base import BaseQuantumRegressor
 from ._kernels import QuantumKernel, _estimator_kernel
 from ._registry import register_estimator
+from ._serialization import sklearn_from_state, sklearn_to_array
 
 
 @register_estimator
@@ -141,23 +142,10 @@ class QSVR(BaseQuantumRegressor):
         return self._svr.predict(K_test)
 
     def _collect_state(self) -> dict:
-        import io
-
-        import joblib  # sklearn guarantees joblib compat for its own estimators
-
-        buf = io.BytesIO()
-        joblib.dump(self._svr, buf)
-        return {
-            "svr_joblib": np.frombuffer(buf.getvalue(), dtype=np.uint8).copy(),
-            "X_train": self._X_train,
-        }
+        return {"svr_skops": sklearn_to_array(self._svr), "X_train": self._X_train}
 
     def _restore_state(self, state: dict) -> None:
-        import io
-
-        import joblib  # sklearn guarantees joblib compat for its own estimators
-
-        self._svr = joblib.load(io.BytesIO(state["svr_joblib"].tobytes()))
+        self._svr = sklearn_from_state(state, "svr")
         self._X_train = state["X_train"]
         self.n_features_in_ = self._X_train.shape[1]
         self.kernel_ = _estimator_kernel(self, self._X_train.shape[1], warn=False)

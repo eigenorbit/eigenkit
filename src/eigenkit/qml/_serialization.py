@@ -54,7 +54,10 @@ class SerializationError(Exception):
     pass
 
 
-_SUPPORTED_FORMAT_VERSION = 1
+# Version 2 stores scikit-learn objects with skops. Version 1 stored them as joblib
+# pickles, which `load_bundle()` reads only when the caller trusts the bundle.
+FORMAT_VERSION = 2
+_SUPPORTED_FORMAT_VERSIONS = (1, 2)
 
 
 def check_format_version(metadata: dict) -> None:
@@ -64,12 +67,62 @@ def check_format_version(metadata: dict) -> None:
         metadata: The metadata of the bundle, read from `metadata.json`.
     """
     version = metadata.get("format_version")
-    if version != _SUPPORTED_FORMAT_VERSION:
+    if version not in _SUPPORTED_FORMAT_VERSIONS:
         raise SerializationError(
             f"Bundle format_version={version} is not supported by this version of "
-            f"eigenkit (supports: format_version={_SUPPORTED_FORMAT_VERSION}). "
+            "eigenkit (supports: format_version "
+            f"{', '.join(map(str, _SUPPORTED_FORMAT_VERSIONS))}). "
             "Upgrade the library to load this bundle."
         )
+
+
+# skops trusts the scikit-learn estimators by default, but not these helpers that
+# `CalibratedClassifierCV` holds (QSVC with `probability=True`).
+_SKOPS_TRUSTED_TYPES = [
+    "sklearn.calibration._CalibratedClassifier",
+    "sklearn.calibration._SigmoidCalibration",
+]
+
+
+def sklearn_to_array(obj) -> np.ndarray:
+    """Serialize a fitted scikit-learn object with skops, without pickle.
+
+    Args:
+        obj: The scikit-learn object.
+
+    Returns:
+        The serialized bytes, as a uint8 array to store under `{name}_skops`.
+    """
+    import skops.io
+
+    return np.frombuffer(skops.io.dumps(obj), dtype=np.uint8)
+
+
+def sklearn_from_state(state: dict, name: str):
+    """Rebuild the scikit-learn object that a bundle stores under `name`.
+
+    skops builds only the types it trusts by default and `_SKOPS_TRUSTED_TYPES`, and
+    a bundle cannot add to them. A bundle with format_version 1 holds a joblib
+    pickle under `{name}_joblib` instead; `load_bundle()` returns those entries
+    only when the caller passed `trusted=True`.
+
+    Args:
+        state: The state returned by `load_bundle()`.
+        name: The name of the object, such as `"svc"`.
+
+    Returns:
+        The object, or `None` when the bundle has none under `name`.
+    """
+    if f"{name}_skops" in state:
+        import skops.io
+
+        data = state[f"{name}_skops"].tobytes()
+        return skops.io.loads(data, trusted=_SKOPS_TRUSTED_TYPES)
+    if f"{name}_joblib" in state:
+        import joblib
+
+        return joblib.load(io.BytesIO(state[f"{name}_joblib"].tobytes()))
+    return None
 
 
 def _append_suffix(path: str | Path, suffix: str) -> Path:
@@ -427,8 +480,15 @@ def save_bundle(
             zf.writestr(arcname, data)
 
 
-def load_bundle(path: str | Path) -> tuple[dict, dict, dict | None, dict]:
+def load_bundle(
+    path: str | Path, *, trusted: bool = False
+) -> tuple[dict, dict, dict | None, dict]:
     """Read a `.eigenkit` archive.
+
+    Args:
+        path: The path of the bundle.
+        trusted: Accept a bundle that holds joblib pickles, as bundles saved
+            before eigenkit 1.3 do. Unpickling them can run code.
 
     Returns:
         metadata: The contents of `metadata.json`.
@@ -436,6 +496,10 @@ def load_bundle(path: str | Path) -> tuple[dict, dict, dict | None, dict]:
         circuit_spec: The contents of `circuit_spec.json`, or `None` when the
             bundle has none.
         state: The saved state, with one entry for each file in `state/`.
+
+    Raises:
+        SerializationError: If the bundle holds joblib pickles and `trusted` is
+            False.
     """
     path = resolve_bundle_path(path)
     state: dict = {}
@@ -469,4 +533,13 @@ def load_bundle(path: str | Path) -> tuple[dict, dict, dict | None, dict]:
                     f"Unknown state file extension in bundle: {name!r}"
                 )
 
+    pickled = sorted(key for key in state if key.endswith("_joblib"))
+    if pickled and not trusted:
+        raise SerializationError(
+            f"{path.name} holds joblib pickles ({', '.join(pickled)}), and loading "
+            "them can run code. Bundles saved before eigenkit 1.3 store "
+            "scikit-learn objects this way. If you trust where this bundle comes "
+            "from, load it with trusted=True, then save the model again to store "
+            "it without pickles."
+        )
     return metadata, params, circuit_spec, state

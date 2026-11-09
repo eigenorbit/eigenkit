@@ -372,6 +372,7 @@ class QuantumTimeSeriesRegressor(BaseQuantumRegressor):
         *,
         provider: ProviderSpec | None = None,
         model: Any = None,
+        trusted: bool = False,
     ) -> "QuantumTimeSeriesRegressor":
         """Load a fitted time-series wrapper from a `.eigenkit` bundle.
 
@@ -383,6 +384,9 @@ class QuantumTimeSeriesRegressor(BaseQuantumRegressor):
                 estimator is
                 [`GenericRegressor`][eigenkit.torch.estimators.GenericRegressor].
                 Pass the same architecture as the one used in training.
+            trusted: Load a bundle saved before eigenkit 1.3 whose inner
+                estimator holds joblib pickles. Unpickling runs code, so pass it
+                only for bundles whose source you trust.
 
         Returns:
             The loaded wrapper.
@@ -390,9 +394,10 @@ class QuantumTimeSeriesRegressor(BaseQuantumRegressor):
         Raises:
             TypeError: If the bundle holds a different class.
             SerializationError: If the inner estimator needs `model` and it is
-                not given.
+                not given, or if the bundle holds joblib pickles and `trusted`
+                is False.
         """
-        metadata, params, circuit_spec, state = load_bundle(path)
+        metadata, params, circuit_spec, state = load_bundle(path, trusted=trusted)
         check_format_version(metadata)
         _validate_bundle_class(metadata, cls)
 
@@ -799,6 +804,7 @@ class QuantumTimeSeriesClassifier(BaseQuantumClassifier):
         *,
         provider: ProviderSpec | None = None,
         model: Any = None,
+        trusted: bool = False,
     ) -> "QuantumTimeSeriesClassifier":
         """Load a fitted time-series classifier wrapper from a `.eigenkit` bundle.
 
@@ -810,6 +816,9 @@ class QuantumTimeSeriesClassifier(BaseQuantumClassifier):
                 estimator is
                 [`GenericClassifier`][eigenkit.torch.estimators.GenericClassifier].
                 Pass the same architecture as the one used in training.
+            trusted: Load a bundle saved before eigenkit 1.3 whose inner
+                estimator holds joblib pickles. Unpickling runs code, so pass it
+                only for bundles whose source you trust.
 
         Returns:
             The loaded wrapper.
@@ -817,9 +826,10 @@ class QuantumTimeSeriesClassifier(BaseQuantumClassifier):
         Raises:
             TypeError: If the bundle holds a different class.
             SerializationError: If the inner estimator needs `model` and it is
-                not given.
+                not given, or if the bundle holds joblib pickles and `trusted`
+                is False.
         """
-        metadata, params, circuit_spec, state = load_bundle(path)
+        metadata, params, circuit_spec, state = load_bundle(path, trusted=trusted)
         check_format_version(metadata)
         _validate_bundle_class(metadata, cls)
 

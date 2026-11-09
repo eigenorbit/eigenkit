@@ -44,6 +44,7 @@ from eigenkit.reservoir import (
 
 from ._base import BaseQuantumClassifier, BaseQuantumRegressor
 from ._registry import register_estimator
+from ._serialization import sklearn_from_state, sklearn_to_array
 
 
 # A named extractor ("z" / "probabilities" / "amplitudes"), a Pauli/Hamiltonian
@@ -420,28 +421,19 @@ class QuantumReservoirClassifier(_ReservoirMixin, BaseQuantumClassifier):
         return float(accuracy_score(np.asarray(y).reshape(-1), preds.reshape(-1)))
 
     def _collect_state(self) -> dict:
-        import io
-
-        import joblib
-
-        buf = io.BytesIO()
-        joblib.dump(self._clf, buf)
         return {
             "weights": self._weights,
-            "clf_joblib": np.frombuffer(buf.getvalue(), dtype=np.uint8).copy(),
+            "clf_skops": sklearn_to_array(self._clf),
             "label_classes": np.asarray(self._label_encoder.classes_),
             "n_features_in": int(self.n_features_in_),
         }
 
     def _restore_state(self, state: dict) -> None:
-        import io
-
-        import joblib
         from sklearn.preprocessing import LabelEncoder
 
         self._build_reservoir()
         self._weights = np.asarray(state["weights"], dtype=np.float64)
-        self._clf = joblib.load(io.BytesIO(state["clf_joblib"].tobytes()))
+        self._clf = sklearn_from_state(state, "clf")
         le = LabelEncoder()
         le.classes_ = np.asarray(state["label_classes"])
         self._label_encoder = le

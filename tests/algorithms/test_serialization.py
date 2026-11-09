@@ -307,27 +307,27 @@ def test_bundle_format_no_pickle(tmp_path, clf_data):
         assert not any(n.endswith(".pkl") or n.endswith(".joblib") for n in names)
 
 
-def test_qsvc_joblib_bytes_are_npy_not_joblib(tmp_path, clf_data):
-    """State file for SVC must be .npy (wrapped bytes), not a raw .joblib."""
+def test_qsvc_skops_bytes_are_npy(tmp_path, clf_data):
+    """State file for SVC must be .npy (wrapped skops bytes), not a pickle."""
     X_tr, y_tr, _, _ = clf_data
     model = QSVC(provider="numpy")
     model.fit(X_tr, y_tr)
     model.save(tmp_path / "qsvc.eigenkit")
     with zipfile.ZipFile(tmp_path / "qsvc.eigenkit") as zf:
         names = zf.namelist()
-        assert "state/svc_joblib.npy" in names
+        assert "state/svc_skops.npy" in names
         assert not any(n.endswith(".joblib") for n in names)
 
 
-def test_qsvr_joblib_bytes_are_npy_not_joblib(tmp_path, reg_data):
-    """State file for SVR must be .npy (wrapped bytes), not a raw .joblib."""
+def test_qsvr_skops_bytes_are_npy(tmp_path, reg_data):
+    """State file for SVR must be .npy (wrapped skops bytes), not a pickle."""
     X_tr, y_tr, _, _ = reg_data
     model = QSVR(provider="numpy")
     model.fit(X_tr, y_tr)
     model.save(tmp_path / "qsvr.eigenkit")
     with zipfile.ZipFile(tmp_path / "qsvr.eigenkit") as zf:
         names = zf.namelist()
-        assert "state/svr_joblib.npy" in names
+        assert "state/svr_skops.npy" in names
         assert not any(n.endswith(".joblib") for n in names)
 
 
@@ -441,12 +441,13 @@ def test_custom_block_serializes_successfully(tmp_path):
 
 
 def test_check_format_version_raises_for_unsupported_version():
-    with pytest.raises(SerializationError, match="format_version=2"):
-        check_format_version({"format_version": 2})
+    with pytest.raises(SerializationError, match="format_version=3"):
+        check_format_version({"format_version": 3})
 
 
-def test_check_format_version_passes_for_version_1():
-    check_format_version({"format_version": 1})
+@pytest.mark.parametrize("version", [1, 2])
+def test_check_format_version_passes_for_known_versions(version):
+    check_format_version({"format_version": version})
 
 
 def test_check_format_version_rejects_a_missing_version():
@@ -492,7 +493,7 @@ def test_timeseries_explicit_load_rejects_wrong_wrapper(
         "autoregressive": False,
     }
 
-    def fake_load_bundle(path):
+    def fake_load_bundle(path, *, trusted=False):
         return (
             {"class_name": actual_class, "format_version": 1},
             params,
@@ -533,7 +534,7 @@ def test_timeseries_explicit_load_restores_matching_wrapper(
         def _restore_state(self, state):
             self.restored_state = state
 
-    def fake_load_bundle(path):
+    def fake_load_bundle(path, *, trusted=False):
         return (
             {"class_name": class_name, "format_version": 1},
             {
@@ -618,7 +619,7 @@ def test_qtsr_bundle_contains_format_version(tmp_path, ts_data):
 
     with zipfile.ZipFile(bundle_path, "r") as zf:
         meta = json.loads(zf.read("metadata.json"))
-    assert meta.get("format_version") == 1
+    assert meta.get("format_version") == 2
     assert meta.get("estimator_class") == "HQNR"
 
 
@@ -670,7 +671,7 @@ def test_qtsc_bundle_contains_format_version(tmp_path):
 
     with zipfile.ZipFile(bundle_path, "r") as zf:
         meta = json.loads(zf.read("metadata.json"))
-    assert meta.get("format_version") == 1
+    assert meta.get("format_version") == 2
     assert meta.get("estimator_class") == "RecurrentHQNC"
 
 

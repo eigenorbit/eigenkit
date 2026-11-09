@@ -39,11 +39,12 @@ def load_model(
     *,
     provider: ProviderSpec | None = None,
     model: Any = None,
+    trusted: bool = False,
 ) -> BaseQuantumEstimator:
     """Load any saved model. The class of the model is read from `metadata.json`.
 
-    Load only bundles that you trust. A bundle can contain joblib pickles, and
-    unpickling runs code, as with `torch.load` or `joblib.load`.
+    Loading a bundle does not unpickle anything, unless you pass `trusted=True`
+    for a bundle saved before eigenkit 1.3.
 
     Args:
         path: The path to the `.eigenkit` bundle.
@@ -51,6 +52,11 @@ def load_model(
             `load()` method of the estimator.
         model: The `nn.Module` architecture, for checkpoints of `GenericRegressor`
             and `GenericClassifier`. It is ignored for the other estimators.
+        trusted: Load a bundle saved before eigenkit 1.3 by `QSVC`, `QSVR` or
+            the reservoir classifier. Such a bundle holds joblib pickles, and
+            unpickling runs code, as with `torch.load` or `joblib.load`. Pass it
+            only for bundles whose source you trust, and save the model again to
+            store it without pickles.
 
     Returns:
         The loaded estimator, an instance of the class named in the bundle.
@@ -65,10 +71,10 @@ def load_model(
         pass
     import eigenkit.algorithms.portfolio_risk  # noqa: F401
 
-    metadata, _, _, _ = load_bundle(path)
+    metadata, _, _, _ = load_bundle(path, trusted=trusted)
     cls = get_estimator_class(metadata["class_name"])
     sig = inspect.signature(cls.load)
-    kwargs: dict[str, Any] = {"provider": provider}
+    kwargs: dict[str, Any] = {"provider": provider, "trusted": trusted}
     if model is not None and "model" in sig.parameters:
         kwargs["model"] = model
     return cls.load(path, **kwargs)

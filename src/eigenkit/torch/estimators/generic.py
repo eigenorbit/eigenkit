@@ -325,6 +325,7 @@ class GenericRegressor(ModelAccessMixin, BaseQuantumRegressor):
         *,
         model: nn.Module | None = None,
         provider: ProviderSpec | None = None,
+        trusted: bool = False,
     ) -> "GenericRegressor":
         """Load a fitted `GenericRegressor` from a `.eigenkit` bundle.
 
@@ -338,6 +339,9 @@ class GenericRegressor(ModelAccessMixin, BaseQuantumRegressor):
                 a deep copy, which is `model_` of the loaded estimator.
             provider: It is ignored. It is kept so that the signature matches the
                 other estimators.
+            trusted: Load a bundle saved before eigenkit 1.3 that holds joblib
+                pickles. Unpickling runs code, so pass it only for bundles whose
+                source you trust.
 
         Returns:
             The loaded estimator.
@@ -361,7 +365,7 @@ class GenericRegressor(ModelAccessMixin, BaseQuantumRegressor):
                 "The nn.Module architecture must be provided manually: "
                 "GenericRegressor.load(path, model=my_net)"
             )
-        metadata, params, _, state = load_bundle(path)
+        metadata, params, _, state = load_bundle(path, trusted=trusted)
         check_format_version(metadata)
         if metadata.get("class_name") != cls.__name__:
             raise TypeError(
@@ -662,6 +666,7 @@ class GenericClassifier(ModelAccessMixin, BaseQuantumClassifier):
         *,
         model: nn.Module | None = None,
         provider: ProviderSpec | None = None,
+        trusted: bool = False,
     ) -> "GenericClassifier":
         """Load a fitted `GenericClassifier` from a `.eigenkit` bundle.
 
@@ -676,6 +681,9 @@ class GenericClassifier(ModelAccessMixin, BaseQuantumClassifier):
                 a deep copy, which is `model_` of the loaded estimator.
             provider: It is ignored. It is kept so that the signature matches the
                 other estimators.
+            trusted: Load a bundle saved before eigenkit 1.3 that holds joblib
+                pickles. Unpickling runs code, so pass it only for bundles whose
+                source you trust.
 
         Returns:
             The loaded estimator.
@@ -699,7 +707,7 @@ class GenericClassifier(ModelAccessMixin, BaseQuantumClassifier):
                 "The nn.Module architecture must be provided manually: "
                 "GenericClassifier.load(path, model=my_net)"
             )
-        metadata, params, _, state = load_bundle(path)
+        metadata, params, _, state = load_bundle(path, trusted=trusted)
         check_format_version(metadata)
         if metadata.get("class_name") != cls.__name__:
             raise TypeError(

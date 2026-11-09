@@ -27,7 +27,9 @@ into saved models, pickles or `repr()` output, and a saved model cannot choose
 the host its provider connects to. If you find a path that does either, that
 is a security issue and belongs in a private report.
 
-Saved models (`.eigenkit` bundles) can contain joblib pickles, and loading one
-can run code, as with `torch.load` or `joblib.load`. Load only bundles you
-trust; code execution from an untrusted bundle is expected behaviour, not a
-vulnerability.
+Saved models (`.eigenkit` bundles) hold no pickles, and loading one does not
+run code from it. If a bundle runs code when you load it without
+`trusted=True`, that is a security issue and belongs in a private report.
+Bundles saved before eigenkit 1.3 hold joblib pickles and load only with
+`trusted=True`. Code execution from a bundle loaded that way is expected
+behaviour, as with `torch.load` or `joblib.load`, not a vulnerability.

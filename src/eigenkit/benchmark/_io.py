@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 
-def load_checkpoint(path: str | Path, *, model: Any = None) -> Any:
+def load_checkpoint(path: str | Path, *, model: Any = None, trusted: bool = False) -> Any:
     """Load a model checkpoint written by `compare(..., save_dir=...)`.
 
     Args:
@@ -15,6 +15,8 @@ def load_checkpoint(path: str | Path, *, model: Any = None) -> Any:
             [`GenericRegressor`][eigenkit.torch.estimators.GenericRegressor] or
             [`GenericClassifier`][eigenkit.torch.estimators.GenericClassifier]
             checkpoints. It is ignored for other types of estimator.
+        trusted: Load a `.eigenkit` bundle saved before eigenkit 1.3 that holds
+            joblib pickles. A `.joblib` file is always a pickle and ignores it.
 
     Returns:
         The loaded estimator.
@@ -27,10 +29,7 @@ def load_checkpoint(path: str | Path, *, model: Any = None) -> Any:
     if path.suffix == ".eigenkit":
         from ..torch.estimators import load_model
 
-        kwargs: dict[str, Any] = {}
-        if model is not None:
-            kwargs["model"] = model
-        return load_model(path, **kwargs)
+        return load_model(path, model=model, trusted=trusted)
     if path.suffix in {".joblib", ".pkl"}:
         import joblib
         from sklearn.base import BaseEstimator

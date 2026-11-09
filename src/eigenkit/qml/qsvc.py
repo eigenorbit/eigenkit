@@ -7,6 +7,7 @@ from eigenkit.core.circuit import ProviderSpec
 from ._base import BaseQuantumClassifier
 from ._kernels import QuantumKernel, _estimator_kernel
 from ._registry import register_estimator
+from ._serialization import sklearn_from_state, sklearn_to_array
 
 
 @register_estimator
@@ -202,35 +203,14 @@ class QSVC(BaseQuantumClassifier):
         return self._calibrated.predict_proba(self._test_kernel(X))
 
     def _collect_state(self) -> dict:
-        import io
-
-        import joblib  # sklearn guarantees joblib compat for its own estimators
-
-        buf = io.BytesIO()
-        joblib.dump(self._svc, buf)
-        state = {
-            "svc_joblib": np.frombuffer(buf.getvalue(), dtype=np.uint8).copy(),
-            "X_train": self._X_train,
-        }
+        state = {"svc_skops": sklearn_to_array(self._svc), "X_train": self._X_train}
         if self._calibrated is not None:
-            buf = io.BytesIO()
-            joblib.dump(self._calibrated, buf)
-            state["calibrated_joblib"] = np.frombuffer(
-                buf.getvalue(), dtype=np.uint8
-            ).copy()
+            state["calibrated_skops"] = sklearn_to_array(self._calibrated)
         return state
 
     def _restore_state(self, state: dict) -> None:
-        import io
-
-        import joblib  # sklearn guarantees joblib compat for its own estimators
-
-        self._svc = joblib.load(io.BytesIO(state["svc_joblib"].tobytes()))
-        self._calibrated = (
-            joblib.load(io.BytesIO(state["calibrated_joblib"].tobytes()))
-            if "calibrated_joblib" in state
-            else None
-        )
+        self._svc = sklearn_from_state(state, "svc")
+        self._calibrated = sklearn_from_state(state, "calibrated")
         self._X_train = state["X_train"]
         self.classes_ = self._svc.classes_
         self.n_features_in_ = self._X_train.shape[1]

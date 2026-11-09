@@ -4,9 +4,11 @@ The supported quantum estimators can save a **fitted** model to disk, and load i
 again later without training it again.
 
 A saved model is a **`.eigenkit` bundle** of JSON, NumPy and PyTorch files. Models
-that hold scikit-learn objects (`QSVC`, `QSVR`, the reservoir estimators and the
-time-series estimators) add them as joblib pickles, and loading a pickle runs code.
-As with `torch.load` or `joblib.load`, **load only bundles that you trust.**
+that hold scikit-learn objects (`QSVC`, `QSVR` and `QuantumReservoirClassifier`)
+store them with [skops](https://skops.readthedocs.io/), which rebuilds only the types
+it trusts. No part of a bundle is a pickle, so **loading a bundle does not run code
+from it.** Bundles saved before eigenkit 1.3 are the exception, see
+[Bundles saved before eigenkit 1.3](#bundles-saved-before-eigenkit-13).
 
 ```python
 from eigenkit import HQNC, load_model
@@ -45,7 +47,7 @@ The state files use typed extensions:
 | Extension | Meaning |
 |-----------|---------|
 | `.pt` | A `state_dict` saved with `torch.save`, which holds the weights of the model. |
-| `.npy` | A NumPy array, for example `X_train`, or the joblib bytes of `QSVC` and `QSVR`. |
+| `.npy` | A NumPy array, for example `X_train`, or the skops bytes of a scikit-learn object. Read with `allow_pickle=False`. |
 | `.json` | Scalars or lists that JSON can store, for example `train_losses` or `label_classes`. |
 
 PyTorch is imported only when a `.pt` entry is read or written. The `QSVC` and `QSVR`
@@ -70,17 +72,18 @@ Example for `QSVC`:
 metadata.json
 params.json
 state/X_train.npy
-state/svc_joblib.npy    # sklearn SVC bytes (joblib), not a .joblib file in the zip
-state/calibrated_joblib.npy    # only with probability=True: the fitted calibration
+state/svc_skops.npy    # the fitted sklearn SVC, serialised with skops
+state/calibrated_skops.npy    # only with probability=True: the fitted calibration
 ```
 
-!!! warning "`QSVC` and `QSVR` bundles include joblib bytes"
-    For `QSVC` and `QSVR`, the fitted `sklearn.svm` object is serialised with joblib
-    in memory, and then stored as a `uint8` array in `state/*_joblib.npy`. Joblib uses
-    pickle internally, so load these bundles only from sources that you trust.
+The fitted scikit-learn object is serialised with skops in memory and stored as a
+`uint8` array in `state/*_skops.npy`. skops rebuilds only the scikit-learn types it
+trusts by default, plus the two calibration helpers that `QSVC(probability=True)`
+needs. A bundle cannot add types to that list.
 
-`metadata.json` includes `"format_version": 1`. `load()` refuses a bundle whose
-`format_version` is missing or different, with an error that names the version.
+`metadata.json` includes `"format_version": 2`. `load()` accepts versions 1 and 2,
+and refuses a bundle whose `format_version` is missing or different, with an error
+that names the version.
 
 ---
 
@@ -116,6 +119,25 @@ from eigenkit import load_model
 
 loaded = load_model("path/to/model.eigenkit")
 ```
+
+### Bundles saved before eigenkit 1.3
+
+Before eigenkit 1.3 (`format_version` 1), `QSVC`, `QSVR` and
+`QuantumReservoirClassifier` stored their scikit-learn objects as joblib pickles, and
+unpickling runs code. `load()` refuses such a bundle with a `SerializationError`. If
+you trust where it comes from, pass `trusted=True`, then save the model again to
+store it without pickles:
+
+```python
+from eigenkit import load_model
+
+model = load_model("old_qsvc.eigenkit", trusted=True)
+model.save("old_qsvc.eigenkit")  # format_version 2, without pickles
+```
+
+Every `load()`, `load_model()` and `benchmark.load_checkpoint()` accepts `trusted`.
+
+### Restored attributes
 
 After `load()`, the attributes that `fit()` sets are restored when the bundle holds
 them. This includes `train_losses_` on `HQNC`, `HQNR`, `RecurrentHQNC`,

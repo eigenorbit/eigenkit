@@ -13,7 +13,7 @@
 | src/eigenkit/algorithms/portfolio\_risk.py             |      256 |       10 |       78 |       12 |     93% |166, 206, 217, 219, 334-\>345, 338, 501, 519-\>521, 553, 599, 606, 635, 778-\>781 |
 | src/eigenkit/benchmark/\_\_init\_\_.py                 |      123 |        6 |       62 |        7 |     93% |102, 150, 245, 248, 250, 252, 282-\>291 |
 | src/eigenkit/benchmark/\_baselines.py                  |       26 |        3 |        2 |        1 |     86% |14, 58, 65 |
-| src/eigenkit/benchmark/\_io.py                         |       19 |        1 |        8 |        1 |     93% |        40 |
+| src/eigenkit/benchmark/\_io.py                         |       16 |        1 |        6 |        1 |     91% |        39 |
 | src/eigenkit/benchmark/\_metrics.py                    |      120 |        8 |       50 |        5 |     92% |27-30, 103, 164, 188, 242, 259 |
 | src/eigenkit/benchmark/\_results.py                    |      379 |       45 |      166 |       31 |     86% |35-36, 63, 71, 73, 75, 168-173, 250, 265, 274, 280, 286-\>285, 288, 298, 329, 419, 428, 475-\>471, 482, 485-486, 521-522, 532-\>534, 576-577, 616, 668, 705-706, 722-\>720, 733, 752, 766-767, 787-788, 789-\>792, 847-848, 853, 870, 875, 879, 903-904, 915 |
 | src/eigenkit/benchmark/\_runner.py                     |      128 |       21 |       42 |        6 |     84% |41, 67, 69, 74, 85, 96-100, 102-\>121, 114-115, 119-120, 129-130, 183-189, 195-201 |
@@ -29,7 +29,7 @@
 | src/eigenkit/chemistry/vqe.py                          |       51 |        0 |       14 |        0 |    100% |           |
 | src/eigenkit/circuit.py                                |       23 |        2 |        8 |        2 |     87% |  122, 130 |
 | src/eigenkit/configs.py                                |       25 |        8 |        6 |        1 |     65% |    97-106 |
-| src/eigenkit/core/\_\_init\_\_.py                      |       16 |        1 |        2 |        1 |     89% |       155 |
+| src/eigenkit/core/\_\_init\_\_.py                      |       16 |        0 |        2 |        0 |    100% |           |
 | src/eigenkit/core/\_results.py                         |       23 |        0 |        6 |        0 |    100% |           |
 | src/eigenkit/core/backends/\_\_init\_\_.py             |       47 |        5 |       20 |        9 |     79% |46-\>48, 48-\>51, 51-\>60, 55-57, 60-\>68, 77-78, 81-\>83, 83-\>85, 85-\>89, 89-\>97, 98, 101-\>106 |
 | src/eigenkit/core/backends/\_kernel\_support.py        |       76 |        9 |       16 |        2 |     88% |28-29, 62-63, 67, 82, 96, 179-180 |
@@ -88,15 +88,15 @@
 | src/eigenkit/photonics/ir.py                           |       70 |        0 |       22 |        0 |    100% |           |
 | src/eigenkit/photonics/reservoir.py                    |       79 |        2 |       44 |        2 |     97% |  240, 251 |
 | src/eigenkit/photonics/torch.py                        |       41 |        0 |        6 |        0 |    100% |           |
-| src/eigenkit/qml/\_\_init\_\_.py                       |       27 |        2 |        2 |        0 |     93% |     64-65 |
+| src/eigenkit/qml/\_\_init\_\_.py                       |       27 |        2 |        2 |        0 |     93% |     70-71 |
 | src/eigenkit/qml/\_alignment.py                        |       66 |        4 |       16 |        3 |     91% |207, 221-\>223, 248-250 |
-| src/eigenkit/qml/\_base.py                             |       91 |        6 |       26 |        2 |     93% |176-\>179, 195, 227-228, 242, 246, 273 |
+| src/eigenkit/qml/\_base.py                             |       91 |        6 |       26 |        2 |     93% |185-\>188, 204, 236-237, 251, 255, 282 |
 | src/eigenkit/qml/\_kernels.py                          |      319 |       27 |       96 |       12 |     89% |136, 260, 272, 288-\>290, 304-305, 381, 531-\>533, 546-559, 576, 644-651, 739-\>748, 750, 798-\>803, 836, 884, 891, 921 |
 | src/eigenkit/qml/\_registry.py                         |        9 |        1 |        2 |        1 |     82% |        38 |
-| src/eigenkit/qml/\_serialization.py                    |      182 |       18 |       72 |       13 |     88% |148, 150, 188, 200-201, 235, 295, 338, 341-342, 353, 357, 359, 361, 377, 392-393, 468 |
-| src/eigenkit/qml/qrc.py                                |      154 |        4 |       16 |        2 |     96% |122, 217, 255, 370 |
-| src/eigenkit/qml/qsvc.py                               |       78 |        1 |       10 |        1 |     98% |       101 |
-| src/eigenkit/qml/qsvr.py                               |       54 |        1 |        4 |        1 |     97% |        92 |
+| src/eigenkit/qml/\_serialization.py                    |      199 |       18 |       78 |       13 |     89% |201, 203, 241, 253-254, 288, 348, 391, 394-395, 406, 410, 412, 414, 430, 445-446, 532 |
+| src/eigenkit/qml/qrc.py                                |      149 |        4 |       16 |        2 |     96% |123, 218, 256, 371 |
+| src/eigenkit/qml/qsvc.py                               |       71 |        1 |       10 |        1 |     98% |       102 |
+| src/eigenkit/qml/qsvr.py                               |       49 |        1 |        4 |        1 |     96% |        93 |
 | src/eigenkit/reservoir/\_\_init\_\_.py                 |        5 |        0 |        0 |        0 |    100% |           |
 | src/eigenkit/reservoir/driver.py                       |       31 |        1 |        8 |        1 |     95% |        57 |
 | src/eigenkit/reservoir/features.py                     |       57 |        4 |       18 |        4 |     89% |47, 50, 60, 91 |
@@ -109,12 +109,12 @@
 | src/eigenkit/torch/estimators/\_seeding.py             |       15 |        1 |        4 |        1 |     89% |        44 |
 | src/eigenkit/torch/estimators/\_training.py            |      112 |        8 |       52 |       10 |     89% |29, 62, 69, 200, 215, 227-\>248, 241-\>248, 249, 307, 319 |
 | src/eigenkit/torch/estimators/custom.py                |      149 |        4 |       20 |        4 |     94% |43-45, 59-\>61, 214 |
-| src/eigenkit/torch/estimators/generic.py               |      225 |        6 |       46 |        4 |     96% |201-\>203, 241, 315-316, 511-\>513, 559, 652-653 |
+| src/eigenkit/torch/estimators/generic.py               |      225 |        6 |       46 |        4 |     96% |201-\>203, 241, 315-316, 515-\>517, 563, 656-657 |
 | src/eigenkit/torch/estimators/hqnc.py                  |       98 |        1 |        8 |        0 |     99% |       180 |
 | src/eigenkit/torch/estimators/hqnr.py                  |       86 |        2 |        8 |        2 |     96% |154, 162-\>167, 222 |
 | src/eigenkit/torch/estimators/recurrent\_hqnc.py       |      146 |        5 |       44 |        6 |     94% |131, 133, 175, 193-\>195, 310, 312 |
 | src/eigenkit/torch/estimators/recurrent\_hqnr.py       |      160 |       16 |       48 |       14 |     86% |64, 172, 178, 180, 194, 241, 268, 272, 280-\>285, 330, 336, 367, 369, 371, 391, 393, 395 |
-| src/eigenkit/torch/estimators/timeseries.py            |      336 |       20 |      128 |       26 |     90% |145, 157, 175, 183, 185, 187, 192, 231, 233, 339, 355-\>357, 412-\>415, 501, 511, 523, 533, 545, 566, 568, 574, 636, 691, 772-\>774, 774-\>776, 788-\>790, 839-\>842 |
+| src/eigenkit/torch/estimators/timeseries.py            |      336 |       20 |      128 |       26 |     90% |145, 157, 175, 183, 185, 187, 192, 231, 233, 339, 355-\>357, 417-\>420, 506, 516, 528, 538, 550, 571, 573, 579, 641, 696, 777-\>779, 779-\>781, 793-\>795, 849-\>852 |
 | src/eigenkit/torch/interface.py                        |       95 |       11 |       30 |        3 |     87% |42-50, 228, 242 |
 | src/eigenkit/torch/layers/\_\_init\_\_.py              |        6 |        0 |        0 |        0 |    100% |           |
 | src/eigenkit/torch/layers/\_dtype.py                   |        6 |        0 |        2 |        0 |    100% |           |
@@ -124,7 +124,7 @@
 | src/eigenkit/torch/layers/minmax.py                    |       39 |        0 |       10 |        0 |    100% |           |
 | src/eigenkit/torch/layers/orthogonal\_qnn.py           |       58 |        1 |       10 |        0 |     99% |       195 |
 | src/eigenkit/torch/layers/reupload.py                  |       29 |        0 |        2 |        0 |    100% |           |
-| **TOTAL**                                              | **12994** |  **669** | **4372** |  **420** | **93%** |           |
+| **TOTAL**                                              | **12991** |  **668** | **4376** |  **419** | **93%** |           |
 
 
 ## Setup coverage badge

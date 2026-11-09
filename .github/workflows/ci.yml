@@ -2,7 +2,8 @@ name: ci
 
 # PR validation. Runs the full-matrix pytest (with coverage) and the
 # bare-install smoke test; pre-commit runs in `lint.yml`. Branch protection on `main` should require the
-# relevant jobs as status checks.
+# relevant jobs as status checks. It also runs on every push to `main`, so the
+# coverage comment has main's coverage to compare a pull request against.
 #
 # The docs build lives in `docs-checks.yml`, not here: the paths-ignore below
 # skips this workflow entirely on a documentation-only pull request, which is
@@ -10,6 +11,12 @@ name: ci
 
 on:
   pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - ".github/CODEOWNERS"
+  push:
     branches: [main]
     paths-ignore:
       - "**.md"
@@ -73,18 +80,23 @@ jobs:
 
   coverage-comment:
     needs: test
-    # A pull request from a fork gets a read-only token, so the comment could
-    # not be posted.
+    # On a push to main the action stores main's coverage on the
+    # `python-coverage-comment-action-data` branch; on a pull request it
+    # compares against that and posts the comment. A pull request from a fork
+    # gets a read-only token, so the comment could not be posted.
     if: >-
-      github.event_name == 'pull_request' &&
+      github.event_name == 'push' ||
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write  # push the coverage data to the data branch
       pull-requests: write
     steps:
       - name: Check-out repository
         uses: actions/checkout@v7
+        with:
+          # The action pushes with its own token; keep the write token out of .git/config.
+          persist-credentials: false
 
       - name: Download coverage data
         uses: actions/download-artifact@v8

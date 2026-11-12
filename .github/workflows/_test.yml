@@ -42,6 +42,11 @@ jobs:
   pytest:
     runs-on: ${{ inputs.runs-on }}
 
+    # The steps are written for bash, and a Windows runner defaults to PowerShell.
+    defaults:
+      run:
+        shell: bash
+
     strategy:
       fail-fast: false
       matrix:

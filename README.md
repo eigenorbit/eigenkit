@@ -61,7 +61,7 @@
 | src/eigenkit/core/variational.py                       |       70 |        1 |       20 |        2 |     97% |250-\>252, 254 |
 | src/eigenkit/core/wire.py                              |       32 |        0 |       12 |        0 |    100% |           |
 | src/eigenkit/datasets/\_\_init\_\_.py                  |       77 |       15 |       26 |        4 |     78% |101, 103, 167-175, 185, 223-237 |
-| src/eigenkit/datasets/\_cache.py                       |       36 |        1 |       12 |        1 |     96% |        90 |
+| src/eigenkit/datasets/\_cache.py                       |       52 |        3 |       14 |        1 |     94% |51-52, 128 |
 | src/eigenkit/datasets/\_loaders.py                     |       58 |        7 |       22 |        4 |     86% |89-90, 101, 119, 136-138 |
 | src/eigenkit/datasets/\_registry.py                    |       21 |        0 |        2 |        0 |    100% |           |
 | src/eigenkit/datasets/\_synthetic.py                   |       78 |        1 |       26 |        1 |     98% |       146 |
@@ -124,7 +124,7 @@
 | src/eigenkit/torch/layers/minmax.py                    |       39 |        0 |       10 |        0 |    100% |           |
 | src/eigenkit/torch/layers/orthogonal\_qnn.py           |       58 |        1 |       10 |        0 |     99% |       195 |
 | src/eigenkit/torch/layers/reupload.py                  |       29 |        0 |        2 |        0 |    100% |           |
-| **TOTAL**                                              | **12991** |  **668** | **4376** |  **419** | **93%** |           |
+| **TOTAL**                                              | **13007** |  **670** | **4378** |  **419** | **93%** |           |
 
 
 ## Setup coverage badge

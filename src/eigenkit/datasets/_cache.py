@@ -6,7 +6,9 @@ from __future__ import annotations
 
 import hashlib
 import os
+import ssl
 import tempfile
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -33,6 +35,23 @@ def _file_hash(filepath: Path) -> str:
         for chunk in iter(lambda: f.read(65536), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+def _ssl_context() -> ssl.SSLContext:
+    """The system's CA certificates, plus certifi's when it is installed.
+
+    The python.org build of Python for macOS has no CA certificates until its
+    `Install Certificates.command` runs, so the default context alone fails to
+    verify any server there. certifi's roots are added, not substituted, so a CA
+    trusted through the system or `SSL_CERT_FILE` still verifies.
+    """
+    context = ssl.create_default_context()
+    try:
+        import certifi
+    except ImportError:
+        return context
+    context.load_verify_locations(certifi.where())
+    return context
 
 
 def cached_download(
@@ -73,17 +92,36 @@ def cached_download(
         else:
             return filepath
 
-    # Download beside the target and rename into place. `urlretrieve` writes
-    # directly to its destination, so an interrupted download -- a dropped
-    # connection, a Ctrl-C -- would leave a truncated file at the cache path
-    # that every later call would return as valid, forever, unless the registry
-    # entry carries a hash to check it against.
+    # Download beside the target and rename into place, so an interrupted
+    # download -- a dropped connection, a Ctrl-C -- never leaves a truncated file
+    # at the cache path that every later call would return as valid, forever,
+    # unless the registry entry carries a hash to check it against.
     with tempfile.NamedTemporaryFile(
         dir=cache_dir, prefix=f".{filename}.", suffix=".part", delete=False
     ) as handle:
         partial = Path(handle.name)
     try:
-        urllib.request.urlretrieve(url, partial)  # noqa: S310
+        try:
+            with urllib.request.urlopen(url, context=_ssl_context()) as response:  # noqa: S310
+                # One unbounded read(): unlike read(n) in a loop, it raises
+                # IncompleteRead when the body is shorter than its Content-Length.
+                # The registry's datasets are a few MB, so they fit in memory.
+                partial.write_bytes(response.read())
+        except urllib.error.URLError as exc:
+            if isinstance(exc.reason, ssl.SSLCertVerificationError):
+                # With an errno beside it, the message prints as text, not as
+                # the repr of a one-element tuple.
+                raise ssl.SSLCertVerificationError(
+                    exc.reason.errno,
+                    f"Could not verify the TLS certificate of {url}: {exc.reason}. "
+                    "Python has no CA certificate that signs it. On the python.org "
+                    "build of Python for macOS, run 'Install Certificates.command' "
+                    "in the Python folder of Applications, or install certifi "
+                    "(pip install certifi). Behind a proxy that inspects TLS, set "
+                    "the SSL_CERT_FILE environment variable to a CA bundle that "
+                    "holds the proxy's certificate.",
+                ) from exc
+            raise
         if expected_hash is not None:
             actual = _file_hash(partial)
             if actual != expected_hash:

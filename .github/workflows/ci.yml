@@ -1,21 +1,20 @@
 name: ci
 
 # PR validation. Runs the full-matrix pytest (with coverage) and the
-# bare-install smoke test; pre-commit runs in `lint.yml`. Branch protection on `main` should require the
-# relevant jobs as status checks. It also runs on every push to `main`, so the
-# coverage comment has main's coverage to compare a pull request against.
+# bare-install smoke test; pre-commit runs in `lint.yml`, the docs build in
+# `docs-checks.yml`. It also runs on pushes to `main`, so the coverage comment
+# has main's coverage to compare a pull request against; a documentation-only
+# commit does not change the coverage, so the `push` trigger skips those.
 #
-# The docs build lives in `docs-checks.yml`, not here: the paths-ignore below
-# skips this workflow entirely on a documentation-only pull request, which is
-# exactly when the site build matters.
+# The `pull_request` trigger has no path filter: a workflow skipped by a path
+# filter leaves its required checks pending forever. Branch protection on
+# `main` requires one check from here, `tests-passed`. On a pull request that
+# changes only documentation, the `changes` job turns the test jobs off and
+# `tests-passed` passes without them.
 
 on:
   pull_request:
     branches: [main]
-    paths-ignore:
-      - "**.md"
-      - "docs/**"
-      - ".github/CODEOWNERS"
   push:
     branches: [main]
     paths-ignore:
@@ -31,7 +30,35 @@ permissions:
   contents: read
 
 jobs:
+  changes:
+    # `code` is false when a pull request changes only the paths the `push`
+    # trigger ignores.
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      code: ${{ steps.diff.outputs.code }}
+    steps:
+      - id: diff
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          if [ -z "$PR" ]; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # A failed call fails the job, and `tests-passed` with it.
+          files=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename')
+          if grep -qvE '\.md$|^docs/|^\.github/CODEOWNERS$' <<< "$files"; then
+            echo "code=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "code=false" >> "$GITHUB_OUTPUT"
+          fi
+
   test:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     uses: ./.github/workflows/_test.yml
     with:
       # `perceval` is kept out of `all` (see pyproject.toml), so the photonics
@@ -42,6 +69,8 @@ jobs:
   test-macos:
     # The full suite on Apple silicon. One Python version: the `test` matrix
     # already covers the version spread.
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     uses: ./.github/workflows/_test.yml
     with:
       python-versions: '["3.13"]'
@@ -56,6 +85,8 @@ jobs:
     # reference simulator's own behaviour (its cross-framework parity tests skip
     # when the extras are absent). The full matrix runs in the `test` job
     # (extras=all). Mirrored by release.yml's `verify-core-only`.
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     uses: ./.github/workflows/_test.yml
     with:
       python-versions: '["3.13"]'
@@ -73,10 +104,26 @@ jobs:
     # `test-core-only`, whose `lint-imports` statically catches the other half:
     # an unguarded optional import in `src/`. One Python version suffices; this
     # checks import guards, not behaviour, so it skips coverage.
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     uses: ./.github/workflows/_test.yml
     with:
       python-versions: '["3.13"]'
       extras: "torch"
+
+  tests-passed:
+    # The one check branch protection on `main` requires from this workflow,
+    # so a new job or Python version needs no change there. Passes when every
+    # test job passed or was turned off by `changes`. `always()`, not
+    # `!cancelled()`: a cancelled run must fail this check, not skip it,
+    # because a skipped check counts as passed.
+    needs: [changes, test, test-macos, test-core-only, test-missing-importorskip]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: A test job failed or was cancelled
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
 
   coverage-comment:
     needs: test

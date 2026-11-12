@@ -8,12 +8,6 @@ name: docs-checks
 # from a submodule, a README command that no longer runs. The scripts live in `tools/docs-checks/` and each
 # one is described in `tools/docs-checks/README.md`.
 #
-# Why a workflow of its own: `ci.yml` ignores `docs/**` and `**.md`, so a
-# documentation-only pull request triggers none of its jobs — including, until
-# now, the site build. That is why the `docs` job below was moved here out of
-# `ci.yml`. It reports as `docs-checks / docs`, so branch protection on `main`
-# has to name that context, not the `ci / docs` it was before the move.
-#
 # Why there is no `paths:` filter on the trigger: a workflow skipped by a path
 # filter does not report a skipped check — its checks stay *pending* forever,
 # and a required check that is pending forever blocks the merge without ever

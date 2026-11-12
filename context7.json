@@ -1,0 +1,15 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "eigenkit",
+  "description": "Open-source Python library for quantum computing. Build quantum algorithms once, run them on any simulator or quantum computer.",
+  "folders": ["docs"],
+  "excludeFiles": ["changelog.md", "CHANGELOG.md"],
+  "rules": [
+    "Choose the backend with the provider= argument of Circuit; the algorithm code does not change.",
+    "Backends other than the built-in numpy simulator need their pip extra, e.g. pip install \"eigenkit[qiskit]\".",
+    "CudaQuantumBackend and QiskitRuntimeBackend are opt-in: register them with eigenkit.register() before using their provider name.",
+    "On paid hardware, gradients are opt-in (enable_gradients=True in the device config); call dry_run_info() before submitting jobs.",
+    "Use interface=\"torch\" to get a torch.nn.Module; the ready-made models follow scikit-learn's fit/predict.",
+    "Import the names in eigenkit.__all__ from eigenkit itself (from eigenkit import Circuit), and domain names from their package (eigenkit.optimization, eigenkit.chemistry)."
+  ]
+}

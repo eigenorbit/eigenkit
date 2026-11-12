@@ -242,6 +242,8 @@ reference. Every example page also ships as a notebook in
 
 ## Contributing
 
+Ask questions in
+[GitHub Discussions](https://github.com/eigenorbit/eigenkit/discussions).
 Bug reports, ideas and pull requests are welcome.
 [CONTRIBUTING.md](https://github.com/eigenorbit/eigenkit/blob/main/CONTRIBUTING.md)
 covers the development setup, tests and conventions, and

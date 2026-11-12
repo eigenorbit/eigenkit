@@ -111,6 +111,20 @@ jobs:
             echo "released=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Announce the release in Discussions
+        # Links a discussion in the Announcements category to the GitHub
+        # release. The release itself is already out, so a failure here (the
+        # app lacking the Discussions permission, say) must not stop PyPI.
+        if: steps.dist.outputs.released == 'true' && !inputs.prerelease
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ steps.release-bot.outputs.token }}
+        run: |
+          tag=$(git describe --tags --abbrev=0)
+          id=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$tag" --jq .id)
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$id" \
+            -f discussion_category_name=Announcements
+
       - name: Upload distributions
         if: steps.dist.outputs.released == 'true'
         uses: actions/upload-artifact@v7

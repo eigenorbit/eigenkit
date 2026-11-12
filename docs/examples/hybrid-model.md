@@ -1,3 +1,7 @@
+---
+extras: [torch, viz]
+---
+
 # Hybrid Classical-Quantum Model
 
 This example places an `Ensemble` layer inside a classical `nn.Sequential`

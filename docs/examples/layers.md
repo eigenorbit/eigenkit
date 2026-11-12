@@ -1,3 +1,7 @@
+---
+extras: [torch]
+---
+
 # Pre-built Layers
 
 The pre-built layers wrap `Circuit` with reasonable defaults. They are all

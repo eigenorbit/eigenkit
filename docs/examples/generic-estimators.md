@@ -1,3 +1,7 @@
+---
+extras: [torch, viz]
+---
+
 # Usage example: Generic Estimators
 
 `GenericClassifier` and `GenericRegressor` are wrappers, compatible with sklearn, that train **any** `torch.nn.Module` through the standard `fit` and `predict` interface of the library. `HQNC` and `HQNR` build the architecture of the model for you. The generic estimators instead expect a complete network, output head included, so you have full control over the architecture.

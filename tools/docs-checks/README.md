@@ -46,6 +46,11 @@ python tools/docs-checks/build_example_notebooks.py            # rebuild
 python tools/docs-checks/build_example_notebooks.py --check    # drift only
 ```
 
+Every notebook opens with an "Open in Colab" badge and an install cell, so it
+runs in Google Colab or any fresh kernel. The install cell takes its extras from
+the page's front matter, `extras: [torch, viz]`; a page without it installs
+plain `eigenkit`. When a page starts to need another extra, add it there.
+
 Output is byte-deterministic, so a rebuild that changes nothing leaves the
 working tree clean, and `--check` reports drift without writing, naming the
 first cell that no longer matches.

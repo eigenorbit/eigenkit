@@ -1,3 +1,7 @@
+---
+extras: [benchmark]
+---
+
 # Benchmark comparison on Iris
 
 This example runs a small benchmark with `eigenkit`. It compares a quantum estimator with scikit-learn baselines, adds a custom metric, inspects the raw rows, reuses the selected model and saves the numeric results.

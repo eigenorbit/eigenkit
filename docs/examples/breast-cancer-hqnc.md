@@ -1,3 +1,7 @@
+---
+extras: [torch, viz]
+---
+
 # Healthcare: Breast cancer classification using eigenkit
 
 ## Why this problem matters

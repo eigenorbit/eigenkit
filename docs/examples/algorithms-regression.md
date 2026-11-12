@@ -1,3 +1,7 @@
+---
+extras: [torch, viz]
+---
+
 # Quantum Regression and Time Series
 
 This page shows complete regression runs with `HQNR` and `QSVR`, and time-series

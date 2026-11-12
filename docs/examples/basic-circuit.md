@@ -1,3 +1,7 @@
+---
+extras: [pennylane]
+---
+
 # Basic Circuit
 
 This example goes through the whole process: it builds a quantum circuit from

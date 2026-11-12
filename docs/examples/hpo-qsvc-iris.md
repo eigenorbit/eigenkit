@@ -1,3 +1,7 @@
+---
+extras: [qml]
+---
+
 # Hyperparameter search with QSVC on Iris
 
 This example runs a small hyperparameter optimisation (HPO) for an `eigenkit` estimator. It loads a dataset, builds a sklearn pipeline, chooses a search range, runs `GridSearchCV`, and evaluates the selected model.

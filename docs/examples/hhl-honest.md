@@ -1,3 +1,7 @@
+---
+extras: [viz]
+---
+
 # Linear Systems with HHL
 
 The **Harrow-Hassidim-Lloyd (HHL)** algorithm solves a linear system \(Ax = b\) on a

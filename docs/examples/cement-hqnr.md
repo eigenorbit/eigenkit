@@ -1,3 +1,7 @@
+---
+extras: [torch, viz]
+---
+
 # Civil Engineering: Concrete compressive strength prediction using eigenkit
 
 ## Why this problem matters

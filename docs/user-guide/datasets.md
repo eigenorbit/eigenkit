@@ -74,6 +74,22 @@ for ds in list_datasets():
     print(ds.name, ds.task, ds.n_features, ds.n_classes)
 ```
 
+### Downloads and certificates
+
+`concrete` and `beijing_pm25` are downloaded on first use and then read from the
+cache. eigenkit checks the certificate of the server against the CA certificates
+of your system and against those of certifi, which the `datasets` extra installs.
+So the download also works on the python.org build of Python for macOS, which has
+no CA certificates until you run `Install Certificates.command` in its folder in
+Applications.
+
+scikit-learn downloads `california_housing` itself, and it uses only the CA
+certificates of Python. On the python.org build of Python for macOS, run
+`Install Certificates.command` before you load it.
+
+Behind a proxy that inspects TLS traffic, set the `SSL_CERT_FILE` environment
+variable to a CA bundle that holds the certificate of the proxy.
+
 ## Synthetic generators
 
 To choose the size and the seed of a synthetic dataset, call its generator function

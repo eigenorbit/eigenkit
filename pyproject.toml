@@ -131,6 +131,9 @@ router = [
 # Synthetic + real datasets and the sklearn baselines used by them.
 datasets = [
     "scikit-learn>=1.3,<2",
+    # CA certificates for the downloaded datasets, which the python.org build of
+    # Python for macOS lacks. 2024.7.4 drops the distrusted GLOBALTRUST roots.
+    "certifi>=2024.7.4",
 ]
 benchmark = [
     "matplotlib>=3.7",

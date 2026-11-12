@@ -1049,6 +1049,7 @@ dependencies = [
 [package.optional-dependencies]
 all = [
     { name = "amazon-braket-sdk" },
+    { name = "certifi" },
     { name = "cirq-core" },
     { name = "cuda-quantum-cu13", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or sys_platform == 'linux'" },
     { name = "cudaq", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or sys_platform == 'linux'" },
@@ -1097,6 +1098,7 @@ cudaquantum = [
     { name = "cudaq", marker = "(platform_machine == 'arm64' and sys_platform == 'darwin') or sys_platform == 'linux'" },
 ]
 datasets = [
+    { name = "certifi" },
     { name = "scikit-learn" },
 ]
 iqm = [
@@ -1172,6 +1174,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "amazon-braket-sdk", marker = "extra == 'braket'", specifier = ">=1.117,<2" },
+    { name = "certifi", marker = "extra == 'datasets'", specifier = ">=2024.7.4" },
     { name = "cirq-core", marker = "extra == 'qsim'", specifier = ">=1.4" },
     { name = "cuda-quantum-cu13", marker = "platform_machine == 'arm64' and sys_platform == 'darwin' and extra == 'cudaquantum'", specifier = ">=0.14.0,!=0.16.0.post1" },
     { name = "cuda-quantum-cu13", marker = "sys_platform == 'linux' and extra == 'cudaquantum'", specifier = ">=0.14.0" },

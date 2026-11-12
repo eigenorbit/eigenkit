@@ -15,7 +15,7 @@ standard SVM convention -- would crash.
 
 from __future__ import annotations
 
-from pathlib import Path
+import io
 from urllib.error import URLError
 
 import numpy as np
@@ -45,13 +45,13 @@ class TestCacheIntegrity:
     def test_a_completed_download_is_cached_and_reused(self, cache, monkeypatch):
         calls = []
 
-        def fake_urlretrieve(url, path):
+        def fake_urlopen(url, context):
             calls.append(url)
-            Path(path).write_text("a,b\n1,2\n")
+            return io.BytesIO(b"a,b\n1,2\n")
 
         monkeypatch.setattr(
-            "eigenkit.datasets._cache.urllib.request.urlretrieve",
-            fake_urlretrieve,
+            "eigenkit.datasets._cache.urllib.request.urlopen",
+            fake_urlopen,
         )
         first = cached_download("http://example/x.csv", "x.csv")
         second = cached_download("http://example/x.csv", "x.csv")

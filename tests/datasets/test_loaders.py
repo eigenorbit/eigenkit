@@ -2,7 +2,6 @@
 
 import io
 import os
-from pathlib import Path
 from unittest.mock import patch
 
 import numpy as np
@@ -117,11 +116,11 @@ def _make_concrete_csv(n_rows: int = 50) -> bytes:
 def test_concrete_dataset_shapes(tmp_path):
     csv_bytes = _make_concrete_csv(50)
 
-    def fake_urlretrieve(url, dest):
-        Path(dest).write_bytes(csv_bytes)
+    def fake_urlopen(url, context):
+        return io.BytesIO(csv_bytes)
 
     with patch.dict(os.environ, {"EIGENKIT_DATA_DIR": str(tmp_path)}):
-        with patch("urllib.request.urlretrieve", side_effect=fake_urlretrieve):
+        with patch("urllib.request.urlopen", side_effect=fake_urlopen):
             data = load_dataset("concrete", random_state=42)
 
     assert {"X_train", "y_train", "X_test", "y_test", "metadata"} <= data.keys()
@@ -133,11 +132,11 @@ def test_concrete_dataset_shapes(tmp_path):
 def test_concrete_dataset_y_is_float(tmp_path):
     csv_bytes = _make_concrete_csv(50)
 
-    def fake_urlretrieve(url, dest):
-        Path(dest).write_bytes(csv_bytes)
+    def fake_urlopen(url, context):
+        return io.BytesIO(csv_bytes)
 
     with patch.dict(os.environ, {"EIGENKIT_DATA_DIR": str(tmp_path)}):
-        with patch("urllib.request.urlretrieve", side_effect=fake_urlretrieve):
+        with patch("urllib.request.urlopen", side_effect=fake_urlopen):
             data = load_dataset("concrete", random_state=42)
 
     assert data["y_train"].dtype == np.float32
@@ -158,11 +157,11 @@ def _make_beijing_csv(n_rows: int = 100) -> bytes:
 def test_beijing_pm25_dataset_shapes(tmp_path):
     csv_bytes = _make_beijing_csv(100)
 
-    def fake_urlretrieve(url, dest):
-        Path(dest).write_bytes(csv_bytes)
+    def fake_urlopen(url, context):
+        return io.BytesIO(csv_bytes)
 
     with patch.dict(os.environ, {"EIGENKIT_DATA_DIR": str(tmp_path)}):
-        with patch("urllib.request.urlretrieve", side_effect=fake_urlretrieve):
+        with patch("urllib.request.urlopen", side_effect=fake_urlopen):
             data = load_dataset("beijing_pm25", random_state=42)
 
     assert {"X_train", "y_train", "X_test", "y_test", "metadata"} <= data.keys()
@@ -174,11 +173,11 @@ def test_beijing_pm25_dataset_shapes(tmp_path):
 def test_beijing_pm25_chronological_split(tmp_path):
     csv_bytes = _make_beijing_csv(100)
 
-    def fake_urlretrieve(url, dest):
-        Path(dest).write_bytes(csv_bytes)
+    def fake_urlopen(url, context):
+        return io.BytesIO(csv_bytes)
 
     with patch.dict(os.environ, {"EIGENKIT_DATA_DIR": str(tmp_path)}):
-        with patch("urllib.request.urlretrieve", side_effect=fake_urlretrieve):
+        with patch("urllib.request.urlopen", side_effect=fake_urlopen):
             data = load_dataset("beijing_pm25", test_size=0.2, random_state=42)
 
     raw = np.loadtxt(io.BytesIO(csv_bytes), delimiter=",", skiprows=1)
@@ -193,11 +192,11 @@ def test_beijing_pm25_chronological_split(tmp_path):
 def test_beijing_pm25_no_split(tmp_path):
     csv_bytes = _make_beijing_csv(100)
 
-    def fake_urlretrieve(url, dest):
-        Path(dest).write_bytes(csv_bytes)
+    def fake_urlopen(url, context):
+        return io.BytesIO(csv_bytes)
 
     with patch.dict(os.environ, {"EIGENKIT_DATA_DIR": str(tmp_path)}):
-        with patch("urllib.request.urlretrieve", side_effect=fake_urlretrieve):
+        with patch("urllib.request.urlopen", side_effect=fake_urlopen):
             data = load_dataset("beijing_pm25", split=False)
 
     assert {"X", "y", "metadata"} <= data.keys()

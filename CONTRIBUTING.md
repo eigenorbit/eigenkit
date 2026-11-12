@@ -701,7 +701,13 @@ Tests go in `tests/datasets/`. The existing `test_loaders.py`,
 
 ## Asking questions and reporting bugs
 
-Open an issue on GitHub. For bug reports, please include:
+Ask questions in the
+[Q&A category of Discussions](https://github.com/eigenorbit/eigenkit/discussions/categories/q-a):
+how to do something, which backend fits a workload, why a result looks
+off. Ideas and things you have built with eigenkit go to Discussions too,
+under Ideas and Show and tell.
+
+Open an issue for a bug. For bug reports, please include:
 
 - The exact `provider=` you used (string, config, or Backend).
 - A minimal reproducing snippet (5-20 lines is plenty).

@@ -1,5 +1,8 @@
 blank_issues_enabled: true
 contact_links:
+  - name: Question
+    url: https://github.com/eigenorbit/eigenkit/discussions/categories/q-a
+    about: Ask how to do something in Discussions. Issues are for bugs and feature requests.
   - name: Security vulnerability
     url: https://github.com/eigenorbit/eigenkit/security/advisories/new
     about: Report security issues privately, not in a public issue.

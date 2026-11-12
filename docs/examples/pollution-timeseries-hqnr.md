@@ -1,3 +1,7 @@
+---
+extras: [torch, viz]
+---
+
 # Time series regression with eigenkit: HQNR and RecurrentHQNR compared
 
 
@@ -30,7 +34,6 @@ Both models use the same length of window, the same shift of the horizon and the
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.preprocessing import StandardScaler

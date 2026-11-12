@@ -1,3 +1,7 @@
+---
+extras: [torch, pennylane, viz]
+---
+
 # Quantum Classification
 
 This page shows complete classification runs on the moons dataset, with `HQNC` and `QSVC`.

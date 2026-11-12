@@ -1,3 +1,7 @@
+---
+extras: [qml]
+---
+
 # Short-Term Memory with a Quantum Reservoir
 
 The **short-term memory capacity** task is the standard test of a reservoir. You

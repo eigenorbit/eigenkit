@@ -1,3 +1,7 @@
+---
+extras: [torch, viz]
+---
+
 # Classification benchmark: Circles dataset using eigenkit
 
 ## Why this problem matters

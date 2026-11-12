@@ -146,6 +146,11 @@ its own; the Getting started guide lists them under "Platform compatibility".
 
 ## Quick start
 
+To try eigenkit without installing anything, open an example in Google Colab:
+[Basic Circuit](https://colab.research.google.com/github/eigenorbit/eigenkit/blob/main/examples/notebooks/basic-circuit.ipynb)
+or
+[Quantum Classification](https://colab.research.google.com/github/eigenorbit/eigenkit/blob/main/examples/notebooks/algorithms-classification.ipynb).
+
 A Bell pair, built gate by gate and measured on the built-in simulator:
 
 ```python

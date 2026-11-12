@@ -44,6 +44,22 @@
   font: inherit;
 }
 
+/* "Open in Colab" on the usage examples: a button of its own, left of the menu. */
+.md-typeset .page-actions__colab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-right: 0.4rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: 0.2rem;
+  color: var(--md-default-fg-color--light);
+}
+
+.md-typeset .page-actions__colab:hover {
+  color: var(--md-accent-fg-color);
+}
+
 .md-typeset .page-actions__more > summary {
   margin: 0;
   border-left: 0;

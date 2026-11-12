@@ -2,10 +2,21 @@
   The page menu for AI tools, in place of Material's edit and view buttons
   (`edit_uri` is empty, so those never render). Every page has a Markdown copy
   next to it, `index.md`, written by mkdocs-llmstxt; `page-actions.js` copies it.
+
+  A usage example also gets "Open in Colab": each `docs/examples/<name>.md` is
+  built into `examples/notebooks/<name>.ipynb` by
+  `tools/docs-checks/build_example_notebooks.py`.
 -#}
 {% if page.canonical_url and page.canonical_url.endswith("/") %}
   {% set prompt = "Read " ~ page.canonical_url ~ "index.md so I can ask you questions about it." %}
+  {% set src = page.file.src_uri %}
   <div class="page-actions">
+    {% if src.startswith("examples/") and src.count("/") == 1 %}
+      <a class="page-actions__colab" href="https://colab.research.google.com/github/eigenorbit/eigenkit/blob/main/examples/notebooks/{{ src[9:-3] }}.ipynb" target="_blank" rel="noopener">
+        {% include ".icons/simple/googlecolab.svg" %}
+        <span>Open in Colab</span>
+      </a>
+    {% endif %}
     <button type="button" class="page-actions__copy" data-markdown="index.md">
       {% include ".icons/material/content-copy.svg" %}
       <span>Copy page</span>

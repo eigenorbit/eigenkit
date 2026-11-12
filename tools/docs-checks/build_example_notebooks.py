@@ -5,7 +5,14 @@ The example pages are the source of truth: they are what the site publishes and
 what the documentation checks run against. A hand-written notebook drifts from
 its page as the library changes; a generated one cannot.
 
-Each page becomes one notebook:
+Each page becomes one notebook. It opens with two cells of its own, so that it
+runs in Google Colab or any fresh kernel:
+
+  an "Open in Colab" badge for the notebook on `main`
+  `%pip install "eigenkit[...]"` with the extras the page lists in its front
+  matter (`extras: [torch, viz]`); a page with none installs plain `eigenkit`
+
+The page follows:
 
   prose            markdown cell
   ```python        code cell, empty output, ready to run
@@ -54,8 +61,11 @@ os.chdir(REPO)
 
 PAGES_DIR = "docs/examples"
 NOTEBOOK_DIR = "examples/notebooks"
+COLAB_URL = "https://colab.research.google.com/github/eigenorbit/eigenkit/blob/main/"
+COLAB_BADGE = "https://colab.research.google.com/assets/colab-badge.svg"
 
 FENCE = re.compile(r"^```(\w*)\s*$")
+EXTRAS = re.compile(r"^extras:\s*\[([\w\s,-]*)\]\s*$")
 ADMONITION = re.compile(r'^!!!\s+(\w+)(?:\s+"(.*)")?\s*$')
 LINK = re.compile(r"(!?)\[([^\]]*)\]\(([^)\s]+)\)")
 IMAGE_ATTR = re.compile(r"\{\s*\.theme-image-(light|dark)\s*\}\s*$")
@@ -140,6 +150,33 @@ def convert_prose(lines):
     return out
 
 
+def split_front_matter(lines, path):
+    """Separate a page's YAML front matter from its body.
+
+    Only the `extras` key is read, as a flow list on one line. The generator is
+    standard library only, so it parses that one shape and rejects any other
+    `extras` line rather than guess.
+
+    Args:
+        lines (list): The page's lines.
+        path (str): The page, for the error message.
+
+    Returns:
+        The list of extras and the body lines after the front matter.
+    """
+    if not lines or lines[0] != "---":
+        return [], lines
+    end = lines.index("---", 1)
+    extras = []
+    for line in lines[1:end]:
+        if line.startswith("extras:"):
+            match = EXTRAS.match(line)
+            if not match:
+                sys.exit("%s: write extras as a list, e.g. extras: [torch, viz]" % path)
+            extras = [name.strip() for name in match.group(1).split(",") if name.strip()]
+    return extras, lines[end + 1 :]
+
+
 def cell(kind, source, index, slug):
     """Build one notebook cell.
 
@@ -180,12 +217,18 @@ def build(path):
     """
     slug = os.path.basename(path)[: -len(".md")]
     lines = io.open(path, encoding="utf-8").read().split("\n")
+    extras, lines = split_front_matter(lines, path)
 
     # No generated-from banner. That the page is the source of truth is written
     # down in this module's docstring; a cell repeating it inside the artefact
     # is one that people delete by hand, and `--check` would then report an
     # extra cell where there is no real difference.
-    cells = []
+    package = '"eigenkit[%s]"' % ",".join(extras) if extras else "eigenkit"
+    url = "%s%s/%s.ipynb" % (COLAB_URL, NOTEBOOK_DIR, slug)
+    cells = [
+        cell("markdown", "[![Open in Colab](%s)](%s)" % (COLAB_BADGE, url), 0, slug),
+        cell("code", "%%pip install -q %s" % package, 1, slug),
+    ]
     prose = []
     last_was_code = False
 

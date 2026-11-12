@@ -77,6 +77,17 @@ jobs:
       extras: "all,perceval"
       runs-on: macos-latest
 
+  test-windows:
+    # The full suite on Windows, which the package supports: there the
+    # `chemistry` extra leaves PySCF out. One Python version, as on macOS.
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    uses: ./.github/workflows/_test.yml
+    with:
+      python-versions: '["3.13"]'
+      extras: "all,perceval"
+      runs-on: windows-latest
+
   test-core-only:
     # The numpy core must install, import, and run with NO optional extras
     # (no torch / pennylane / qiskit / ...). Enforces the import-linter
@@ -117,7 +128,7 @@ jobs:
     # test job passed or was turned off by `changes`. `always()`, not
     # `!cancelled()`: a cancelled run must fail this check, not skip it,
     # because a skipped check counts as passed.
-    needs: [changes, test, test-macos, test-core-only, test-missing-importorskip]
+    needs: [changes, test, test-macos, test-windows, test-core-only, test-missing-importorskip]
     if: always()
     runs-on: ubuntu-latest
     steps:

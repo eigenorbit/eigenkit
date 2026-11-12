@@ -2,6 +2,8 @@
 
 [![PyPI](https://img.shields.io/pypi/v/eigenkit)](https://pypi.org/project/eigenkit/)
 [![Python](https://img.shields.io/pypi/pyversions/eigenkit)](https://pypi.org/project/eigenkit/)
+[![CI](https://github.com/eigenorbit/eigenkit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/eigenorbit/eigenkit/actions/workflows/ci.yml)
+[![arXiv](https://img.shields.io/badge/arXiv-2611.02979-b31b1b.svg)](https://arxiv.org/abs/2611.02979)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/eigenorbit/eigenkit/blob/main/LICENSE)
 [![Docs](https://img.shields.io/badge/docs-docs.kit.eigenorbit.com-informational)](https://docs.kit.eigenorbit.com)
 [![Qiskit Ecosystem](https://qisk.it/e-df43ee68)](https://qisk.it/e)

@@ -70,3 +70,15 @@ gives the assistant two tools:
       }
     }
     ```
+
+## Context7
+
+[Context7](https://context7.com) is a documentation index that coding
+assistants query through its own MCP server. eigenkit is indexed there as
+[`/eigenorbit/eigenkit`](https://context7.com/eigenorbit/eigenkit), from the
+pages of these docs. With the Context7 server connected, name the library in
+the prompt:
+
+```text
+Train an HQNC classifier on the moons dataset with eigenkit. use library /eigenorbit/eigenkit
+```

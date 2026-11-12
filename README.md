@@ -21,7 +21,7 @@ processor, so moving an algorithm to another backend means changing the
 
 ## Why move between backends
 
-No backend suits every workload, so it is often worth trying several.
+No backend suits every workload, so it is usually worth trying several.
 
 Simulators differ in what they are fast at. Which one finishes first depends on
 the number of qubits, the structure of the circuit and how much entanglement it

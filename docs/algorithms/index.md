@@ -4,7 +4,8 @@ These pages explain how each algorithm in eigenkit works: what happens between t
 data that you put in and the result that it gives back. For the interface itself
 (the arguments of the constructors, the return types, saving a model), see the
 [Estimators guide](../user-guide/estimators.md) and the API Reference, which is
-generated from the code.
+generated from the code. For when a method is worth using, and how its results compare
+with a classical baseline, see the [EigenOrbit Library](https://eigenorbit.com/library/).
 
 | Page | What it computes | What it gives back |
 |---|---|---|

@@ -328,3 +328,7 @@ The details of the interface are in the [API reference](../api/algorithms.md). I
 change only one parameter while you experiment, change `n_eigenvalue_qubits`: it
 controls the resolution of the phase estimation. The papers are listed in
 [References](references.md#hhl-linear-systems).
+
+To decide whether HHL is worth using on your problem, use the
+[checklist of its conditions](https://eigenorbit.com/library/algorithms/hhl-harrow-hassidim-lloyd/)
+in the EigenOrbit Library, which comes with resource estimates.

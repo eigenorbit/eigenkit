@@ -141,3 +141,7 @@ and the parts in
 [memory-capacity example](../examples/reservoir-memory.md) is where the results
 above come from. The papers are listed in
 [References](references.md#quantum-reservoir-computing).
+
+The EigenOrbit Library
+[tests a quantum reservoir on volatility forecasting](https://eigenorbit.com/library/finance/market-volatility-forecasting-qrc/)
+against a classical baseline, and shows how to test one on your own series.

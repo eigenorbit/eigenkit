@@ -1,5 +1,8 @@
 """Generate API reference pages at build time via mkdocs-gen-files."""
 
+import ast
+import json
+import re
 from pathlib import Path
 
 import mkdocs_gen_files
@@ -168,6 +171,102 @@ def write_member_directive(fd, module_id: str, member: str) -> None:
     fd.write("\n")
 
 
+# What a search result shows for a page: its <title> and its meta description.
+# Both are taken from the module docstring and written as front matter.
+# `html_title` is read by `overrides/main.html`. Front matter `title` is not used:
+# it would also replace the short module name in the header and in the site search.
+TITLE_MAX = 70
+TITLE_SUFFIX = " | eigenkit API"
+DESCRIPTION_MAX = 160
+
+
+def main_member_docstring(tree: ast.Module, stem: str) -> str:
+    """The docstring of the member that a module with no docstring is named after."""
+    members = [
+        node
+        for node in tree.body
+        if isinstance(node, (ast.ClassDef, ast.FunctionDef))
+        and not node.name.startswith("_")
+    ]
+    # `hqnc.py` is described by `HQNC`. Failing a member of the module's own name,
+    # the first one that is not a result container (`HHLResult` before `HHL`).
+    members.sort(
+        key=lambda node: (
+            node.name.lower() != stem.replace("_", ""),
+            node.name.endswith("Result"),
+        )
+    )
+    return (ast.get_docstring(members[0]) or "") if members else ""
+
+
+def summary_sentences(py_file: Path) -> list[str]:
+    """The opening sentences of the module docstring, as plain text."""
+    tree = ast.parse(py_file.read_text(encoding="utf-8"))
+    docstring = ast.get_docstring(tree) or main_member_docstring(tree, py_file.stem)
+    prose = []
+    for paragraph in docstring.split("\n\n"):
+        # A list, a code fence or an `Example:` section ends the opening prose.
+        if not re.match(r"[A-Za-z]|`[^`]", paragraph) or re.match(r"\w+:\n", paragraph):
+            break
+        prose.append(paragraph)
+    # A link keeps its text.
+    text = re.sub(r"\[([^\]]*)\](\[[^\]]*\]|\([^)]*\))", r"\1", " ".join(prose))
+    sentences = []
+    for sentence in re.split(
+        r"(?<=[.!?])(?<![ei]\.[ge]\.)\s+(?=[A-Z`*])", " ".join(text.split())
+    ):
+        # A formula has no plain-text form, and a paragraph that ends on a colon
+        # only introduces the list or the code block after it.
+        if "\\(" in sentence or not sentence.endswith((".", "!", "?")):
+            break
+        # Code spans and emphasis lose their marks; an asterisk inside a code
+        # span is code and stays.
+        sentences.append(
+            re.sub(r"(`+)(.+?)\1|\*+", lambda match: match.group(2) or "", sentence)
+        )
+    return sentences
+
+
+def opening_clause(sentence: str, limit: int) -> str:
+    """`sentence` if it fits in `limit` characters, else its opening clause."""
+    # Up to the first comma, colon, semicolon or dash and, if that is still too
+    # long, up to the first parenthesis. One word ("VQE", "Blocks") says too
+    # little, so such a clause runs on to the next mark. A clause that is still too
+    # long stays whole: cut inside a clause, a title reads as broken, and search
+    # engines shorten a long title themselves.
+    # A comma inside a list of names ("Harrow, Hassidim and Lloyd") is not a clause.
+    for marks in (r"(?:,(?! \w+ and )|[:;]) | [—–] ", r" \("):
+        cuts = [
+            match.start()
+            for match in re.finditer(marks, sentence)
+            if " " in sentence[: match.start()]
+        ]
+        if len(sentence) > limit and cuts:
+            sentence = sentence[: cuts[0]]
+    return sentence
+
+
+def search_title_and_description(py_file: Path, module_id: str) -> tuple[str, str]:
+    sentences = summary_sentences(py_file)
+    if not sentences:
+        return (
+            f"{module_id} API reference | eigenkit",
+            f"API reference for {module_id} in eigenkit, an open-source Python "
+            "library for quantum computing and quantum machine learning.",
+        )
+    name = module_id.rpartition(".")[2]
+    # A summary that opens with the module's own name ("Blocks: reusable parts")
+    # would say it twice.
+    first = re.sub(rf"^{re.escape(name)}: ", "", sentences[0], flags=re.IGNORECASE)
+    lead = opening_clause(first.rstrip("."), TITLE_MAX - len(f"{name}: {TITLE_SUFFIX}"))
+    description = sentences[0]
+    for sentence in sentences[1:]:
+        if len(description) + 1 + len(sentence) > DESCRIPTION_MAX:
+            break
+        description += " " + sentence
+    return f"{name}: {lead}{TITLE_SUFFIX}", description
+
+
 for py_file in sorted(pkg_root.rglob("*.py")):
     rel = py_file.relative_to(pkg_root)
     parts = rel.parts  # e.g. ('layers', 'q.py') or ('_blocks', ...)
@@ -194,7 +293,14 @@ for py_file in sorted(pkg_root.rglob("*.py")):
 
     nav[nav_key] = nav_path.as_posix()
 
+    html_title, description = search_title_and_description(py_file, module_id)
+
     with mkdocs_gen_files.open(doc_path, "w") as fd:
+        # A JSON string is a valid YAML scalar, so `json.dumps` does the quoting.
+        fd.write("---\n")
+        fd.write(f"html_title: {json.dumps(html_title, ensure_ascii=False)}\n")
+        fd.write(f"description: {json.dumps(description, ensure_ascii=False)}\n")
+        fd.write("---\n\n")
         if module_id == "eigenkit.algorithms":
             fd.write("# algorithms\n\n")
             for member in algorithms_api_members:

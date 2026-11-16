@@ -75,3 +75,8 @@ and issues a warning. `epsilon` must be in \((0, \pi/8)\).
 The details of the interface are in the [API reference](../api/algorithms.md). The
 same idea also appears in `PortfolioRiskEstimator`, where the ancilla marks a tail
 loss. The papers are listed in [References](references.md#iqae-amplitude-estimation).
+
+The EigenOrbit Library measures
+[amplitude estimation against Monte Carlo](https://eigenorbit.com/library/comparisons/qae-vs-monte-carlo/)
+to show when the quadratic speed-up is real, and repeats the comparison for
+[Value at Risk and Conditional Value at Risk](https://eigenorbit.com/library/finance/var-cvar-risk-estimation-iqae/).

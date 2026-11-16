@@ -79,7 +79,9 @@ and the parities in a balanced tree instead, which shortens these strings to
 ### Step 3: choose an ansatz
 
 The ansatz is the trial circuit whose angles the optimiser tunes. The library
-provides two, which balance physical accuracy against the depth of the circuit.
+provides two, which balance physical accuracy against the depth of the circuit. For
+the concept itself, see the [ansatz explainer](https://eigenorbit.com/library/concepts/ansatz/)
+in the EigenOrbit Library.
 
 **Hardware-efficient.** This is the default. It has layers of rotations and
 entangling gates, chosen because a device can run them, not because chemistry
@@ -135,3 +137,7 @@ The interface of the solver is in the [chemistry reference](../api/chemistry/vqe
 and the [Chemistry guide](../user-guide/chemistry.md) covers the whole pipeline with
 working code. The papers are listed in
 [References](references.md#vqe-the-variational-quantum-eigensolver).
+
+The EigenOrbit Library uses VQE to
+[find the bond lengths of two molecules](https://eigenorbit.com/library/chemistry-materials/molecular-optimization-vqe/),
+and checks the results against exact classical chemistry.

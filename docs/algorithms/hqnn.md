@@ -90,3 +90,8 @@ modules. Other HQNN examples focus on one dataset each:
 [circles](../examples/circles-hqnc.md), and
 [concrete strength](../examples/cement-hqnr.md). The papers are listed in
 [References](references.md#hqnn-hybrid-quantum-neural-networks).
+
+The EigenOrbit Library explains
+[what a quantum neural network and a hybrid one are](https://eigenorbit.com/library/concepts/quantum-neural-networks/),
+and tests whether the quantum layer helps by
+[comparing an HQNN with a classical network of the same size](https://eigenorbit.com/library/comparisons/hqnn-vs-classical-neural-network/).

@@ -65,3 +65,8 @@ small. The current mixer is the standard transverse field \(\sum_i X_i\).
 The interface of the solver is in the [QAOA reference](../api/optimization/qaoa.md).
 QAOA also appears in the [architecture notes](../architecture-diagrams.md). The papers
 are listed in [References](references.md#qaoa-combinatorial-optimisation).
+
+The EigenOrbit Library shows
+[QAOA on a real problem](https://eigenorbit.com/library/algorithms/qaoa-quantum-approximate-optimization-algorithm/):
+how to write the problem for it, which classical baseline to compare it with, and how
+to read the results.

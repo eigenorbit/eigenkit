@@ -8,10 +8,14 @@
 {% endblock %}
 
 {#- Search engines show the home page's title; the others keep Material's.
-    `page.is_homepage` is false here because index.md sits in a nav section. -#}
+    `page.is_homepage` is false here because index.md sits in a nav section.
+    An API reference page brings its own title as `html_title` in its front
+    matter (`docs/gen_ref_pages.py`). -#}
 {% block htmltitle %}
   {% if page and page.file.src_uri == "index.md" %}
     <title>{{ config.extra.home_title }}</title>
+  {% elif page and page.meta and page.meta.html_title %}
+    <title>{{ page.meta.html_title }}</title>
   {% else %}
     {{ super() }}
   {% endif %}
@@ -28,6 +32,8 @@
   {% set is_home = page and page.file.src_uri == "index.md" %}
   {% if is_home %}
     {% set preview_title = config.extra.home_title %}
+  {% elif page and page.meta and page.meta.html_title %}
+    {% set preview_title = page.meta.html_title %}
   {% elif page and page.title %}
     {% set preview_title = (page.title | striptags) ~ " - " ~ config.site_name %}
   {% else %}

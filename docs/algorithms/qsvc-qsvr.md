@@ -86,3 +86,7 @@ and the [Quantum Kernels guide](../user-guide/kernels.md) to inspect the kernel
 matrix. The Iris example of hyperparameter optimisation uses `QSVC` inside
 [GridSearchCV](../examples/hpo-qsvc-iris.md). The papers are listed in
 [References](references.md#qsvc-qsvr-quantum-kernels).
+
+The EigenOrbit Library
+[benchmarks quantum kernels against tuned classical SVMs](https://eigenorbit.com/library/comparisons/qsvm-vs-classical-svm/),
+and shows how to run such a comparison fairly.

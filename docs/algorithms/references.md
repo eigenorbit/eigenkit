@@ -257,6 +257,13 @@ These papers cover the orthogonal networks of `eigenkit.orthogonal`.
   [arXiv:2311.06243](https://arxiv.org/abs/2311.06243); X. Ma et al., *Parameter
   Efficient Quasi-Orthogonal Fine-Tuning via Givens Rotation*, ICML (2024),
   [arXiv:2404.04316](https://arxiv.org/abs/2404.04316).
+- **Certified fine-tuning with butterfly adapters.** O. Tsurkan, L. Domingo,
+  V. Orlova, A. Sagingalieva, I. Zalaudek, R. D. Caposiena Caro, *Quantum-inspired
+  orthogonal adapters for certifiably robust medical image classification* (2026),
+  [arXiv:2611.18775](https://arxiv.org/abs/2611.18775). It shows that a butterfly
+  adapter keeps the Lipschitz bound, and with it the certified radius, of the
+  network it adapts, while LoRA and full fine-tuning do not. The two certified
+  examples follow it.
 
 ## Cross-cutting foundations
 

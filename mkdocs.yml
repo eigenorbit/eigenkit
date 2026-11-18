@@ -157,6 +157,10 @@ nav:
       - Benchmark on Iris: examples/benchmark-iris.md
     - Reservoir Computing:
       - Quantum Reservoir Memory: examples/reservoir-memory.md
+    - Orthogonal Networks:
+      - Certified Classifier from Orthogonal Layers: examples/orthogonal-certified-training.md
+      - Certified Fine-Tuning with Butterfly Adapters: examples/orthogonal-certified-fine-tuning.md
+      - Orthogonal QNN as a Compact Classifier: examples/orthogonal-qnn-classifier.md
     - Quantum Algorithms:
       - MaxCut with QAOA: examples/qaoa-max-cut.md
       - Ground-State Energy with VQE: examples/vqe-fermi-hubbard.md

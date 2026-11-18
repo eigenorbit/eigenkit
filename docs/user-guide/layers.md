@@ -172,7 +172,9 @@ load, so it gives the uniform distribution \(1/n\) on all \(n\) qubits, and no
 gradient flows back to it; the other rows of the batch are not affected. The
 circuit simulates \(2^n\) amplitudes, so the layer is practical up to about 20 qubits;
 `eigenkit.orthogonal.torch.Orthogonal` computes the same matrix classically at any
-width.
+width. The [orthogonal QNN classifier](../examples/orthogonal-qnn-classifier.md)
+trains the matrix classically, runs it as a circuit, and compares it
+with classical networks and `HQNC` on PneumoniaMNIST.
 
 ## `MinMaxNorm`
 

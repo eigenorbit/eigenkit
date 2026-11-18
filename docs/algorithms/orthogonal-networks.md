@@ -184,5 +184,12 @@ The limits come from the same structure:
 ## Next
 
 The interface is in [Orthogonal Networks](../user-guide/orthogonal.md) and in the
-`OrthogonalQNN` section of [Layers](../user-guide/layers.md). The papers are listed
-in [References](references.md#orthogonal-networks).
+`OrthogonalQNN` section of [Layers](../user-guide/layers.md). Three examples use
+them on medical images: the
+[certified classifier](../examples/orthogonal-certified-training.md) trains a deep
+network of butterfly layers that keeps its Lipschitz bound at 1, the
+[certified fine-tuning example](../examples/orthogonal-certified-fine-tuning.md)
+adapts it from axial to coronal CT slices without losing its certificate, and the
+[orthogonal QNN classifier](../examples/orthogonal-qnn-classifier.md) compares an
+orthogonal circuit with classical networks and a variational circuit. The papers
+are listed in [References](references.md#orthogonal-networks).

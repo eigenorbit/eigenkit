@@ -252,7 +252,10 @@ raises a `RuntimeError`.
 
 `target_modules` takes qualified names or a predicate `(name, module) -> bool`.
 `fold_bn(conv, bn)` folds an eval-mode BatchNorm into the convolution before it,
-so that a convolution and its BatchNorm can be adapted as one layer.
+so that a convolution and its BatchNorm can be adapted as one layer. The
+[certified fine-tuning example](../examples/orthogonal-certified-fine-tuning.md)
+compares butterfly adapters with head-only training, LoRA and full fine-tuning
+from axial to coronal CT slices.
 
 ### Certified robustness
 

@@ -34,7 +34,7 @@ dashes end up mid-sentence on the page. `find_unfenced_code.py` also checks
 markdown structure and catches this, so run both after using the rewrapper.
 
 `build_example_notebooks.py` is the other tool. It rebuilds
-`examples/notebooks/*.ipynb` from the sixteen pages in `docs/examples/`, one
+`examples/notebooks/*.ipynb` from the nineteen pages in `docs/examples/`, one
 notebook per page, prose as markdown cells and every ```` ```python ```` block
 as an empty code cell ready to run. The pages are the source of truth — they are
 what the site publishes and what the checks above run against — so the notebooks

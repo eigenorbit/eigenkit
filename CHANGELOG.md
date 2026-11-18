@@ -2,6 +2,82 @@
 
 <!-- version list -->
 
+## v1.3.0 (2026-11-18)
+
+### Features
+
+- Load .eigenkit bundles without pickle ([#41](https://github.com/eigenorbit/eigenkit/pull/41),
+  [`43e2f3a`](https://github.com/eigenorbit/eigenkit/commit/43e2f3a62578edfe1834c32a78a9725050c3a6be))
+
+### Bug Fixes
+
+- **datasets**: Verify downloads against certifi's CA certificates too
+  ([#60](https://github.com/eigenorbit/eigenkit/pull/60),
+  [`786fd5d`](https://github.com/eigenorbit/eigenkit/commit/786fd5d32e0ae07a25afe4c056e8ffc1b92a37c3))
+
+### Documentation
+
+- Add CI and arXiv badges to the README ([#51](https://github.com/eigenorbit/eigenkit/pull/51),
+  [`a07c6da`](https://github.com/eigenorbit/eigenkit/commit/a07c6da2b41fa8558d71e932cd1a5129005c7f42))
+
+- Add the orthogonal-network examples and cite the adapters paper
+  ([#71](https://github.com/eigenorbit/eigenkit/pull/71),
+  [`e60ba46`](https://github.com/eigenorbit/eigenkit/commit/e60ba46a843e22f7118396e14ef9c8425d9713e7))
+
+- Count visits with Cloudflare Web Analytics ([#65](https://github.com/eigenorbit/eigenkit/pull/65),
+  [`e2d8279`](https://github.com/eigenorbit/eigenkit/commit/e2d8279bf615cb5fcb7fbe7d3e831e7b7ebb077e))
+
+- Describe API pages in their titles and link the Library
+  ([#66](https://github.com/eigenorbit/eigenkit/pull/66),
+  [`8f43aff`](https://github.com/eigenorbit/eigenkit/commit/8f43affd0bf9438114ab696cece0899b0c84dab1))
+
+- Describe the library for Context7 and add it to Use with AI
+  ([#52](https://github.com/eigenorbit/eigenkit/pull/52),
+  [`9b1c2d9`](https://github.com/eigenorbit/eigenkit/commit/9b1c2d993aedd18525802299f4dfa0872d869fd5))
+
+- Open the example notebooks in Google Colab ([#54](https://github.com/eigenorbit/eigenkit/pull/54),
+  [`3733e24`](https://github.com/eigenorbit/eigenkit/commit/3733e2452125ef647697a906bcb136c066919989))
+
+- Publish the Context7 claim key on the docs site
+  ([#57](https://github.com/eigenorbit/eigenkit/pull/57),
+  [`d55f3fc`](https://github.com/eigenorbit/eigenkit/commit/d55f3fc5cb550dbf0c4dfe213e426d301d060bbb))
+
+- Send questions to GitHub Discussions and announce releases there
+  ([#53](https://github.com/eigenorbit/eigenkit/pull/53),
+  [`4c8fed8`](https://github.com/eigenorbit/eigenkit/commit/4c8fed8af6c21b1bc55f48df4fec7f0fe7c0e782))
+
+### Continuous Integration
+
+- Run the test suite on Windows ([#61](https://github.com/eigenorbit/eigenkit/pull/61),
+  [`4e2470d`](https://github.com/eigenorbit/eigenkit/commit/4e2470d84c40125873947483fecbfaec27c08fa5))
+
+- Skip the test jobs on documentation-only pull requests
+  ([#58](https://github.com/eigenorbit/eigenkit/pull/58),
+  [`89832fe`](https://github.com/eigenorbit/eigenkit/commit/89832fe7c28dea3a89f1133d11fb16ad29930822))
+
+- Store main's coverage so pull requests compare against it
+  ([#44](https://github.com/eigenorbit/eigenkit/pull/44),
+  [`f2e6d87`](https://github.com/eigenorbit/eigenkit/commit/f2e6d87673a53691874710920a74618f8775464c))
+
+### Chores
+
+- Add the Context7 claim key to context7.json
+  ([#56](https://github.com/eigenorbit/eigenkit/pull/56),
+  [`2b78533`](https://github.com/eigenorbit/eigenkit/commit/2b78533ecde7d31da934763d7f2109742a01dc9a))
+
+- **deps**: Bump pyscf, ruff, import-linter and mkdocs-material
+  ([#50](https://github.com/eigenorbit/eigenkit/pull/50),
+  [`344f629`](https://github.com/eigenorbit/eigenkit/commit/344f62984c4143aaef5717981c661085a1e0e56a))
+
+- **deps**: Bump ruff, amazon-braket-sdk and python-coverage-comment-action
+  ([#70](https://github.com/eigenorbit/eigenkit/pull/70),
+  [`3a5687b`](https://github.com/eigenorbit/eigenkit/commit/3a5687bd1aaa39fb99721994ab1ae3c85ef335ba))
+
+- **deps**: Bump soupsieve to 4.1 and opentelemetry-api to 1.45.2
+  ([#64](https://github.com/eigenorbit/eigenkit/pull/64),
+  [`d1f5772`](https://github.com/eigenorbit/eigenkit/commit/d1f5772ee690108a40ece3d39cc5ef6178aa20e4))
+
+
 ## v1.2.2 (2026-11-09)
 
 ### Bug Fixes

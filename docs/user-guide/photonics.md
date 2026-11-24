@@ -261,10 +261,11 @@ router = RouterPhotonicBackend(RouterConfig(device="quandela/sim_slos", shots=20
 states = run_photonic_reservoir(spec, weights, sequences, executor=router)
 ```
 
-The reservoir sends all its time steps as **one** job, because the compiled circuit of
-this executor has a method `run_batch(weights, rows)`. `run_photonic_reservoir` calls
-it once when an executor offers it, and calls `run` for each step when it does not, as
-with the local `PercevalBackend`. The results are sampled, so gradients are not
+The reservoir sends all its time steps in **one** call, because the compiled circuit of
+this executor has a method `run_batch(weights, rows)`. The executor sends them as one
+job, or as a few jobs when the device limits the rows of a job.
+`run_photonic_reservoir` calls `run_batch` once when an executor offers it, and calls
+`run` for each step when it does not, as with the local `PercevalBackend`. The results are sampled, so gradients are not
 available, as on Quandela Cloud.
 
 Two functions support services that submit jobs for their users, as the Router does.

@@ -1,6 +1,8 @@
 """Building and reading a Quandela Cloud job without a connection."""
 
 import json
+import sys
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -10,6 +12,9 @@ import pytest
 pcvl = pytest.importorskip("perceval")
 
 from eigenkit.core.ir import Constant, resolve  # noqa: E402
+from eigenkit.photonics.backends.perceval_backend import (  # noqa: E402
+    build_perceval_circuit,
+)
 from eigenkit.photonics.backends.perceval_remote import (  # noqa: E402
     cloud_job_body,
     cloud_job_counts,
@@ -193,3 +198,62 @@ def test_a_job_without_counts_is_refused(results):
 def test_a_result_without_the_results_key_is_refused():
     with pytest.raises(ValueError, match="no counts"):
         cloud_job_counts({"job_id": "x"}, 4)
+
+
+def test_each_row_builds_the_circuit_the_single_run_path_builds():
+    rows = np.random.default_rng(3).uniform(-50, 50, (4, 2))
+    body = _body(rows)
+    experiment = pcvl.serialization.deserialize(body["payload"]["experiment"])
+    for row, iteration in zip(rows, body["payload"]["iterator"], strict=True):
+        bound = experiment.copy()
+        parameters = bound.get_circuit_parameters()
+        for name, value in iteration["circuit_params"].items():
+            parameters[name].set_value(value)
+        built = np.array(bound.unitary_circuit().compute_unitary())
+        expected = np.array(build_perceval_circuit(SPEC, WEIGHTS, row).compute_unitary())
+        np.testing.assert_allclose(built, expected, atol=1e-12)
+
+
+def test_concurrent_builds_do_not_mix():
+    # Perceval dispatches some methods through state shared by all instances, so
+    # unguarded concurrent builds can swap input states or corrupt the experiment.
+    jobs = []
+    for index in range(16):
+        spec, weights = random_reservoir_spec(
+            4,
+            2,
+            depth=2,
+            input_state=(1, 1, 0, 0) if index % 2 else (1, 0, 1, 0),
+            rng=np.random.default_rng(index),
+        )
+        jobs.append((spec, weights, np.full((2, 2), 0.1 * index), f"eo-{index}"))
+
+    def build(job):
+        spec, weights, rows, name = job
+        body = cloud_job_body(
+            spec,
+            weights,
+            rows,
+            platform="sim:slos",
+            platform_details=DETAILS,
+            shots=10,
+            job_name=name,
+        )
+        return json.dumps(body, sort_keys=True)
+
+    expected = [build(job) for job in jobs]
+    interval = sys.getswitchinterval()
+    sys.setswitchinterval(1e-5)
+    try:
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            for _ in range(15):
+                assert list(pool.map(build, jobs)) == expected
+    finally:
+        sys.setswitchinterval(interval)
+
+
+def test_a_platform_without_sample_count_is_refused():
+    details = json.loads(json.dumps(DETAILS))
+    details["specs"]["available_commands"] = ["samples"]
+    with pytest.raises(ValueError, match="sample_count"):
+        _body(np.zeros(2), platform_details=details)

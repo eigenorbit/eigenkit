@@ -2,7 +2,7 @@
 
 This module is the photonic counterpart of `core.wire`. It turns a
 `PhotonicCircuitSpec` into plain JSON data and back, so that a circuit can be sent
-to a service or stored. It holds only data, and uses neither Perceval nor NumPy.
+to a service or stored. It holds only data, and does not use Perceval.
 
 The angles of the components use the same encoding as the parameters of the qubit
 circuits, so a `WeightRef` or an `InputRef` means the same thing in both.
@@ -10,19 +10,44 @@ circuits, so a `WeightRef` or an `InputRef` means the same thing in both.
 
 from __future__ import annotations
 
+import numbers
+
 from ..core.blocks import _param_from_json, _param_to_json
 from .ir import BeamSplitter, Permutation, PhaseShifter, PhotonicCircuitSpec
 
 
+def _plain(value):
+    """Replace the NumPy scalars of an encoded angle with Python numbers.
+
+    The parameter encoding of the qubit circuits writes numbers as it finds them,
+    and `json.dumps` refuses a NumPy integer or a 32-bit float.
+    """
+    if isinstance(value, dict):
+        return {key: _plain(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_plain(item) for item in value]
+    if isinstance(value, bool | str) or type(value) in (int, float):
+        return value
+    if isinstance(value, numbers.Integral):
+        return int(value)
+    if isinstance(value, numbers.Real):
+        return float(value)
+    return value
+
+
+def _angle_to_json(angle) -> dict:
+    return _plain(_param_to_json(angle))
+
+
 def _component_to_json(comp) -> dict:
     if isinstance(comp, PhaseShifter):
-        return {"c": "PS", "mode": int(comp.mode), "phi": _param_to_json(comp.phi)}
+        return {"c": "PS", "mode": int(comp.mode), "phi": _angle_to_json(comp.phi)}
     if isinstance(comp, BeamSplitter):
         return {
             "c": "BS",
             "modes": [int(m) for m in comp.modes],
-            "theta": _param_to_json(comp.theta),
-            "phi": _param_to_json(comp.phi),
+            "theta": _angle_to_json(comp.theta),
+            "phi": _angle_to_json(comp.phi),
         }
     if isinstance(comp, Permutation):
         return {"c": "PERM", "perm": [int(m) for m in comp.perm]}

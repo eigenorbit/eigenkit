@@ -7,7 +7,7 @@ import sys
 import numpy as np
 import pytest
 
-from eigenkit.core.ir import Constant, InputRef, WeightRef
+from eigenkit.core.ir import Constant, InputRef, Scale, Sum, WeightRef
 from eigenkit.photonics.ir import (
     BeamSplitter,
     Permutation,
@@ -76,6 +76,27 @@ def test_numpy_scalars_encode_as_plain_json():
     assert type(data["n_modes"]) is int
     assert type(data["components"][0]["mode"]) is int
     assert type(data["input_state"][0]) is int
+
+
+def test_numpy_scalars_inside_angles_encode_as_plain_json():
+    angle = Sum((Scale(InputRef(np.int64(0)), np.float32(0.5)), WeightRef(np.int64(1))))
+    spec = PhotonicCircuitSpec(
+        n_modes=2,
+        n_weights=2,
+        n_inputs=1,
+        components=(
+            PhaseShifter(0, angle),
+            PhaseShifter(1, Constant(np.float32(0.25))),
+        ),
+        input_state=(1, 0),
+    )
+    data = photonic_spec_to_json(spec)
+    assert json.loads(json.dumps(data)) == data
+    phi = data["components"][0]["phi"]
+    assert type(phi["es"][0]["e"]["i"]) is int
+    assert type(phi["es"][0]["f"]) is float
+    assert type(phi["es"][1]["i"]) is int
+    assert type(data["components"][1]["phi"]["v"]) is float
 
 
 @pytest.mark.parametrize(

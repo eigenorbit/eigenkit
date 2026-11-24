@@ -31,6 +31,7 @@ from __future__ import annotations
 import contextlib
 import json
 import os
+import threading
 import time
 import warnings
 
@@ -82,6 +83,12 @@ def _counts_to_distribution(counts, n_modes):
             "shots or lower min_detected_photons"
         )
     return {fock_tuple(state, n_modes): count / total for state, count in counts.items()}
+
+
+# Perceval dispatches some methods (for example `with_input`, and the serializer)
+# through state that all instances share, so two threads that build a job at the same
+# time can swap input states or corrupt an experiment. One build takes milliseconds.
+_BUILD_LOCK = threading.Lock()
 
 
 class _CaptureHandler:
@@ -153,6 +160,9 @@ def cloud_job_body(
     /api/jobs`). A service that holds the token can send it later. The job samples
     the circuit once for each row of `inputs`, so a batch is one job.
 
+    Several threads can call this function at the same time: the calls into Perceval
+    run one after another.
+
     Args:
         spec (PhotonicCircuitSpec): The circuit to run.
         weights (np.ndarray): The 1-D weight vector, used for every row.
@@ -175,7 +185,8 @@ def cloud_job_body(
 
     Raises:
         ValueError: If `weights` is not 1-D with the length that the spec declares,
-            or if `inputs` is not one or more rows of that length.
+            if `inputs` is not one or more rows of that length, or if the platform
+            does not offer the `sample_count` command.
     """
     import perceval as pcvl
     from perceval.algorithm import Sampler
@@ -194,33 +205,41 @@ def cloud_job_body(
             f"or (rows, {spec.n_inputs}) with at least one row"
         )
 
-    handler = _CaptureHandler(platform, platform_details)
-    processor = pcvl.RemoteProcessor(rpc_handler=handler)
-    circuit, angles = _parametric_circuit(spec)
-    processor.set_circuit(circuit)
-    processor.min_detected_photons_filter(
-        spec.n_photons if min_detected_photons is None else min_detected_photons
-    )
-    processor.with_input(pcvl.BasicState(list(spec.input_state)))
     shots = int(shots)
-    sampler = Sampler(processor, max_shots_per_call=shots)
-    sampler.add_iteration_list(
-        [
-            {
-                "circuit_params": {
-                    f"a{index}": float(resolve(angle, weights, row))
-                    for index, angle in enumerate(angles)
-                },
-                "max_samples": shots,
-                "max_shots": shots,
-            }
-            for row in rows
-        ]
-    )
-    job = sampler.sample_count
-    job.name = job_name
-    job.execute_async(shots)
-    return handler.body
+    handler = _CaptureHandler(platform, platform_details)
+    with _BUILD_LOCK:
+        processor = pcvl.RemoteProcessor(rpc_handler=handler)
+        circuit, angles = _parametric_circuit(spec)
+        processor.set_circuit(circuit)
+        processor.min_detected_photons_filter(
+            spec.n_photons if min_detected_photons is None else min_detected_photons
+        )
+        processor.with_input(pcvl.BasicState(list(spec.input_state)))
+        sampler = Sampler(processor, max_shots_per_call=shots)
+        sampler.add_iteration_list(
+            [
+                {
+                    "circuit_params": {
+                        f"a{index}": float(resolve(angle, weights, row))
+                        for index, angle in enumerate(angles)
+                    },
+                    "max_samples": shots,
+                    "max_shots": shots,
+                }
+                for row in rows
+            ]
+        )
+        job = sampler.sample_count
+        job.name = job_name
+        job.execute_async(shots)
+    body = handler.body
+    # Without a native `sample_count`, Perceval asks for another command and converts
+    # the result itself; `cloud_job_counts` reads the service's own counts only.
+    if body["payload"]["command"] != "sample_count":
+        raise ValueError(
+            f"the platform {platform!r} does not offer the sample_count command"
+        )
+    return body
 
 
 def cloud_job_counts(result: dict, n_modes: int) -> list[dict]:

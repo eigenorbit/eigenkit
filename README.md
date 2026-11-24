@@ -82,12 +82,13 @@
 | src/eigenkit/photonics/\_\_init\_\_.py                 |       10 |        0 |        2 |        0 |    100% |           |
 | src/eigenkit/photonics/backends/\_\_init\_\_.py        |        2 |        0 |        0 |        0 |    100% |           |
 | src/eigenkit/photonics/backends/perceval\_backend.py   |       73 |        3 |       18 |        2 |     95% |104-105, 239 |
-| src/eigenkit/photonics/backends/perceval\_remote.py    |      108 |        9 |       20 |        0 |     93% |45-49, 167-171 |
+| src/eigenkit/photonics/backends/perceval\_remote.py    |      182 |       10 |       40 |        1 |     95% |51-55, 142, 368-372 |
 | src/eigenkit/photonics/executor.py                     |       22 |        1 |        4 |        2 |     88% |142-\>149, 144 |
 | src/eigenkit/photonics/gradients.py                    |       99 |        5 |       40 |        4 |     94% |92, 102, 134-135, 202 |
 | src/eigenkit/photonics/ir.py                           |       70 |        0 |       22 |        0 |    100% |           |
-| src/eigenkit/photonics/reservoir.py                    |       79 |        2 |       44 |        2 |     97% |  240, 251 |
+| src/eigenkit/photonics/reservoir.py                    |       83 |        2 |       48 |        2 |     97% |  243, 254 |
 | src/eigenkit/photonics/torch.py                        |       41 |        0 |        6 |        0 |    100% |           |
+| src/eigenkit/photonics/wire.py                         |       41 |        2 |       24 |        2 |     94% |    35, 54 |
 | src/eigenkit/qml/\_\_init\_\_.py                       |       27 |        2 |        2 |        0 |     93% |     70-71 |
 | src/eigenkit/qml/\_alignment.py                        |       66 |        4 |       16 |        3 |     91% |207, 221-\>223, 248-250 |
 | src/eigenkit/qml/\_base.py                             |       91 |        6 |       26 |        2 |     93% |185-\>188, 204, 236-237, 251, 255, 282 |
@@ -124,7 +125,7 @@
 | src/eigenkit/torch/layers/minmax.py                    |       39 |        0 |       10 |        0 |    100% |           |
 | src/eigenkit/torch/layers/orthogonal\_qnn.py           |       58 |        1 |       10 |        0 |     99% |       195 |
 | src/eigenkit/torch/layers/reupload.py                  |       29 |        0 |        2 |        0 |    100% |           |
-| **TOTAL**                                              | **13007** |  **670** | **4378** |  **419** | **93%** |           |
+| **TOTAL**                                              | **13126** |  **673** | **4426** |  **422** | **93%** |           |
 
 
 ## Setup coverage badge

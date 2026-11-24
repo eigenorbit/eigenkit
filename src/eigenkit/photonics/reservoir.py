@@ -203,7 +203,10 @@ def run_photonic_reservoir(
         weights (np.ndarray): The frozen weights of the reservoir.
         sequences (np.ndarray): The input sequences, of shape `(B, T, F)`.
         executor (Executor | None): The executor that runs each step. The default
-            is `PercevalBackend()`.
+            is `PercevalBackend()`. If its compiled circuit has a method
+            `run_batch(weights, rows)`, it is called once with all the steps, as
+            the rows of a 2-D array, and returns one distribution for each row. A
+            remote executor uses it to send one job instead of one job per step.
         policy (Stateless | None): The policy whose `expand_inputs` turns each
             timestep into the circuit's `n_inputs` values (`window * F`). The
             default is `Stateless(window=1)`. Policies that carry the state from one
@@ -255,9 +258,16 @@ def run_photonic_reservoir(
 
     compiled = executor.compile(spec)
     flat = inputs_bt.reshape(batch * timesteps, spec.n_inputs)
+    if hasattr(compiled, "run_batch"):
+        dists = compiled.run_batch(weights, flat)
+        if len(dists) != len(flat):
+            raise RuntimeError(
+                f"the executor returned {len(dists)} distributions for {len(flat)} rows"
+            )
+    else:
+        dists = [compiled.run(weights, x) for x in flat]
     rows = np.empty((batch * timesteps, n_features), dtype=np.float64)
-    for row, x in enumerate(flat):
-        dist = compiled.run(weights, x)
+    for row, dist in enumerate(dists):
         if features == "fock":
             rows[row] = fock_probability_features(dist, basis)
         else:

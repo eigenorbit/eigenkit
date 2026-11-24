@@ -363,6 +363,7 @@ source_modules = [
     "eigenkit.photonics.ir",
     "eigenkit.photonics.executor",
     "eigenkit.photonics.gradients",
+    "eigenkit.photonics.wire",
 ]
 forbidden_modules = ["perceval", "torch", "pennylane", "qiskit", "braket", "sklearn", "qulacs"]
 

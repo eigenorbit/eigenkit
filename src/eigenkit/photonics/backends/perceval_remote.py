@@ -29,11 +29,17 @@ a network connection nor a token.
 from __future__ import annotations
 
 import contextlib
+import json
 import os
+import threading
 import time
 import warnings
 
+import numpy as np
+
+from ...core.ir import resolve
 from ...core.provider import CostWarning
+from ..ir import BeamSplitter, PhaseShifter
 from .perceval_backend import build_perceval_circuit, fock_tuple
 
 
@@ -77,6 +83,201 @@ def _counts_to_distribution(counts, n_modes):
             "shots or lower min_detected_photons"
         )
     return {fock_tuple(state, n_modes): count / total for state, count in counts.items()}
+
+
+# Perceval dispatches some methods (for example `with_input`, and the serializer)
+# through state that all instances share, so two threads that build a job at the same
+# time can swap input states or corrupt an experiment. One build takes milliseconds.
+_BUILD_LOCK = threading.Lock()
+
+
+class _CaptureHandler:
+    """A stand-in for Perceval's cloud handler that opens no connection.
+
+    It answers the platform details that the caller already holds, and keeps the
+    body of the job instead of sending it.
+    """
+
+    def __init__(self, platform: str, platform_details: dict) -> None:
+        self.name = platform
+        self.url = ""
+        self.token = ""
+        self.proxies: dict = {}
+        self._platform_details = platform_details
+        self.body: dict | None = None
+
+    def fetch_platform_details(self) -> dict:
+        return self._platform_details
+
+    def create_job(self, cloud_data: dict) -> str:
+        self.body = cloud_data
+        return "not-submitted"
+
+
+def _parametric_circuit(spec):
+    """Build the circuit with one named Perceval parameter per angle.
+
+    Returns the circuit and the angle expressions, in the order of the parameters
+    `a0`, `a1`, and so on. A batch then needs one number per angle and per row,
+    whatever the expressions are.
+    """
+    import perceval as pcvl
+
+    circ = pcvl.Circuit(spec.n_modes)
+    angles = []
+
+    def placeholder(expression):
+        angles.append(expression)
+        return pcvl.P(f"a{len(angles) - 1}")
+
+    for comp in spec.components:
+        if isinstance(comp, PhaseShifter):
+            circ.add(comp.mode, pcvl.PS(placeholder(comp.phi)))
+        elif isinstance(comp, BeamSplitter):
+            theta = placeholder(comp.theta)
+            circ.add(
+                tuple(comp.modes), pcvl.BS(theta=theta, phi_tr=placeholder(comp.phi))
+            )
+        else:
+            circ.add(0, pcvl.PERM(list(comp.perm)))
+    return circ, angles
+
+
+def cloud_job_body(
+    spec,
+    weights,
+    inputs,
+    *,
+    platform: str,
+    platform_details: dict,
+    shots: int,
+    min_detected_photons: int | None = None,
+    job_name: str,
+) -> dict:
+    """Build the body of a Quandela Cloud job, without a connection or a token.
+
+    The body is the JSON that Perceval itself sends to create a job (`POST
+    /api/jobs`). A service that holds the token can send it later. The job samples
+    the circuit once for each row of `inputs`, so a batch is one job.
+
+    Several threads can call this function at the same time: the calls into Perceval
+    run one after another.
+
+    Args:
+        spec (PhotonicCircuitSpec): The circuit to run.
+        weights (np.ndarray): The 1-D weight vector, used for every row.
+        inputs (np.ndarray): One 1-D input vector, or a 2-D array with one input
+            vector in each row. It needs at least one row.
+        platform (str): The name of the Quandela Cloud platform, for example
+            `"sim:slos"`.
+        platform_details (dict): The description of the platform, as the service
+            returns it (`GET /api/platforms/{name}/processor`). Perceval needs it to
+            prepare a job.
+        shots (int): The number of samples asked for in each row. It is also the
+            limit on the shots of each row.
+        min_detected_photons (int | None): Keep only the shots that detect at
+            least this many photons. The default is the number of photons in the
+            input state.
+        job_name (str): The name of the job on Quandela Cloud.
+
+    Returns:
+        The body of the request, as a dictionary that `json.dumps` accepts.
+
+    Raises:
+        ValueError: If `weights` is not 1-D with the length that the spec declares,
+            if `inputs` is not one or more rows of that length, or if the platform
+            does not offer the `sample_count` command.
+    """
+    import perceval as pcvl
+    from perceval.algorithm import Sampler
+
+    weights = np.asarray(weights, dtype=np.float64)
+    if weights.shape != (spec.n_weights,):
+        raise ValueError(
+            f"weights has shape {weights.shape} but the spec needs ({spec.n_weights},)"
+        )
+    rows = np.asarray(inputs, dtype=np.float64)
+    if rows.ndim == 1:
+        rows = rows[np.newaxis, :]
+    if rows.ndim != 2 or rows.shape[0] < 1 or rows.shape[1] != spec.n_inputs:
+        raise ValueError(
+            f"inputs has shape {np.shape(inputs)} but the spec needs ({spec.n_inputs},) "
+            f"or (rows, {spec.n_inputs}) with at least one row"
+        )
+
+    shots = int(shots)
+    handler = _CaptureHandler(platform, platform_details)
+    with _BUILD_LOCK:
+        processor = pcvl.RemoteProcessor(rpc_handler=handler)
+        circuit, angles = _parametric_circuit(spec)
+        processor.set_circuit(circuit)
+        processor.min_detected_photons_filter(
+            spec.n_photons if min_detected_photons is None else min_detected_photons
+        )
+        processor.with_input(pcvl.BasicState(list(spec.input_state)))
+        sampler = Sampler(processor, max_shots_per_call=shots)
+        sampler.add_iteration_list(
+            [
+                {
+                    "circuit_params": {
+                        f"a{index}": float(resolve(angle, weights, row))
+                        for index, angle in enumerate(angles)
+                    },
+                    "max_samples": shots,
+                    "max_shots": shots,
+                }
+                for row in rows
+            ]
+        )
+        job = sampler.sample_count
+        job.name = job_name
+        job.execute_async(shots)
+    body = handler.body
+    # Without a native `sample_count`, Perceval asks for another command and converts
+    # the result itself; `cloud_job_counts` reads the service's own counts only.
+    if body["payload"]["command"] != "sample_count":
+        raise ValueError(
+            f"the platform {platform!r} does not offer the sample_count command"
+        )
+    return body
+
+
+def cloud_job_counts(result: dict, n_modes: int) -> list[dict]:
+    """Read the counts of a finished Quandela Cloud job.
+
+    Args:
+        result (dict): The result of the job, as the service returns it (`GET
+            /api/jobs/{id}/result`).
+        n_modes (int): The number of modes of the circuit.
+
+    Returns:
+        One dictionary `{photon_counts: count}` for each row of the job, in the
+            order of the rows. A job with a single run gives a list of one. A row
+            in which no shot passed the photon filter is an empty dictionary.
+
+    Raises:
+        ValueError: If the result holds no counts, for example because the job
+            failed or was cancelled.
+    """
+    from perceval.serialization import deserialize
+
+    inner = result.get("results") if isinstance(result, dict) else None
+    if isinstance(inner, str):
+        with contextlib.suppress(ValueError):
+            inner = json.loads(inner)
+    if isinstance(inner, dict) and "results_list" in inner:
+        entries = inner["results_list"]
+    elif isinstance(inner, dict) and "results" in inner:
+        entries = [inner]
+    else:
+        raise ValueError(f"the job result has no counts: {str(inner)[:200]!r}")
+    return [
+        {
+            fock_tuple(state, n_modes): int(count)
+            for state, count in deserialize(entry["results"]).items()
+        }
+        for entry in entries
+    ]
 
 
 class RemoteJobHandle:

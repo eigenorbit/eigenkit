@@ -9,6 +9,7 @@ frozen optics act as a useful feature map.
 import numpy as np
 import pytest
 
+from eigenkit.photonics import PercevalBackend
 from eigenkit.photonics.reservoir import (
     fock_basis,
     photon_number_features,
@@ -173,3 +174,52 @@ def test_reservoir_learns_bilinear_memory_task():
     # The linear-on-raw baseline can't fit a product (best linear fit ~ 0 -> MSE ~ var).
     assert reservoir_mse < 0.4 * raw_mse
     assert reservoir_mse < 0.3 * target_var
+
+
+class _BatchCompiled:
+    """A compiled object that also offers `run_batch`, as a remote executor does."""
+
+    def __init__(self, inner, *, batch_result=None):
+        self.inner = inner
+        self.batch_result = batch_result
+        self.batches = []
+        self.single_runs = 0
+
+    def run(self, weights, inputs):
+        self.single_runs += 1
+        return self.inner.run(weights, inputs)
+
+    def run_batch(self, weights, rows):
+        self.batches.append(np.shape(rows))
+        if self.batch_result is not None:
+            return self.batch_result
+        return [self.inner.run(weights, row) for row in rows]
+
+
+class _BatchExecutor:
+    def __init__(self, **compiled_kwargs):
+        self.compiled_kwargs = compiled_kwargs
+        self.compiled = None
+
+    def compile(self, spec):
+        inner = PercevalBackend().compile(spec)
+        self.compiled = _BatchCompiled(inner, **self.compiled_kwargs)
+        return self.compiled
+
+
+def test_run_batch_is_used_once_when_the_executor_has_it():
+    spec, weights = random_reservoir_spec(3, 1, rng=np.random.default_rng(0))
+    sequences = np.random.default_rng(1).uniform(-1, 1, (2, 5, 1))
+    executor = _BatchExecutor()
+    batched = run_photonic_reservoir(spec, weights, sequences, executor=executor)
+    looped = run_photonic_reservoir(spec, weights, sequences)
+    assert executor.compiled.batches == [(10, 1)]
+    assert executor.compiled.single_runs == 0
+    np.testing.assert_allclose(batched, looped)
+
+
+def test_a_batch_of_the_wrong_length_is_refused():
+    spec, weights = random_reservoir_spec(3, 1, rng=np.random.default_rng(0))
+    executor = _BatchExecutor(batch_result=[])
+    with pytest.raises(RuntimeError, match="10 rows"):
+        run_photonic_reservoir(spec, weights, np.zeros((2, 5, 1)), executor=executor)

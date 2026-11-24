@@ -1037,7 +1037,7 @@ wheels = [
 
 [[package]]
 name = "eigenkit"
-version = "1.3.0"
+version = "1.4.0rc1"
 source = { editable = "." }
 dependencies = [
     { name = "numpy" },

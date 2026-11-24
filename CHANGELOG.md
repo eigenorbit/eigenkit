@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v1.4.0-rc.1 (2026-11-24)
+
+### Features
+
+- **photonics**: Wire codec, Quandela job helpers, batched reservoir
+  ([#73](https://github.com/eigenorbit/eigenkit/pull/73),
+  [`b6d0c73`](https://github.com/eigenorbit/eigenkit/commit/b6d0c732ec2f2dcf2b9054bfaa71dcc909f5a642))
+
+
 ## v1.3.0 (2026-11-18)
 
 ### Features

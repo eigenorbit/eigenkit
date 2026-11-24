@@ -664,6 +664,7 @@ src/eigenkit/
 │   ├── executor.py        ← Executor / Compiled protocol + lazy executor registry
 │   ├── gradients.py       ← photonic parameter-shift + finite-difference jacobians
 │   ├── reservoir.py       ← photonic reservoir (fixed interferometer)
+│   ├── wire.py            ← JSON codec for PhotonicCircuitSpec
 │   ├── torch.py           ← PhotonicCircuit nn.Module (loaded lazily)
 │   └── backends/
 │       ├── perceval_backend.py      ← Perceval SLOS executor (perceval imported lazily)

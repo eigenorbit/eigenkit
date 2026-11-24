@@ -243,6 +243,37 @@ fails, or if the post-selection on the number of detected photons
 and the live test marked `qpu` in `tests/photonics/test_quandela_cloud.py`, which you
 run with `pytest -m qpu` and a token set.
 
+## Running through the EigenOrbit Router
+
+A photonic circuit can also reach Quandela Cloud through the
+[EigenOrbit Router](https://router.eigenorbit.com), with a Router API key in place of
+a Quandela token. The executor is `RouterPhotonicBackend`, from the package
+`eigenorbit-router-client` (version 0.4 or later). It is used like the other two
+executors, so a circuit moves from the local simulator to the Router when you replace
+the executor. The photonic devices of the Router are in limited preview.
+
+```python
+from eigenorbit_router_client import RouterConfig, RouterPhotonicBackend
+
+from eigenkit.photonics.reservoir import run_photonic_reservoir
+
+router = RouterPhotonicBackend(RouterConfig(device="quandela/sim_slos", shots=2000))
+states = run_photonic_reservoir(spec, weights, sequences, executor=router)
+```
+
+The reservoir sends all its time steps as **one** job, because the compiled circuit of
+this executor has a method `run_batch(weights, rows)`. `run_photonic_reservoir` calls
+it once when an executor offers it, and calls `run` for each step when it does not, as
+with the local `PercevalBackend`. The results are sampled, so gradients are not
+available, as on Quandela Cloud.
+
+Two functions support services that submit jobs for their users, as the Router does.
+`cloud_job_body` builds the request that creates a Quandela Cloud job, with one run
+for each row of inputs, and `cloud_job_counts` reads the counts of a finished job.
+Both are in `eigenkit.photonics.backends.perceval_remote`, and neither opens a
+connection nor needs a token. `eigenkit.photonics.wire` encodes a
+`PhotonicCircuitSpec` as JSON data, and decodes it.
+
 ## How it maps to the qubit core
 
 The photonics package has the same layers as the core, for a different model of
@@ -268,8 +299,9 @@ adapter belongs to the photonics package, not to the qubit `torch/` package. The
   qubit statevector of size \(2^n\).
 - **Execution on Quandela Cloud**, on a real QPU or a cloud simulator, goes through
   `QuandelaCloudBackend`. The results are sampled, so there are no gradients.
-- **One scalar observable is evaluated at a time, for one sample.** There is no
-  batching yet.
+- **One scalar observable is evaluated at a time, for one sample.** `run`,
+  `expectation` and `PhotonicCircuit` take one sample for each call. Only
+  `run_photonic_reservoir` sends a batch, to an executor that offers `run_batch`.
 - **Only observables that are diagonal in the Fock basis are supported.**
 
 ## Roadmap

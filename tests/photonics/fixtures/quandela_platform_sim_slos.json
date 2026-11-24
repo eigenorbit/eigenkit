@@ -1,0 +1,18 @@
+{
+ "status": "available",
+ "type": "simulator",
+ "perfs": {},
+ "specs": {
+  "available_commands": [
+   "probs",
+   "samples",
+   "sample_count"
+  ],
+  "constraints": {
+   "max_photon_count": 12,
+   "min_photon_count": 2,
+   "support_multi_photon": true
+  },
+  "parameters": {}
+ }
+}

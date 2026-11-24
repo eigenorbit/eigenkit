@@ -1,0 +1,8 @@
+{
+ "duration": 1,
+ "intermediate_results": [],
+ "job_id": "00000000-0000-4000-8000-000000000000",
+ "results": "{\"results\": \":PCVL:zip:eJyzCnAO87FyCnbOL80rsaquMdQxAEJDO1sjUzNrIA/Mt7M1NDGwrgHJGIF5hhbWYJWGEJ4xSM4IqtLIHMQzhJhiaAzVZwjmGZrVAgA8Jhqu\", \"global_perf\": 1.0}",
+ "results_type": null,
+ "shots": 0
+}

@@ -3874,7 +3874,7 @@ wheels = [
 
 [[package]]
 name = "pyscf"
-version = "2.15.0"
+version = "2.15.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "h5py" },
@@ -3882,12 +3882,11 @@ dependencies = [
     { name = "scipy" },
     { name = "setuptools" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6e/30/39707040412f20c61a91a7edcd921a5973c9b604c4d6095c2e0a5f7b35d3/pyscf-2.15.0.tar.gz", hash = "sha256:46601b24bb5fa8583f4734c65f096f1cb2006cd1a2c581b7761e1e740f36d74f", size = 10941454, upload-time = "2026-11-05T05:42:06.643Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e9/c5/172dc60c3c11e081fbcca858b97ab275abecd26887c256c46123271559ff/pyscf-2.15.1.tar.gz", hash = "sha256:6d8950c0f4c1860f96d9fd1c3c908fcb590c6e1ba07720b0a2b8c7c3cd3a6a3b", size = 10944428, upload-time = "2026-11-17T08:18:14.951Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/70/ff/a8d1086c7029aa05e370b015f364e421a148af7fb6969b00ef5565a04eeb/pyscf-2.15.0-py3-none-macosx_10_9_x86_64.whl", hash = "sha256:3640c34e938a09c4211fda448ee857374cf8a10eb345547f003ee25650d26392", size = 25301270, upload-time = "2026-11-05T05:41:29.587Z" },
-    { url = "https://files.pythonhosted.org/packages/9c/e8/579b0353de0ba84621a2530fcccc4ca7ef9ca78e05697c1c4e3ce319a88a/pyscf-2.15.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:727f854866e7930f1c28722030a25efff61f594fcca78735e60c1a62829a4e62", size = 23364845, upload-time = "2026-11-05T05:37:05.523Z" },
-    { url = "https://files.pythonhosted.org/packages/2f/1d/7e4e878248fae458f4934dc6f31ae2cbcf5f67230d6b4505b3655c8559bb/pyscf-2.15.0-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:ca9427ae9f41c03e44c74763cc61d240e46be9a7cc75166c22817eebf1e0b87b", size = 33597044, upload-time = "2026-11-05T06:43:39.266Z" },
-    { url = "https://files.pythonhosted.org/packages/bd/c4/ae16e0cf2d391e87bfa0e81a764fb5847253eabf1e8bdaf07959244c73e2/pyscf-2.15.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a372e4ac136b969ef4a22fb328905cfbc84513bcd4d85321026af0493345b94b", size = 40598332, upload-time = "2026-11-05T05:41:36.196Z" },
+    { url = "https://files.pythonhosted.org/packages/d7/64/c292fd9182fa9ddb59805de6230fde61b27df1704009eeeace8858690c1c/pyscf-2.15.1-py3-none-macosx_10_9_x86_64.whl", hash = "sha256:93d91204c206960d7c4846e9d265b348089a3adbb3e27ae77ea828b7e3509c1b", size = 25303289, upload-time = "2026-11-17T08:18:55.851Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/c6/dea3fbe26d4ae50780d1a464e13d8a3bc462a62fa3757313096700bd6cd7/pyscf-2.15.1-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:3c174e139b8a4d7bc04d90b981d99eef8c64b00626a50354c2898c8cf774d427", size = 33599022, upload-time = "2026-11-17T09:31:38.458Z" },
+    { url = "https://files.pythonhosted.org/packages/45/c7/4e9bd6d02276c0f2b54ba9c15183eeae14b5efc283f6be7323c1ce7531f0/pyscf-2.15.1-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:29503e09014b2e71770ccefec33d7d558fe71b5d4fb1a2ab745c7e534857d5e4", size = 40600213, upload-time = "2026-11-17T08:17:49.726Z" },
 ]
 
 [[package]]

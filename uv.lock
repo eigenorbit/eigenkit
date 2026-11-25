@@ -761,13 +761,15 @@ wheels = [
 
 [[package]]
 name = "cuda-quantum-cu13"
-version = "0.16.0"
+version = "0.17.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astpretty" },
+    { name = "cudaq-core" },
     { name = "cudensitymat-cu13", marker = "sys_platform == 'linux'" },
     { name = "cupy-cuda13x", version = "13.6.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.14' and sys_platform == 'linux'" },
     { name = "cupy-cuda13x", version = "14.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.14' and sys_platform == 'linux'" },
+    { name = "custabilizer-cu13", marker = "sys_platform == 'linux'" },
     { name = "custatevec-cu13", marker = "sys_platform == 'linux'" },
     { name = "cutensornet-cu13", marker = "sys_platform == 'linux'" },
     { name = "numpy" },
@@ -781,15 +783,15 @@ dependencies = [
     { name = "scipy" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e0/05/101bae7c873973ad6aace03cc189bd1736618132cbe080d77fc2c3e9cf67/cuda_quantum_cu13-0.16.0-cp312-cp312-macosx_13_0_arm64.whl", hash = "sha256:a89abf7628a0cac9d172cc4aff32071f921eae0f7af079c24a7d2f05f4fdecb1", size = 63898015, upload-time = "2026-09-12T09:45:33.646Z" },
-    { url = "https://files.pythonhosted.org/packages/fa/bd/2cdb63dbceefb72e9be30fd6b0dd0ed6126558419eab0ef52b39b860bcfc/cuda_quantum_cu13-0.16.0-cp312-cp312-manylinux_2_28_aarch64.whl", hash = "sha256:5313d8bb0a1b4fb2b5dd7f29347e017fa6b9767643d1cc43c47d9a3e2df9f76d", size = 79962300, upload-time = "2026-09-12T09:45:39.011Z" },
-    { url = "https://files.pythonhosted.org/packages/1c/41/32b2fc99d3b6e10d42a23d0d13697ad21a688c15bd5c6ec20f7554326aba/cuda_quantum_cu13-0.16.0-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:ed3d7131255440790e1cfda7825f8f8680697c192791fa510ae8447f4554b4da", size = 91940806, upload-time = "2026-09-12T09:45:44.754Z" },
-    { url = "https://files.pythonhosted.org/packages/11/dc/566db9383d3b2dd7197e744b0a26162a11152f415f6388ba0aafb4a2d011/cuda_quantum_cu13-0.16.0-cp313-cp313-macosx_13_0_arm64.whl", hash = "sha256:a032ee9de325515b257786d1eb13bf530531b3bd11172bf8de505fa5c7d4d4a3", size = 63901790, upload-time = "2026-09-12T09:45:49.93Z" },
-    { url = "https://files.pythonhosted.org/packages/6e/ac/fdb87c46199d7a9471b660afa3bc81acd5e1a0d39a1ef9343a7db2bd14fe/cuda_quantum_cu13-0.16.0-cp313-cp313-manylinux_2_28_aarch64.whl", hash = "sha256:d85e878923b0d5891b24216be800a651598a14fec03b8106592e1e6ce31cd8b2", size = 79966386, upload-time = "2026-09-12T09:45:55.243Z" },
-    { url = "https://files.pythonhosted.org/packages/48/9d/5f7a4b6c44d5fbc20958f9f3b6312658ea9ba5bf7f2156cccbd01b674128/cuda_quantum_cu13-0.16.0-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:c2efa2801fa1e95b5d96b4244499ff272264e47c09d2eb5bba71bf41abac65f7", size = 91944000, upload-time = "2026-09-12T09:46:01.155Z" },
-    { url = "https://files.pythonhosted.org/packages/16/19/1c0ed4d237bf930cc2357dddc696fa179b178b9526126b5ba9ba3a7c94d2/cuda_quantum_cu13-0.16.0-cp314-cp314-macosx_13_0_arm64.whl", hash = "sha256:809de7b0d980ec35918a5bc9aab4f21ac1b64386da3037a87c9e0175c127765e", size = 63902335, upload-time = "2026-09-12T09:46:06.42Z" },
-    { url = "https://files.pythonhosted.org/packages/04/b9/c24829e3a2fbe4957dcceab123cf2e53fa00bb2f9f338c07e4ad4a026f8e/cuda_quantum_cu13-0.16.0-cp314-cp314-manylinux_2_28_aarch64.whl", hash = "sha256:4f51029ccb0c99d4ba70a878fc739dec46e4457bc3765c40e378e42c8b7aeed2", size = 79967628, upload-time = "2026-09-12T09:46:12.84Z" },
-    { url = "https://files.pythonhosted.org/packages/3a/19/415181c4d06e723a92393eefcc8e8656c9e5d137a8873172c52944e8f324/cuda_quantum_cu13-0.16.0-cp314-cp314-manylinux_2_28_x86_64.whl", hash = "sha256:303873d8c9521c1d36b87c75b68dea9fc23663f8b8f9049809a5d33cc253e6af", size = 91943726, upload-time = "2026-09-12T09:46:19.388Z" },
+    { url = "https://files.pythonhosted.org/packages/6d/f6/452eca92564ffb0aff4e80f4858358d8526d481d1537525452b1800b3a89/cuda_quantum_cu13-0.17.0-cp312-cp312-macosx_13_0_arm64.whl", hash = "sha256:e9084c36e2265b259114f464f2d4ee0fa62c7d1c33d7a31d9c6d913b5389b65b", size = 9078592, upload-time = "2026-11-16T13:48:19.191Z" },
+    { url = "https://files.pythonhosted.org/packages/5a/dc/7338b7e0c18b0645ae05c7f687e804d34069d7757a67e776a2e8c159333e/cuda_quantum_cu13-0.17.0-cp312-cp312-manylinux_2_28_aarch64.whl", hash = "sha256:209ff826c3f243ffb1b27408c2f4a98b108eec0aa5cb0b9170cb027c698c71eb", size = 19250789, upload-time = "2026-11-16T13:48:21.74Z" },
+    { url = "https://files.pythonhosted.org/packages/4e/b9/a46f726849e800eb4625f5c863c79ec4e081bcd76d38e45ad17e58013e5f/cuda_quantum_cu13-0.17.0-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:5a61d70bd435b025c7af49c6dac2df4df968aaf63111c724861f7a33ee357b42", size = 28954002, upload-time = "2026-11-16T13:48:24.645Z" },
+    { url = "https://files.pythonhosted.org/packages/f9/3e/6ee278846ef8f0ed5f21740c63cd60d1dfbe1d510abf47dafdf967c6daee/cuda_quantum_cu13-0.17.0-cp313-cp313-macosx_13_0_arm64.whl", hash = "sha256:dc287c70dc8ceffe15c6975b38e39c89826fe31f38f319f9360e86552550e9f0", size = 9080023, upload-time = "2026-11-16T13:48:27.983Z" },
+    { url = "https://files.pythonhosted.org/packages/99/0b/b00f1342dbc407f906817a2f75be735b4ca396234e820e68c1aee4689cd1/cuda_quantum_cu13-0.17.0-cp313-cp313-manylinux_2_28_aarch64.whl", hash = "sha256:57195c5e17689e0321792e5602e27dc3f5e6321727c670ce10b2a97ef37b11fa", size = 19252690, upload-time = "2026-11-16T13:48:30.952Z" },
+    { url = "https://files.pythonhosted.org/packages/06/4b/ea49c49bfa93cadc021b06493aae34ac4df632c9f3467388c7936eed6a8f/cuda_quantum_cu13-0.17.0-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:97f8d7f3ba45b0e709ffae58a3a933ba1408f09b8c3496eb8c8c1e44639d7cda", size = 28955285, upload-time = "2026-11-16T13:48:34.033Z" },
+    { url = "https://files.pythonhosted.org/packages/ad/15/d5302ae632b8325b780c0c8827a0dffd8ceb40ce49798621c2071ad22ca3/cuda_quantum_cu13-0.17.0-cp314-cp314-macosx_13_0_arm64.whl", hash = "sha256:2ff7e912c7f61acad12e168e0f41357d87cce9163259fef014e0199e907fff4a", size = 9080411, upload-time = "2026-11-16T13:48:37.199Z" },
+    { url = "https://files.pythonhosted.org/packages/3b/20/487f06546ec9b8df43ef53f24bc79136d96b4866b8c7d84c87236d174555/cuda_quantum_cu13-0.17.0-cp314-cp314-manylinux_2_28_aarch64.whl", hash = "sha256:10803f84a8783f16757ae81e784b06508f4923c6d141c7950e7ad375bdf857bc", size = 19253324, upload-time = "2026-11-16T13:48:40.541Z" },
+    { url = "https://files.pythonhosted.org/packages/7a/03/cb5b2dec12a9486f14f34813deb3676a3ef4ccbee488e128184010e20e2a/cuda_quantum_cu13-0.17.0-cp314-cp314-manylinux_2_28_x86_64.whl", hash = "sha256:bb2e715e8d3192f874f681d1f205d05a0e475967e10503210c6b5261dc3e8993", size = 28955693, upload-time = "2026-11-16T13:48:43.769Z" },
 ]
 
 [[package]]
@@ -834,25 +836,64 @@ nvtx = [
 
 [[package]]
 name = "cudaq"
-version = "0.16.0"
+version = "0.17.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cuda-quantum-cu13" },
+    { name = "cudaq-core" },
+    { name = "cudaq-edem", marker = "sys_platform == 'linux'" },
     { name = "cudaq-logical", extra = ["cu13"], marker = "sys_platform == 'linux'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/17/d7/2a0b7f9cdaece0768de5a8a8bcf39d53fc602baf530014bc293c2dc5743e/cudaq-0.16.0.tar.gz", hash = "sha256:3d41d64caed07c05aeeef5fd760877f8126df230ccf3f13a638554df74922790", size = 30005, upload-time = "2026-09-12T09:46:42.558Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8a/55/a6c9bfe8c8fe50dcdbd165a7e7f37b5a103ea063b8e56e4fba4596aeaacc/cudaq-0.17.0.tar.gz", hash = "sha256:ad07e96b9748c233fbb834f6f5c84f7bce7247a2068ee7df47743e4057d259ff", size = 36212, upload-time = "2026-11-16T13:49:20.542Z" }
+
+[[package]]
+name = "cudaq-core"
+version = "0.17.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/19/53/453e288693ba4d97013e2aa13bb20aa63f80bc3e2c1062fe13c2aa1af600/cudaq_core-0.17.0-cp312-cp312-macosx_13_0_arm64.whl", hash = "sha256:ee55fe594a7b61faf0374646d74353ae6856a71ac9db6d14b447dc7ad565ac90", size = 57065200, upload-time = "2026-11-16T13:44:52.198Z" },
+    { url = "https://files.pythonhosted.org/packages/d3/25/785ababa4d44a24634892ec2d4b50f283822c42ed2209bd9149789d244ac/cudaq_core-0.17.0-cp312-cp312-manylinux_2_28_aarch64.whl", hash = "sha256:d0e4718bb37f219e0003e0e1f4d490d7449d731df3c945af690709c9eb7c80dd", size = 63975968, upload-time = "2026-11-16T13:44:57.258Z" },
+    { url = "https://files.pythonhosted.org/packages/d7/02/1508542a942b833e60b943ff1b176c7e4b6cafdad4032ad8570efb958087/cudaq_core-0.17.0-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:40b957958a96c5cb58e46c1b7fb6b3dcf7c858f8d4b18c1010fa9783c3fbcd2a", size = 67203549, upload-time = "2026-11-16T13:45:02.552Z" },
+    { url = "https://files.pythonhosted.org/packages/19/2b/83ea89e442de4153a7d9ed9755c0edaceb1ec8ac30adb221a30052203a41/cudaq_core-0.17.0-cp313-cp313-macosx_13_0_arm64.whl", hash = "sha256:c31b0f45b5a4efdab33160185b056aacbaa9af2756634a33e14b8303f658f8bf", size = 57067191, upload-time = "2026-11-16T13:45:07.018Z" },
+    { url = "https://files.pythonhosted.org/packages/21/b9/cc265381116174b1ebae9634df06d3652da71193669b8105343b2a56a40f/cudaq_core-0.17.0-cp313-cp313-manylinux_2_28_aarch64.whl", hash = "sha256:1ae87b798cdad6b41686f9a1274d89e61b216718f4cde4a0a377d5ebf0b1a857", size = 63979196, upload-time = "2026-11-16T13:45:11.858Z" },
+    { url = "https://files.pythonhosted.org/packages/8b/52/85a678d420087f5925b128b559c515eafaf0ca8f89bffc4932f89f835eda/cudaq_core-0.17.0-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:ec4d1f52140e92e3b5ddabd7023c9efc8d6680be2b9193c79428120b8b62e277", size = 67206118, upload-time = "2026-11-16T13:45:17.015Z" },
+    { url = "https://files.pythonhosted.org/packages/ac/d9/3e5b73077c326a415b6165af319e5f2e086e198c5c7e921d68514363958f/cudaq_core-0.17.0-cp314-cp314-macosx_13_0_arm64.whl", hash = "sha256:f6b6bd737f0f19fe874df99e59254832ac9fd9a2fe6d17f668651aad046d6603", size = 57067406, upload-time = "2026-11-16T13:45:22.037Z" },
+    { url = "https://files.pythonhosted.org/packages/81/a8/cbb8d9af518190beee6306ced091aa7945d43a09d98879f8da0373ba03ce/cudaq_core-0.17.0-cp314-cp314-manylinux_2_28_aarch64.whl", hash = "sha256:aa09e625d60c8b278106900eaf126c85ba23c87fa0c51f2fe61edfedac7358a4", size = 63980205, upload-time = "2026-11-16T13:45:27.3Z" },
+    { url = "https://files.pythonhosted.org/packages/c9/11/ba1050e7f0c59a8d99e814d63c4a5ed2232b727d6e116ccb5b1a14913b89/cudaq_core-0.17.0-cp314-cp314-manylinux_2_28_x86_64.whl", hash = "sha256:46a3c8a75acf70ce72cfa438301284a1a023c46a348a34fa2c08410c44191cfb", size = 67205282, upload-time = "2026-11-16T13:45:32.251Z" },
+]
+
+[[package]]
+name = "cudaq-edem"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/1e/ad/1b9b3c23288964d0379df2350cdd544acf48f420947af1fbf85cfa16c9b7/cudaq_edem-0.1.0.tar.gz", hash = "sha256:f2e8050647ef9bf054dcc15fdb1ae4e832396ef44cc2c456a6899057e60ab7d7", size = 123048, upload-time = "2026-11-16T13:46:55.561Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e6/89/f742023707df096a22be6b226e2e068a224bf17f2e3fdb95d5506c59c57d/cudaq_edem-0.1.0-cp312-cp312-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:38c27481b4d18c1a5da25f36fd23cc97e4bd3fc8257d548c95e26a883606d6ae", size = 378573, upload-time = "2026-11-16T13:46:46.655Z" },
+    { url = "https://files.pythonhosted.org/packages/83/ea/346abcba4ad7d2f2f80815ea606f0a7d6b78ebcc54dd59d73784ef7a2760/cudaq_edem-0.1.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:06c8c4d2e65b4c4ce48319c13cac4acfc7f6c6dd5ae6ed1f037006e91f1dab4b", size = 382507, upload-time = "2026-11-16T13:46:48.129Z" },
+    { url = "https://files.pythonhosted.org/packages/56/95/115e925be20d2d7f585dae55310ae99da66ded62059e7cc0f809f3a5de3c/cudaq_edem-0.1.0-cp313-cp313-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:f49a5c54500e6585fcda6a69494f5e396271c3d25d41bd576b1863224b155f28", size = 378576, upload-time = "2026-11-16T13:46:49.499Z" },
+    { url = "https://files.pythonhosted.org/packages/e6/7d/d6de38c45b16eef1ed61203f44e6ccd3f1e08ce588722c83f54817e66441/cudaq_edem-0.1.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:c793044c49bcf92a61de7d748d89e312fb24379432388baef33a70fedb91837a", size = 382495, upload-time = "2026-11-16T13:46:50.863Z" },
+    { url = "https://files.pythonhosted.org/packages/d1/e7/46920af89f5aab2edffcd7cf8d3fca02dd64e73f28d50640613e0ad0a04c/cudaq_edem-0.1.0-cp314-cp314-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:d9ae63ad6d420070c6a0fb59a0539ba25f73cf41bee2053d0c068902287ca69b", size = 379024, upload-time = "2026-11-16T13:46:52.553Z" },
+    { url = "https://files.pythonhosted.org/packages/a1/0b/a281d27d27945826c721663271fb866f5544bcc860ed2d572db530ee7858/cudaq_edem-0.1.0-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:a12b8eae80fa90f69733ec7e4f161768a542800992756aa2a8caf37320002601", size = 382596, upload-time = "2026-11-16T13:46:54.327Z" },
+]
 
 [[package]]
 name = "cudaq-logical"
-version = "0.1.1"
+version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cudaq-core" },
+    { name = "cudaq-edem" },
+]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8f/79/4fcc72177c4eca259972030ea6e391f526802e56f2c31e690b18c477d715/cudaq_logical-0.1.1-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:a7d516e967c19dc1ef4bd359fde6c85c14cb376d7bab3fef1673968b77f67072", size = 11437245, upload-time = "2026-09-12T09:46:28.117Z" },
-    { url = "https://files.pythonhosted.org/packages/7d/7c/4578e3e36029eab25e498edc28e2afa941a068556bb9427901af8c811132/cudaq_logical-0.1.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:74e266b37ab34b8800565374cf7ff40a0cda32eeaa7c597e04a51456d2a6e028", size = 11564563, upload-time = "2026-09-12T09:46:30.664Z" },
-    { url = "https://files.pythonhosted.org/packages/43/39/28851f5ce2f8292eb65b0cdd3075155dcfd8965599acc878b8e0e3791c86/cudaq_logical-0.1.1-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:6c031be40c2b86d5ba4840589a4b861135e64c2e65bbc5b57402f5f51724c961", size = 11437275, upload-time = "2026-09-12T09:46:33.244Z" },
-    { url = "https://files.pythonhosted.org/packages/a7/63/25ad3f0ee978a78dff104c72e02b63dfbfc114006dffe684a88514073611/cudaq_logical-0.1.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:935fbfbf81608544a786fc07efdab7ff19e173aa9af37948dd2970f39a1704f4", size = 11564534, upload-time = "2026-09-12T09:46:35.634Z" },
-    { url = "https://files.pythonhosted.org/packages/43/ba/4cdd9aff0e0a01a74f91680e832399b6316297c66974f7d456f2d25836dc/cudaq_logical-0.1.1-cp314-cp314-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:655234c832749341612449021674273df653ad57bb309df038f3ab0ec62d2511", size = 11437298, upload-time = "2026-09-12T09:46:38.302Z" },
-    { url = "https://files.pythonhosted.org/packages/c5/70/8534c56f32b29e96bd2a842e3197a0af861f8abdbec3c3f0eecd91647848/cudaq_logical-0.1.1-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:4396f3811518208acb574a9bc6f59d42ffe193ab6994ea9d3160ec787758341b", size = 11564531, upload-time = "2026-09-12T09:46:40.91Z" },
+    { url = "https://files.pythonhosted.org/packages/15/c3/35f8a77e97dbba61cef4babcc9aeff2f99eaa9f9e55cfe30fd8256d495fc/cudaq_logical-0.2.0-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:5ed69e0a082389f50ec7e7474d93fecd9b6e20b05c42366a9d629facec569aae", size = 11317938, upload-time = "2026-11-16T13:46:10.186Z" },
+    { url = "https://files.pythonhosted.org/packages/3d/36/68fdd7251ae240d2d1026c4e13072942c8b99e71406105a0914513ac9f33/cudaq_logical-0.2.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:cc5baa3dab5a0638ce6c731100191ed1fdfe9e0a0ef56dd024dc62aab0684c62", size = 11589099, upload-time = "2026-11-16T13:46:13.648Z" },
+    { url = "https://files.pythonhosted.org/packages/e5/f1/6e37306acede8fa84d8ca6df203f9d424037963978f444c4a900ce271774/cudaq_logical-0.2.0-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:80902326fcb3bf6579871f4cd1cc46aa9146e49acd5c81338f5309cad6f480ba", size = 11317989, upload-time = "2026-11-16T13:46:16.31Z" },
+    { url = "https://files.pythonhosted.org/packages/36/b6/cda36c6f9cc070fcd3716443431d2d9117fc1dbd8b5501fb70217de26e00/cudaq_logical-0.2.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:1265dd9a1b02363a1b21b6fa79d53688cbab69b7ff3519dba7ff9fdde692ab16", size = 11589024, upload-time = "2026-11-16T13:46:18.772Z" },
+    { url = "https://files.pythonhosted.org/packages/f3/1c/b42c226e2ddf1b8b490f6b7aa922948e6d4a07fff8c338c4fde3f13365e6/cudaq_logical-0.2.0-cp314-cp314-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:cc47243914972ff7bb80c9b1c3111eca96a9dceba7c2520f0d4e6dfcce806cc8", size = 11318055, upload-time = "2026-11-16T13:46:21.405Z" },
+    { url = "https://files.pythonhosted.org/packages/ca/df/9be4ede05eaa641a5e6a9b9045a4d9829302baa47fe8f504f7e318b18b4d/cudaq_logical-0.2.0-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:32d6c9749c6c9c9ad1cbd2544c6aa3543c87c721b45c35dd3ecbc443dbc89584", size = 11589030, upload-time = "2026-11-16T13:46:23.708Z" },
 ]
 
 [package.optional-dependencies]
@@ -862,15 +903,15 @@ cu13 = [
 
 [[package]]
 name = "cudensitymat-cu13"
-version = "0.6.0"
+version = "0.7.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cutensor-cu13" },
     { name = "cutensornet-cu13" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b5/ca/23b382158370b89753035b0f15dd453b69595da0c4faa07ad0cbf724bb14/cudensitymat_cu13-0.6.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:4d346da09a53ca5be572811df0d962ebf7d3815a8fdc68fbec594a68f2522050", size = 30399721, upload-time = "2026-06-29T20:38:17.413Z" },
-    { url = "https://files.pythonhosted.org/packages/f7/7d/e49b1a450b9ded6be265c787c3632bf3d8c595f7124885b917218f935c92/cudensitymat_cu13-0.6.0-py3-none-manylinux2014_x86_64.whl", hash = "sha256:0252bd80d314f98866bd9e5688e8aa3457f2612bfd65ad8087d7cfb1d3322d79", size = 30418415, upload-time = "2026-06-29T20:38:38.787Z" },
+    { url = "https://files.pythonhosted.org/packages/5b/09/51dc78e87c740bf3811d01fb268295ae7ec7d136b89e9dbe9781c1d3ed0c/cudensitymat_cu13-0.7.1-py3-none-manylinux2014_aarch64.whl", hash = "sha256:b21ebde310ff4f1c033d70964ce6917ed6a0c2482cc563cc5ff3e070fa49b29a", size = 37582892, upload-time = "2026-11-10T22:57:17.54Z" },
+    { url = "https://files.pythonhosted.org/packages/68/a1/7b610bb435ee674fa0bfd30e613ae0c756277d6a0c7c96857b47203b71f2/cudensitymat_cu13-0.7.1-py3-none-manylinux2014_x86_64.whl", hash = "sha256:0daf487e84e19597727c5742c1db3c9e6197f1326d46e43136927dda8f0d8575", size = 37666529, upload-time = "2026-11-10T22:58:01.376Z" },
 ]
 
 [[package]]
@@ -915,12 +956,21 @@ wheels = [
 ]
 
 [[package]]
-name = "custatevec-cu13"
-version = "1.14.0"
+name = "custabilizer-cu13"
+version = "0.5.0"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/82/ac/a9685b1a35fafbd18bf5a1058fd6cdeaca765c6c30bb6b90f03e5e5164a6/custatevec_cu13-1.14.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:1dce9e09d45b19055e949b1243df6851b448be2d57efaeb3024a3adf56557a3a", size = 58670543, upload-time = "2026-06-29T20:31:25.9Z" },
-    { url = "https://files.pythonhosted.org/packages/d2/6c/ab76c6730dc4c161cc77dfa767616b59958544c38745c1804acac9673a57/custatevec_cu13-1.14.0-py3-none-manylinux2014_x86_64.whl", hash = "sha256:9e018206029faab9afe87a75e161b0f0cda08bd206b9e41dce21992db8f1c537", size = 58764693, upload-time = "2026-06-29T20:31:45.479Z" },
+    { url = "https://files.pythonhosted.org/packages/89/12/ce4709e4f859d76c2cdd929e5b24da29bf60f479c248360043e767b77fa3/custabilizer_cu13-0.5.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:c1a29ed723ef0b193af21817654e72572f106f9a48317bd2b164a2ce1d2865b7", size = 7365882, upload-time = "2026-09-11T01:34:04.73Z" },
+    { url = "https://files.pythonhosted.org/packages/c2/6d/faee7fd076f0b6eab5c62a9be559dcfb255a9898fc61387b488df268936f/custabilizer_cu13-0.5.0-py3-none-manylinux2014_x86_64.whl", hash = "sha256:1e7f7016dad0ef123da9a8d1d43e998ff9b8f69b802a4769a51daed089e37764", size = 7364869, upload-time = "2026-09-11T01:34:37.647Z" },
+]
+
+[[package]]
+name = "custatevec-cu13"
+version = "1.15.1"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6b/bf/b494f253f5a5004efbcc6c945bdd16ca258b92715db5b7e6931823bba1d0/custatevec_cu13-1.15.1-py3-none-manylinux2014_aarch64.whl", hash = "sha256:0fe0782e5a55225e14db8f653803fdd40be64a2414159f11f113c0b723a40dfa", size = 59769951, upload-time = "2026-11-10T23:14:53.974Z" },
+    { url = "https://files.pythonhosted.org/packages/3d/72/eeb46f84d808b38335d2ae49cb7af257f1e7ac0b67f6a26584c0a595dc2b/custatevec_cu13-1.15.1-py3-none-manylinux2014_x86_64.whl", hash = "sha256:85114b889bee8c8967e15763339ecabb2d0061b2a347ca17c845baa63aadcc06", size = 59909518, upload-time = "2026-11-10T23:15:27.138Z" },
 ]
 
 [[package]]
@@ -934,14 +984,14 @@ wheels = [
 
 [[package]]
 name = "cutensornet-cu13"
-version = "2.13.0"
+version = "2.14.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cutensor-cu13" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fd/63/c8a9f65cebec4db71818c06afd99e3a696cf892825da81bf235dc3304e8f/cutensornet_cu13-2.13.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:c57906ea213188bef0dd87fc31cae9689214e9194baf5c9445783c9730ff086e", size = 3048405, upload-time = "2026-06-29T20:35:57.385Z" },
-    { url = "https://files.pythonhosted.org/packages/d7/8a/cc27e1a1404c884662d01a23957e849c0557c40143819e2332a585073a83/cutensornet_cu13-2.13.0-py3-none-manylinux2014_x86_64.whl", hash = "sha256:50d30c3a3525d83a4a38ad8c7f93e7cb7043be79775d1a90eed1e14b79c2fd37", size = 3143285, upload-time = "2026-06-29T20:36:21.763Z" },
+    { url = "https://files.pythonhosted.org/packages/7f/99/513da6fc84b5a9580845542299fe6035260a96b3d7ad50d1f232abfa9fe4/cutensornet_cu13-2.14.0-py3-none-manylinux2014_aarch64.whl", hash = "sha256:c8a9da37a8d0ff44d649e334080c85fd2e18a615fd161d2bd81267489c2a9e38", size = 3378935, upload-time = "2026-09-11T01:39:21.029Z" },
+    { url = "https://files.pythonhosted.org/packages/5e/7a/101f198c51237c004045707eb4293e5fa985bf3bdd392e2e7a943716ef5f/cutensornet_cu13-2.14.0-py3-none-manylinux2014_x86_64.whl", hash = "sha256:3e84b020f203fedf7e3baff8c0a37ebcfd41afe211103f6c200c5bd6c6a34f24", size = 3499606, upload-time = "2026-09-11T01:39:46.772Z" },
 ]
 
 [[package]]
@@ -1070,7 +1120,7 @@ all = [
     { name = "qiskit-aer", marker = "python_full_version < '3.14' or platform_machine != 'aarch64' or sys_platform != 'linux'" },
     { name = "qiskit-ibm-runtime", version = "0.45.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.14'" },
     { name = "qiskit-ibm-runtime", version = "0.49.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.14'" },
-    { name = "qsimcirq", marker = "python_full_version < '3.14' and (platform_machine != 'aarch64' or sys_platform != 'linux')" },
+    { name = "qsimcirq", marker = "(python_full_version < '3.14' and platform_machine != 'aarch64') or (python_full_version < '3.14' and sys_platform != 'linux')" },
     { name = "qulacs", marker = "python_full_version < '3.14'" },
     { name = "scikit-learn" },
     { name = "skops" },
@@ -1129,7 +1179,7 @@ qml = [
 ]
 qsim = [
     { name = "cirq-core" },
-    { name = "qsimcirq", marker = "python_full_version < '3.14' and (platform_machine != 'aarch64' or sys_platform != 'linux')" },
+    { name = "qsimcirq", marker = "(python_full_version < '3.14' and platform_machine != 'aarch64') or (python_full_version < '3.14' and sys_platform != 'linux')" },
 ]
 qulacs = [
     { name = "qulacs", marker = "python_full_version < '3.14'" },
@@ -1200,9 +1250,9 @@ requires-dist = [
     { name = "pyscf", marker = "sys_platform != 'win32' and extra == 'chemistry'", specifier = ">=2.3" },
     { name = "qiskit", marker = "python_full_version >= '3.14' and extra == 'qiskit'", specifier = ">=2,<3" },
     { name = "qiskit", marker = "extra == 'qiskit'", specifier = ">=1.4.1,<3" },
-    { name = "qiskit-aer", marker = "(python_full_version < '3.14' or platform_machine != 'aarch64' or sys_platform != 'linux') and extra == 'qiskit'", specifier = ">=0.16,<0.18" },
+    { name = "qiskit-aer", marker = "(python_full_version < '3.14' and extra == 'qiskit') or (platform_machine != 'aarch64' and extra == 'qiskit') or (sys_platform != 'linux' and extra == 'qiskit')", specifier = ">=0.16,<0.18" },
     { name = "qiskit-ibm-runtime", marker = "extra == 'qiskit'", specifier = ">=0.43.1,!=0.44.*,<0.50" },
-    { name = "qsimcirq", marker = "python_full_version < '3.14' and ((platform_machine != 'aarch64' and extra == 'qsim') or (sys_platform != 'linux' and extra == 'qsim'))", specifier = ">=0.21" },
+    { name = "qsimcirq", marker = "(python_full_version < '3.14' and platform_machine != 'aarch64' and extra == 'qsim') or (python_full_version < '3.14' and sys_platform != 'linux' and extra == 'qsim')", specifier = ">=0.21" },
     { name = "qulacs", marker = "python_full_version < '3.14' and extra == 'qulacs'", specifier = ">=0.6,<0.7" },
     { name = "scikit-learn", marker = "extra == 'benchmark'", specifier = ">=1.3,<2" },
     { name = "scikit-learn", marker = "extra == 'datasets'", specifier = ">=1.3,<2" },
